@@ -4,8 +4,8 @@
  */
 package net.recommenders.evaluation.frameworks.mahout;
 
+import net.recommenders.evaluation.frameworks.AbstractRunner;
 import net.recommenders.evaluation.frameworks.Recommend;
-import net.recommenders.evaluation.frameworks.mahout.exceptions.AbstractRunner;
 import net.recommenders.evaluation.frameworks.mahout.exceptions.RecommenderException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
@@ -23,10 +23,9 @@ import java.util.Map;
  *
  * @author alejandr, alan
  */
-public class RecommenderRunner extends AbstractRunner{
+public class MahoutRecommenderRunner extends AbstractRunner {
 
     public static final int DEFAULT_NEIGHBORHOOD_SIZE = 50;
-    private Map<String, String> parameters;
     public void runRecommender() throws IOException, TasteException {
         DataModel trainModel = new FileDataModel(new File(parameters.get(Recommend.trainingSet)));
         DataModel testModel = new FileDataModel(new File(parameters.get(Recommend.testSet)));

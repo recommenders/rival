@@ -4,8 +4,8 @@
  */
 package net.recommenders.evaluation.frameworks;
 
-import net.recommenders.evaluation.frameworks.mahout.RecommenderRunner;
-import org.apache.mahout.cf.taste.recommender.Recommender;
+import net.recommenders.evaluation.frameworks.lenskit.LenskitRecommenderRunner;
+import net.recommenders.evaluation.frameworks.mahout.MahoutRecommenderRunner;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +31,10 @@ public class Recommend {
     public static final String trainingSet = "training";
     public static final String testSet = "test";
     public static final String output = "outputPath";
+    public static final String framework = "framework";
+    public static final String MAHOUT = "mahout";
+    public static final String LENSKIT = "lenskit";
+
 
 
     public static void main(String[] args) {
@@ -55,7 +59,7 @@ public class Recommend {
             System.exit(0);
         }
         if (properties.getProperty(trainingSet) != null)
-                params.put(trainingSet, properties.getProperty(trainingSet));
+            params.put(trainingSet, properties.getProperty(trainingSet));
         else {
             System.out.println("No training set specified, exiting.");
             System.exit(0);
@@ -77,18 +81,28 @@ public class Recommend {
         if (properties.getProperty(iterations) != null)
             params.put(iterations, properties.getProperty(iterations));
         if (properties.getProperty(output) != null)
-            params.put(output, properties.getProperty(output));
+            params.put(output, properties.getProperty(output)+"/"+properties.getProperty(framework));
 
 
+        if (properties.getProperty(framework).equals(MAHOUT)){
+            MahoutRecommenderRunner rr = new MahoutRecommenderRunner();
+            rr.setParameters(params);
+            try{
+                rr.runRecommender();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        else if (properties.getProperty(framework).equals(LENSKIT)){
+            System.out.println("recommend");
+            LenskitRecommenderRunner rr = new LenskitRecommenderRunner();
+            rr.setParameters(params);
+            try {
+                rr.runRecommender();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
 
-        RecommenderRunner rr = new RecommenderRunner();
-
-        rr.setParameters(params);
-
-        try{
-            rr.runRecommender();
-        }catch (Exception e){
-            e.printStackTrace();
         }
 
     }
