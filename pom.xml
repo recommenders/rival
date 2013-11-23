@@ -24,6 +24,8 @@
     </build>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mahout.version>0.8</mahout.version>
+        <lenskit.version>2.0</lenskit.version>
     </properties>
 
     <dependencies>
@@ -36,8 +38,53 @@
         <dependency>
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-core</artifactId>
-            <version>0.8</version>
+            <version>${mahout.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.grouplens.lenskit</groupId>
+            <artifactId>lenskit-core</artifactId>
+            <version>${lenskit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.grouplens.lenskit</groupId>
+            <artifactId>lenskit-knn</artifactId>
+            <version>${lenskit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.grouplens.lenskit</groupId>
+            <artifactId>lenskit-svd</artifactId>
+            <version>${lenskit.version}</version>
+        </dependency>
+
+
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>net.recommenders.evaluation.frameworks.Recommend</mainClass>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>propertyFile</key>
+                            <value>${basedir}/${propertyFile}</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
+                <version>1.2</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
 
