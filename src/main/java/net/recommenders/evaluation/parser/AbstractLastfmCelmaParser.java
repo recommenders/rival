@@ -30,7 +30,6 @@ public class AbstractLastfmCelmaParser {
             while ((line = br.readLine()) != null) {
                 String[] toks = line.split("\t");
                 long i = Long.parseLong(toks[1]);
-//                long i = TypeFormat.parseLong(toks[1], 10, new Cursor());
                 map.put(toks[0], i);
                 id = Math.max(i, id);
             }

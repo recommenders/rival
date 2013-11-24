@@ -22,6 +22,7 @@ public class ParserRunner {
     public static final String LASTFM_USEARTISTS = "dataset.parser.lastfm.useartists";
 
     public static DataModel<Long, Long> run(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
+        System.out.println("Parsing started");
         DataModel<Long, Long> model = null;
         File file = new File(properties.getProperty(DATASET_FILE));
         String parserClassName = properties.getProperty(DATASET_PARSER);
@@ -35,6 +36,7 @@ public class ParserRunner {
             Object parser = parserClass.getConstructor(boolean.class).newInstance(useArtists);
             model = (DataModel<Long, Long>) parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
         }
+        System.out.println("Parsing finished");
         return model;
     }
 }

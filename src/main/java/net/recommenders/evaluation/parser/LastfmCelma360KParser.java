@@ -64,11 +64,7 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser {
             }
             long itemId = mapItemIds.get(item);
             // preference
-            double preference = 1.0;
-            if (PREF_TOK != -1) {
-                preference = Double.parseDouble(toks[PREF_TOK]);
-//                preference = TypeFormat.parseDouble(toks[prefTok], new Cursor());
-            }
+            double preference = Double.parseDouble(toks[PREF_TOK]);
             //////
             // update information
             //////

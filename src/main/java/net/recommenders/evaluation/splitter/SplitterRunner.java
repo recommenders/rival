@@ -29,6 +29,7 @@ public class SplitterRunner {
     public static final String SPLIT_TEST_SUFFIX = "split.test.suffix";
 
     public static void run(Properties properties, DataModel<Long, Long> data) throws ClassNotFoundException, FileNotFoundException {
+        System.out.println("Start splitting");
         DataModel<Long, Long>[] splits = null;
         // read parameters
         String splitterClassName = properties.getProperty(DATASET_SPLITTER);
@@ -47,6 +48,7 @@ public class SplitterRunner {
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
             splits = new RandomSplitter(percentage, perUser, seed).split(data);
         }
+        System.out.println("Saving splits");
         // save splits
         for (int i = 0; i < splits.length / 2; i++) {
             DataModel<Long, Long> training = splits[2 * i];
