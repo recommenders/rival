@@ -29,10 +29,10 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
     }
 
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
-        final DataModel<Long, Long>[] splits = new DataModel[nFolds * 2];
+        final DataModel<Long, Long>[] splits = new DataModel[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {
-            splits[i] = new DataModel<Long, Long>(); // training
-            splits[i + 1] = new DataModel<Long, Long>(); // test
+            splits[2 * i] = new DataModel<Long, Long>(); // training
+            splits[2 * i + 1] = new DataModel<Long, Long>(); // test
         }
         if (perUser) {
             int n = 0;
@@ -78,9 +78,9 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
                     }
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
-                        DataModel<Long, Long> datamodel = splits[i]; // training
+                        DataModel<Long, Long> datamodel = splits[2 * i]; // training
                         if (i == curFold) {
-                            datamodel = splits[i + 1]; // test
+                            datamodel = splits[2 * i + 1]; // test
                         }
                         if (pref != null) {
                             datamodel.addPreference(user, item, pref);

@@ -49,8 +49,8 @@ public class SplitterRunner {
         }
         // save splits
         for (int i = 0; i < splits.length / 2; i++) {
-            DataModel<Long, Long> training = splits[i];
-            DataModel<Long, Long> test = splits[i + 1];
+            DataModel<Long, Long> training = splits[2 * i];
+            DataModel<Long, Long> test = splits[2 * i + 1];
             String trainingFile = outputFolder + splitTrainingPrefix + i + splitTrainingSuffix;
             String testFile = outputFolder + splitTestPrefix + i + splitTestSuffix;
             saveDataModel(training, trainingFile);
