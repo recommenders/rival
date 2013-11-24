@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.recommenders.evaluation.splitter.data;
+package net.recommenders.evaluation.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,11 +14,11 @@ import java.util.Map;
  *
  * @author alejandr
  */
-public class AbstractCelmaParser {
+public class AbstractLastfmCelmaParser {
 
     protected boolean useArtists;
 
-    public AbstractCelmaParser(boolean useArtists) {
+    public AbstractLastfmCelmaParser(boolean useArtists) {
         this.useArtists = useArtists;
     }
 

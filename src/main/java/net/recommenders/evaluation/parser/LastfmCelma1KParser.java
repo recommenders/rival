@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.recommenders.evaluation.splitter.data;
+package net.recommenders.evaluation.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,14 +20,14 @@ import net.recommenders.evaluation.core.DataModel;
  *
  * @author alejandr
  */
-public class Celma1KParser extends AbstractCelmaParser {
+public class LastfmCelma1KParser extends AbstractLastfmCelmaParser {
 
     public static final int USER_TOK = 0;
     public static final int ARTIST_TOK = 3;
     public static final int TRACK_TOK = 5;
     public static final int TIME_TOK = 1;
 
-    public Celma1KParser(boolean useArtists) {
+    public LastfmCelma1KParser(boolean useArtists) {
         super(useArtists);
     }
 
