@@ -32,7 +32,7 @@ public class ParserRunner {
         } else if (parserClassName.contains("LastfmCelma")) {
             String mapIdsPrefix = properties.getProperty(LASTFM_IDS_PREFIX);
             Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
-            Object parser = parserClass.getConstructor(Boolean.class).newInstance(useArtists);
+            Object parser = parserClass.getConstructor(boolean.class).newInstance(useArtists);
             model = (DataModel<Long, Long>) parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
         }
         return model;
