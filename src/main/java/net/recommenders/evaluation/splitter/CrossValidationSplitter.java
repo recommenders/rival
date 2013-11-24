@@ -78,9 +78,9 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
                     }
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
-                        DataModel<Long, Long> datamodel = splits[2 * i]; // training
+                        DataModel<Long, Long> datamodel = splits[i]; // training
                         if (i == curFold) {
-                            datamodel = splits[2 * i + 1]; // test
+                            datamodel = splits[i + 1]; // test
                         }
                         if (pref != null) {
                             datamodel.addPreference(user, item, pref);
