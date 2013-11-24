@@ -92,4 +92,10 @@ public class DataModel<U, I> {
     public int getNumUsers() {
         return getUsers().size();
     }
+
+    public void clear() {
+        userItemPreferences.clear();
+        userItemTimestamps.clear();
+        itemUserPreferences.clear();
+    }
 }
