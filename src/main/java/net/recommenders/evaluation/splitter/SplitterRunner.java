@@ -67,7 +67,7 @@ public class SplitterRunner {
             Map<Long, Set<Long>> userTimeModel = model.getUserItemTimestamps().get(user);
             for (Long item : userPrefModel.keySet()) {
                 Double pref = userPrefModel.get(item);
-                Set<Long> time = userTimeModel.get(item);
+                Set<Long> time = userTimeModel != null ? userTimeModel.get(item) : null;
                 if (time == null) {
                     out.println(user + "\t" + item + "\t" + pref + "\t-1");
                 } else {
