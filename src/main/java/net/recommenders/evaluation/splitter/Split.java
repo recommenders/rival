@@ -28,6 +28,6 @@ public class Split {
             ie.printStackTrace();
         }
 
-        SplitterRunner.run(properties, ParserRunner.run(properties));
+        SplitterRunner.run(properties, ParserRunner.run(properties), true);
     }
 }
