@@ -12,7 +12,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mahout.version>0.8</mahout.version>
-        <lenskit.version>2.0</lenskit.version>
+        <lenskit.version>2.0.4</lenskit.version>
     </properties>
 
     <dependencies>
@@ -71,12 +71,6 @@
                 </executions>
                 <configuration>
                     <mainClass>net.recommenders.evaluation.frameworks.Recommend</mainClass>
-                    <systemProperties>
-                        <systemProperty>
-                            <key>propertyFile</key>
-                            <value>${basedir}/${propertyFile}</value>
-                        </systemProperty>
-                    </systemProperties>
                 </configuration>
                 <version>1.2</version>
             </plugin>

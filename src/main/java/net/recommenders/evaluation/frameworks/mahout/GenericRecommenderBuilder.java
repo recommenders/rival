@@ -40,7 +40,7 @@ public final class GenericRecommenderBuilder<T>
      */
     public Recommender buildRecommender(DataModel dataModel, String recType)
             throws TasteException, RecommenderException {
-        return buildRecommender(dataModel, recType, null, null, NOITER, NOFACTORS, null);
+        return buildRecommender(dataModel, recType, null, DEFAULT_N, NOFACTORS, NOITER, null);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class GenericRecommenderBuilder<T>
      */
     public Recommender buildRecommender(DataModel dataModel, String recType, String simType)
             throws TasteException, RecommenderException {
-        return buildRecommender(dataModel, recType, simType, null, NOITER, NOFACTORS, null);
+        return buildRecommender(dataModel, recType, simType, DEFAULT_N, NOFACTORS, NOITER, null);
     }
 
     /**
@@ -62,19 +62,18 @@ public final class GenericRecommenderBuilder<T>
      * @param dataModel
      * @param recType
      * @param simType
-     * @param nbType
      * @return
      * @throws TasteException
      * @throws RecommenderException
      */
-    public Recommender buildRecommender(DataModel dataModel, String recType, String simType, String nbType)
+    public Recommender buildRecommender(DataModel dataModel, String recType, String simType, int nbSize)
             throws TasteException, RecommenderException {
-        return buildRecommender(dataModel, recType, simType, nbType, NOITER, NOFACTORS, null);
+        return buildRecommender(dataModel, recType, simType, nbSize, NOFACTORS, NOITER, null);
     }
 
     public Recommender buildRecommender(DataModel dataModel, String recType, String facType, int iterations, int factors)
             throws TasteException, RecommenderException {
-        return buildRecommender(dataModel, recType, null, null, iterations, factors, facType);
+        return buildRecommender(dataModel, recType, null, DEFAULT_N, factors, iterations, facType);
     }
 
 
@@ -92,11 +91,12 @@ public final class GenericRecommenderBuilder<T>
     public Recommender buildRecommender(final DataModel dataModel,
                                         final String recType,
                                         final String similarityType,
-                                        final String neighborhoodType,
+                                        final int neighborhoodSize,
                                         final int factors,
                                         final int iterations,
                                         String facType)
             throws TasteException, RecommenderException {
+        String neighborhoodType = "org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood";
         try {
             Object simObj = null;
             /**
@@ -121,7 +121,7 @@ public final class GenericRecommenderBuilder<T>
                 Class<?> neighborhoodClass = null;
                 try {
                     neighborhoodClass = Class.forName(neighborhoodType);
-                    neighObj = neighborhoodClass.getConstructor(int.class, UserSimilarity.class, DataModel.class).newInstance(DEFAULT_N, simObj, dataModel);
+                    neighObj = neighborhoodClass.getConstructor(int.class, UserSimilarity.class, DataModel.class).newInstance(neighborhoodSize, simObj, dataModel);
                 }
                 catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -157,7 +157,8 @@ public final class GenericRecommenderBuilder<T>
                     recObj = recommenderClass.getConstructor(DataModel.class, Factorizer.class).newInstance(dataModel, (Factorizer)simObj);
                 }
                 // user-based similarity with neighborhood
-                else if (neighborhoodType != null && similarityType != null) {
+//                else if (neighborhoodType != null && similarityType != null) {
+                else if (recType.contains("UserBased")){
                     recObj = recommenderClass.getConstructor(DataModel.class, UserNeighborhood.class, UserSimilarity.class).newInstance(dataModel, neighObj, simObj);
                 }
                 // item-based similarity, no neighborhood

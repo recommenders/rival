@@ -4,30 +4,35 @@
  */
 package net.recommenders.evaluation.frameworks.lenskit;
 
-import net.recommenders.evaluation.frameworks.Recommend;
 import net.recommenders.evaluation.frameworks.AbstractRunner;
+import net.recommenders.evaluation.frameworks.Recommend;
 import org.grouplens.lenskit.ItemRecommender;
 import org.grouplens.lenskit.ItemScorer;
 import org.grouplens.lenskit.Recommender;
 import org.grouplens.lenskit.RecommenderBuildException;
+import org.grouplens.lenskit.baseline.BaselineScorer;
+import org.grouplens.lenskit.baseline.UserMeanItemScorer;
 import org.grouplens.lenskit.core.LenskitConfiguration;
-import org.grouplens.lenskit.core.LenskitRecommender;
 import org.grouplens.lenskit.core.LenskitRecommenderEngine;
 import org.grouplens.lenskit.cursors.Cursors;
 import org.grouplens.lenskit.data.dao.*;
-import org.grouplens.lenskit.knn.item.ItemItemScorer;
+import org.grouplens.lenskit.iterative.IterationCount;
+import org.grouplens.lenskit.iterative.IterationCountStoppingCondition;
+import org.grouplens.lenskit.iterative.StoppingCondition;
+import org.grouplens.lenskit.knn.NeighborhoodSize;
 import org.grouplens.lenskit.knn.item.ItemSimilarity;
+import org.grouplens.lenskit.knn.user.NeighborhoodFinder;
+import org.grouplens.lenskit.knn.user.SimpleNeighborhoodFinder;
+import org.grouplens.lenskit.mf.funksvd.FeatureCount;
 import org.grouplens.lenskit.scored.ScoredId;
-import org.grouplens.lenskit.vectors.similarity.CosineVectorSimilarity;
-import org.grouplens.lenskit.vectors.similarity.PearsonCorrelation;
 import org.grouplens.lenskit.vectors.similarity.VectorSimilarity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -36,96 +41,63 @@ import java.util.List;
 public class LenskitRecommenderRunner extends AbstractRunner{
     private final static Logger logger = LoggerFactory.getLogger(LenskitRecommenderRunner.class);
 
-
-    /**
-     *
-
-     EventDAO dao = new EventCollectionDAO(rs);
-     LenskitConfiguration config = new LenskitConfiguration();
-     config.bind(EventDAO.class).to(dao);
-     config.bind(ItemScorer.class).to(UserUserItemScorer.class);
-     config.bind(NeighborhoodFinder.class).to(SimpleNeighborhoodFinder.class);
-     config.within(UserSimilarity.class)
-     .bind(VectorSimilarity.class)
-     .to(PearsonCorrelation.class);
-
-
-     factory.set(NeighborhoodSize.class).to(50);
-
-     // this is the default
- //here !!<------
-    LenskitRecommenderEngine engine = LenskitRecommenderEngine.build(config);
-    rec = engine.createRecommender();
-
-     */
-
-         /*        factory.setComponent(UserVectorNormalizer.class,
-     VectorNormalizer.class,
-     IdentityVectorNormalizer.class);*/
+    public LenskitRecommenderRunner(Properties _properties){
+        super(_properties);
+    }
 
     public void runRecommender() throws IOException {
 
-        File trainingFile = new File(parameters.get(Recommend.trainingSet));
-        File testFile = new File(parameters.get(Recommend.testSet));
+
+        File trainingFile = new File(properties.getProperty(Recommend.trainingSet));
+        File testFile = new File(properties.getProperty(Recommend.testSet));
         EventDAO base = new SimpleFileRatingDAO(trainingFile,"\t");
-
         EventDAO dao = new EventCollectionDAO(Cursors.makeList(base.streamEvents()));
-
         LenskitConfiguration config = new LenskitConfiguration();
         config.bind(EventDAO.class).to(dao);
-        /*
-        if (parameters.get(Recommend.similarity) != null){
+
+        try {
+            config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(properties.getProperty(Recommend.recommender)));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (properties.getProperty(Recommend.recommender).contains(".user.")){
+            config.bind(NeighborhoodFinder.class).to(SimpleNeighborhoodFinder.class);
+            config.set(NeighborhoodSize.class).to(Integer.parseInt(properties.getProperty(Recommend.neighborhood)));
+        }
+        if (properties.containsKey(Recommend.similarity)){
             try {
-                Class.forName(parameters.get(Recommend.similarity)).getConstructor().newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                config.within(ItemSimilarity.class).bind(VectorSimilarity.class).to((Class<? extends VectorSimilarity>)Class.forName(properties.getProperty(Recommend.similarity)));
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
         }
-        */
-        config.bind(ItemScorer.class).to(ItemItemScorer.class);
-
-        config.within(ItemSimilarity.class).bind(VectorSimilarity.class).to(CosineVectorSimilarity.class);
-
-//        config.within(ItemSimilarity.class).bind(VectorSimilarity.class).to(PearsonCorrelation.class);
+        if (properties.containsKey(Recommend.factors)){
+//            config.bind(PreferenceSnapshot.class).to(PackedPreferenceSnapshot.class);
+//            config.bind(ItemScorer.class).to(FunkSVDItemScorer.class);
+            // not possible to do FunkSVD without baseline (see Funk's paper)
+            config.bind(BaselineScorer.class, ItemScorer.class).to(UserMeanItemScorer.class);
+//            config.bind(UserMeanBaseline.class, ItemScorer.class).to(ItemMeanRatingItemScorer.class);
+            config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
+            config.set(IterationCount.class).to(Integer.parseInt(properties.getProperty(Recommend.iterations)));
+            config.set(FeatureCount.class).to(Integer.parseInt(properties.getProperty(Recommend.factors)));
+        }
 
         UserDAO test = new PrefetchingUserDAO(new SimpleFileRatingDAO(testFile, "\t"));
-
-
         Recommender rec = null;
         try{
-            rec = LenskitRecommender.build(config);
+            LenskitRecommenderEngine engine = LenskitRecommenderEngine.build(config);
+            rec = engine.createRecommender();
         } catch (RecommenderBuildException e){
             logger.error(e.getMessage());
             System.out.println("RecommenderBuildException thrown");
+            e.printStackTrace();
         }
-
-
-
-
         ItemRecommender irec = rec.getItemRecommender();
         assert irec != null;
 
-
-        if(irec == null)
-            System.out.println("irec is null");
-
         for(long user : test.getUserIds()){
             List<ScoredId> recs = irec.recommend(user);
-            writeData(parameters.get(Recommend.output), user, recs);
+            writeData(properties.getProperty(Recommend.output), user, recs);
         }
-
     }
-
-
-
-
-
 }
