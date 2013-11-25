@@ -17,7 +17,6 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 /**
