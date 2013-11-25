@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.recommenders.evaluation.splitter;
 
 import net.recommenders.evaluation.core.DataModel;
 
 /**
  *
- * @author alejandr
+ * @author Alejandro
  */
 public interface Splitter<U, I> {
 

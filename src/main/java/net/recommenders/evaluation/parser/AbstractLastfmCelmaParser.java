@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.recommenders.evaluation.parser;
 
 import java.io.BufferedReader;
@@ -12,7 +8,7 @@ import java.util.Map;
 
 /**
  *
- * @author alejandr
+ * @author Alejandro
  */
 public class AbstractLastfmCelmaParser {
 

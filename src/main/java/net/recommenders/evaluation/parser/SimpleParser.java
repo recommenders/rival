@@ -10,7 +10,7 @@ import net.recommenders.evaluation.core.DataModel;
  *
  * @author Alejandro
  */
-public class MovielensParser {
+public class SimpleParser {
 
     public static final int USER_TOK = 0;
     public static final int ITEM_TOK = 1;
@@ -31,23 +31,21 @@ public class MovielensParser {
     }
 
     private void parseLine(String line, DataModel<Long, Long> dataset) {
-        String[] toks = line.contains("::") ? line.split("::") : line.split("\t");
+        String[] toks = line.split("\t");
         // user
         long userId = Long.parseLong(toks[USER_TOK]);
-//            long userId = TypeFormat.parseLong(toks[userTok], 10, new Cursor());
         // item
         long itemId = Long.parseLong(toks[ITEM_TOK]);
-//            long itemId = TypeFormat.parseLong(toks[itemTok], 10, new Cursor());
         // timestamp
         long timestamp = Long.parseLong(toks[TIME_TOK]);
-//            long timestamp = TypeFormat.parseLong(toks[timeTok], 10, new Cursor());
         // preference
         double preference = Double.parseDouble(toks[RATING_TOK]);
-//            double preference = TypeFormat.parseDouble(toks[ratingTok], new Cursor());
         //////
         // update information
         //////
         dataset.addPreference(userId, itemId, preference);
-        dataset.addTimestamp(userId, itemId, timestamp);
+        if (timestamp != -1) {
+            dataset.addTimestamp(userId, itemId, timestamp);
+        }
     }
 }

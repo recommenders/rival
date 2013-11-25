@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.recommenders.evaluation.parser;
 
 import java.io.File;
@@ -12,7 +8,7 @@ import net.recommenders.evaluation.core.DataModel;
 
 /**
  *
- * @author nets
+ * @author Alejandro
  */
 public class ParserRunner {
 

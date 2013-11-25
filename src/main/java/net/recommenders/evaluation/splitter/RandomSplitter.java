@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.recommenders.evaluation.splitter;
 
 import java.util.ArrayList;
@@ -13,7 +9,7 @@ import net.recommenders.evaluation.core.DataModel;
 
 /**
  *
- * @author alejandr
+ * @author Alejandro
  */
 public class RandomSplitter implements Splitter<Long, Long> {
 
