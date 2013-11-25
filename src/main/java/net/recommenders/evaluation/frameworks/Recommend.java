@@ -36,7 +36,6 @@ public class Recommend {
 
 
     public static void main(String[] args) {
-        //String test = "/Users/alan/Documents/workspace/data/movielens1m100k/test.tsv";
         String propertyFile = System.getProperty("file");
 
         if(propertyFile == null){
