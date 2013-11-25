@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  *
- * @author alejandr
+ * @author Alejandro, Alan
  */
 public class DataModel<U, I> {
 
