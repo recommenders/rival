@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -45,9 +46,8 @@
             <artifactId>lenskit-svd</artifactId>
             <version>${lenskit.version}</version>
         </dependency>
-
-
     </dependencies>
+    
     <build>
         <plugins>
             <plugin>
@@ -76,5 +76,27 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>repo1</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+        <!--  repository>
+            <id>repo2</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>repo3</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>
+        <repository>
+            <id>repo4</id>
+            <url>http://maven.apache.org/</url>
+        </repository>
+        <repository>
+            <id>repo5</id>
+            <url>http://repo2.maven.org/maven2</url>
+        </repository -->
+    </repositories>
 </project>
 
