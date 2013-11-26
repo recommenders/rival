@@ -70,12 +70,12 @@ public class StrategyRunner {
         Class<?> strategyClass = Class.forName(strategyClassName);
         // get strategy
         EvaluationStrategy<Long, Long> strategy = null;
-        if (strategyClassName.contains("Movielens")) {
+        if (strategyClassName.contains("Koren")) {
             Integer N = Integer.parseInt(properties.getProperty(KOREN_N));
             Long seed = Long.parseLong(properties.getProperty(KOREN_SEED));
             strategy = new Koren(trainingModel, testModel, N, threshold, seed);
         } else {
-            strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingFile, testFile, threshold);
+            strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
         }
         // read recommendations: user \t item \t score
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
