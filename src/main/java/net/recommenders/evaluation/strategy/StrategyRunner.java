@@ -27,6 +27,7 @@ public class StrategyRunner {
     public static final String TRAINING_FILE = "split.training.file";
     public static final String TEST_FILE = "split.test.file";
     public static final String INPUT_FILE = "recommendation.file";
+    public static final String INPUT_FORMAT = "recommendation.format";
     public static final String OUTPUT_FORMAT = "output.format";
     public static final String OUTPUT_FILE = "output.file.ranking";
     public static final String GROUNDTRUTH_FILE = "output.file.groundtruth";
@@ -62,6 +63,7 @@ public class StrategyRunner {
         System.out.println("Parsing finished: test file");
         // read other parameters
         File inputFile = new File(properties.getProperty(INPUT_FILE));
+        String inputFormat = properties.getProperty(INPUT_FORMAT);
         File rankingFile = new File(properties.getProperty(OUTPUT_FILE));
         File groundtruthFile = new File(properties.getProperty(GROUNDTRUTH_FILE));
         EvaluationStrategy.OUTPUT_FORMAT format = properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
@@ -82,16 +84,7 @@ public class StrategyRunner {
         BufferedReader in = new BufferedReader(new FileReader(inputFile));
         String line = null;
         while ((line = in.readLine()) != null) {
-            String[] toks = line.split("\t");
-            Long user = Long.parseLong(toks[0]);
-            Long item = Long.parseLong(toks[1]);
-            Double score = Double.parseDouble(toks[2]);
-            List<Pair<Long, Double>> userRec = mapUserRecommendations.get(user);
-            if (userRec == null) {
-                userRec = new ArrayList<Pair<Long, Double>>();
-                mapUserRecommendations.put(user, userRec);
-            }
-            userRec.add(new Pair<Long, Double>(item, score));
+            readLine(line, inputFormat, mapUserRecommendations);
         }
         in.close();
         // generate output
@@ -111,5 +104,34 @@ public class StrategyRunner {
         }
         outRanking.close();
         outGroundtruth.close();
+    }
+
+    public static void readLine(String line, String format, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
+        String[] toks = line.split("\t");
+        if (format != null || format.equals("mymedialite")) {
+            Long user = Long.parseLong(toks[0]);
+            String items = toks[1].replace("[", "").replace("]", "");
+            for (String pair : items.split(",")) {
+                String[] pairToks = pair.split(":");
+                Long item = Long.parseLong(pairToks[0]);
+                Double score = Double.parseDouble(pairToks[1]);
+                List<Pair<Long, Double>> userRec = mapUserRecommendations.get(user);
+                if (userRec == null) {
+                    userRec = new ArrayList<Pair<Long, Double>>();
+                    mapUserRecommendations.put(user, userRec);
+                }
+                userRec.add(new Pair<Long, Double>(item, score));
+            }
+        } else {
+            Long user = Long.parseLong(toks[0]);
+            Long item = Long.parseLong(toks[1]);
+            Double score = Double.parseDouble(toks[2]);
+            List<Pair<Long, Double>> userRec = mapUserRecommendations.get(user);
+            if (userRec == null) {
+                userRec = new ArrayList<Pair<Long, Double>>();
+                mapUserRecommendations.put(user, userRec);
+            }
+            userRec.add(new Pair<Long, Double>(item, score));
+        }
     }
 }
