@@ -32,8 +32,8 @@ public class StrategyRunner {
     public static final String GROUNDTRUTH_FILE = "output.file.groundtruth";
     public static final String STRATEGY = "strategy.class";
     public static final String RELEVANCE_THRESHOLD = "strategy.relevance.threshold";
-    public static final String KOREN_N = "strategy.koren.N";
-    public static final String KOREN_SEED = "strategy.koren.seed";
+    public static final String RELPLUSN_N = "strategy.relplusn.N";
+    public static final String RELPLUSN_SEED = "strategy.relplusn.seed";
 
     public static void main(String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
@@ -70,10 +70,10 @@ public class StrategyRunner {
         Class<?> strategyClass = Class.forName(strategyClassName);
         // get strategy
         EvaluationStrategy<Long, Long> strategy = null;
-        if (strategyClassName.contains("Koren")) {
-            Integer N = Integer.parseInt(properties.getProperty(KOREN_N));
-            Long seed = Long.parseLong(properties.getProperty(KOREN_SEED));
-            strategy = new Koren(trainingModel, testModel, N, threshold, seed);
+        if (strategyClassName.contains("RelPlusN")) {
+            Integer N = Integer.parseInt(properties.getProperty(RELPLUSN_N));
+            Long seed = Long.parseLong(properties.getProperty(RELPLUSN_SEED));
+            strategy = new RelPlusN(trainingModel, testModel, N, threshold, seed);
         } else {
             strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
         }

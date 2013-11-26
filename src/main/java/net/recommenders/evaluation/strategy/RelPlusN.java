@@ -18,12 +18,12 @@ import net.recommenders.evaluation.strategy.EvaluationStrategy.Pair;
  *
  * @author Alejandro
  */
-public class Koren extends AbstractStrategy {
+public class RelPlusN extends AbstractStrategy {
 
     protected int N;
     protected Random rnd;
 
-    public Koren(DataModel<Long, Long> training, DataModel<Long, Long> test, int N, double threshold, long seed) {
+    public RelPlusN(DataModel<Long, Long> training, DataModel<Long, Long> test, int N, double threshold, long seed) {
         super(training, test, threshold);
         this.N = N;
 
