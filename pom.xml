@@ -21,6 +21,27 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>net.recommenders.evaluation.strategy.StrategyRunner</mainClass>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>propertyFile</key>
+                            <value>${basedir}/${propertyFile}</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
+                <version>1.2</version>
+            </plugin>
         </plugins>
     </build>
     <properties>
