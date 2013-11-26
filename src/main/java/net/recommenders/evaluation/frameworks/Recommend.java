@@ -19,7 +19,6 @@ import java.util.Properties;
 
 
 public class Recommend {
-
     public static final String recommender = "recommender";
     public static final String similarity = "similarity";
     public static final String factorizer = "factorizer";
@@ -29,20 +28,16 @@ public class Recommend {
     public static final String trainingSet = "training";
     public static final String testSet = "test";
     public static final String output = "output";
-    public static final String framework = "framework";
+    public static final String framework = "framework"; 
     public static final String MAHOUT = "mahout";
     public static final String LENSKIT = "lenskit";
 
-
-
     public static void main(String[] args) {
         String propertyFile = System.getProperty("file");
-
         if(propertyFile == null){
             System.out.println("Property file not given, exiting.");
             System.exit(0);
         }
-
         final Properties properties = new Properties();
         try{
             properties.load(new FileInputStream(propertyFile));
@@ -51,7 +46,6 @@ public class Recommend {
         } catch (IOException ie){
             ie.printStackTrace();
         }
-
         if(properties.getProperty(recommender) == null){
             System.out.println("No recommenderClass specified, exiting.");
             System.exit(0);
@@ -64,7 +58,6 @@ public class Recommend {
             System.out.println("No training set specified, exiting.");
             System.exit(0);
         }
-
         if (properties.getProperty(framework).equals(MAHOUT)){
             MahoutRecommenderRunner rr = new MahoutRecommenderRunner(properties);
             try{
@@ -81,10 +74,6 @@ public class Recommend {
             } catch (IOException e){
                 e.printStackTrace();
             }
-
         }
-
     }
-
-
 }
