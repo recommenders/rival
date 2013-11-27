@@ -31,6 +31,7 @@ public class MahoutRecommenderRunner extends AbstractRunner {
         super(_properties);
     }
 
+    @Override
     public void run() throws IOException, TasteException {
         if(alreadyRecomended)
             return;

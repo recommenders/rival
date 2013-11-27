@@ -58,7 +58,7 @@ public class MultipleRecommendationRunner {
 
 
         runLenskitRecommeders();
-//        runMahoutRecommeders();
+        runMahoutRecommeders();
 
     }
 

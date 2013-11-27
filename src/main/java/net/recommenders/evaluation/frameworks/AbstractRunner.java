@@ -23,6 +23,7 @@ public class AbstractRunner {
     public static final int DEFAULT_ITERATIONS = 50;
     public Properties properties;
     private String fileName;
+    private String path;
     public boolean alreadyRecomended = false;
 
     public AbstractRunner(Properties properties){
@@ -34,10 +35,11 @@ public class AbstractRunner {
             System.out.println("File exists: " + filePath);
             alreadyRecomended = true;
         }
+        path = properties.getProperty(RecommendationRunner.output);
+
     }
 
     public <T> void writeData(long user, List<T> recommendations) {
-        String path = properties.getProperty(RecommendationRunner.output);
         try {
             File dir = new File(path);
             if (!dir.isDirectory())
@@ -85,7 +87,15 @@ public class AbstractRunner {
         System.out.println(fileName);
     }
 
+    public String getCanonicalFileName(){
+        return path + "/" + fileName + ".stats";
+    }
+
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    public void run() throws Exception{
+
     }
 }

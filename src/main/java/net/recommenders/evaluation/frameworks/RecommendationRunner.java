@@ -7,9 +7,7 @@ package net.recommenders.evaluation.frameworks;
 import net.recommenders.evaluation.frameworks.lenskit.LenskitRecommenderRunner;
 import net.recommenders.evaluation.frameworks.mahout.MahoutRecommenderRunner;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -31,6 +29,9 @@ public class RecommendationRunner {
     public static final String framework = "framework";
     public static final String MAHOUT = "mahout";
     public static final String LENSKIT = "lenskit";
+    public static String statPath;
+    public static long time;
+
 
     public static void main(String[] args) {
         String propertyFile = System.getProperty("file");
@@ -62,9 +63,12 @@ public class RecommendationRunner {
             System.out.println("No training set specified, exiting.");
             return;
         }
-        long time = System.currentTimeMillis();
+        time = System.currentTimeMillis();
+
+        AbstractRunner rr;
         if (properties.getProperty(framework).equals(MAHOUT)){
-            MahoutRecommenderRunner rr = new MahoutRecommenderRunner(properties);
+            rr = new MahoutRecommenderRunner(properties);
+            statPath = rr.getCanonicalFileName();
             try{
                 rr.run();
             }catch (Exception e){
@@ -72,13 +76,32 @@ public class RecommendationRunner {
             }
         }
         else if (properties.getProperty(framework).equals(LENSKIT)){
-            LenskitRecommenderRunner rr = new LenskitRecommenderRunner(properties);
+            rr = new LenskitRecommenderRunner(properties);
+            statPath = rr.getCanonicalFileName();
             try {
                 rr.run();
-            } catch (IOException e){
+            } catch (Exception e){
                 e.printStackTrace();
             }
         }
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
         time = System.currentTimeMillis() - time;
+        writeStats(statPath, "time", time);
+        writeStats(statPath, "memory", memory);
     }
+
+    public static void writeStats(String path, String statLabel, long stat){
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(path, true));
+            out.write(statLabel + "\t" + stat + "\n");
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+
 }

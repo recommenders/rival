@@ -38,13 +38,13 @@ import java.util.Properties;
  *
  * @author alan
  */
-public class LenskitRecommenderRunner extends AbstractRunner{
+public class LenskitRecommenderRunner extends AbstractRunner {
     private final static Logger logger = LoggerFactory.getLogger(LenskitRecommenderRunner.class);
 
     public LenskitRecommenderRunner(Properties _properties){
         super(_properties);
     }
-
+    @Override
     public void run() throws IOException {
         if(alreadyRecomended)
             return;
