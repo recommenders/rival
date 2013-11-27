@@ -72,7 +72,6 @@ public class RecommendationRunner {
             }
         }
         else if (properties.getProperty(framework).equals(LENSKIT)){
-            System.out.println("recommend");
             LenskitRecommenderRunner rr = new LenskitRecommenderRunner(properties);
             try {
                 rr.run();

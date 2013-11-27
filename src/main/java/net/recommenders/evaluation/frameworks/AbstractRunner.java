@@ -20,6 +20,7 @@ import java.util.Properties;
  */
 public class AbstractRunner {
     private final static Logger logger = LoggerFactory.getLogger(AbstractRunner.class);
+    public static final int DEFAULT_ITERATIONS = 50;
     public Properties properties;
     private String fileName;
     public boolean alreadyRecomended = false;

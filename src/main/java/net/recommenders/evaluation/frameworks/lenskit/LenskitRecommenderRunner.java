@@ -79,7 +79,7 @@ public class LenskitRecommenderRunner extends AbstractRunner{
             config.bind(BaselineScorer.class, ItemScorer.class).to(UserMeanItemScorer.class);
 //            config.bind(UserMeanBaseline.class, ItemScorer.class).to(ItemMeanRatingItemScorer.class);
             config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
-            config.set(IterationCount.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.iterations)));
+            config.set(IterationCount.class).to(DEFAULT_ITERATIONS);
             config.set(FeatureCount.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
         }
 
