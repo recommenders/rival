@@ -70,7 +70,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>net.recommenders.evaluation.frameworks.Recommend</mainClass>
+                    <mainClass>net.recommenders.evaluation.frameworks.MultipleRecommendationRunner</mainClass>
                 </configuration>
                 <version>1.2</version>
             </plugin>

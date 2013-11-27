@@ -5,7 +5,7 @@
 package net.recommenders.evaluation.frameworks.mahout;
 
 import net.recommenders.evaluation.frameworks.AbstractRunner;
-import net.recommenders.evaluation.frameworks.Recommend;
+import net.recommenders.evaluation.frameworks.RecommendationRunner;
 import net.recommenders.evaluation.frameworks.mahout.exceptions.RecommenderException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
@@ -26,21 +26,25 @@ import java.util.Properties;
 public class MahoutRecommenderRunner extends AbstractRunner {
 
     public static final int DEFAULT_NEIGHBORHOOD_SIZE = 50;
+    public static final int DEFAULT_ITERATIONS = 50;
     public MahoutRecommenderRunner(Properties _properties){
         super(_properties);
     }
 
-    public void runRecommender() throws IOException, TasteException {
-        DataModel trainModel = new FileDataModel(new File(properties.getProperty(Recommend.trainingSet)));
-        DataModel testModel = new FileDataModel(new File(properties.getProperty(Recommend.testSet)));
+    public void run() throws IOException, TasteException {
+        if(alreadyRecomended)
+            return;
+        DataModel trainModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.trainingSet)));
+        DataModel testModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.testSet)));
         GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
         Recommender recommender = null;
         try{
-            if(properties.get(Recommend.factors) == null)
-                recommender = grb.buildRecommender(trainModel, properties.getProperty(Recommend.recommender), properties.getProperty(Recommend.similarity), Integer.parseInt(properties.getProperty(Recommend.neighborhood)));
-            if(properties.get(Recommend.factors) != null)
-                recommender = grb.buildRecommender(trainModel, properties.getProperty(Recommend.recommender), properties.getProperty(Recommend.factorizer), Integer.parseInt(properties.getProperty(Recommend.iterations)), Integer.parseInt(properties.getProperty(Recommend.factors)));
-            System.out.println(recommender.getClass().getName());
+            if(properties.getProperty(RecommendationRunner.factors) == null)
+                recommender = grb.buildRecommender(trainModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.similarity), Integer.parseInt(properties.getProperty(RecommendationRunner.neighborhood)));
+            if(properties.getProperty(RecommendationRunner.factors) != null)
+//                recommender = grb.buildRecommender(trainModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.factorizer), Integer.parseInt(properties.getProperty(RecommendationRunner.iterations)), Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
+                recommender = grb.buildRecommender(trainModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.factorizer), DEFAULT_ITERATIONS, Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
+            //(dataModel, recommender, factorizer, default iterations, factors)
         }catch (RecommenderException e){
             e.printStackTrace();
         }
@@ -49,7 +53,7 @@ public class MahoutRecommenderRunner extends AbstractRunner {
         while (users.hasNext()) {
             long u = users.nextLong();
             List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-            writeData(properties.getProperty(Recommend.output), u, items);
+            writeData(u, items);
         }
     }
 

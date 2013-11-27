@@ -22,14 +22,21 @@ public class AbstractRunner {
     private final static Logger logger = LoggerFactory.getLogger(AbstractRunner.class);
     public Properties properties;
     private String fileName;
-
+    public boolean alreadyRecomended = false;
 
     public AbstractRunner(Properties properties){
         this.properties = properties;
         this.setFileName();
+        String filePath = properties.getProperty(RecommendationRunner.output) + "/" + fileName;
+        File file = new File(filePath);
+        if (file.exists()){
+            System.out.println("File exists: " + filePath);
+            alreadyRecomended = true;
+        }
     }
 
-    public <T> void writeData(String path, long user, List<T> recommendations) {
+    public <T> void writeData(long user, List<T> recommendations) {
+        String path = properties.getProperty(RecommendationRunner.output);
         try {
             File dir = new File(path);
             if (!dir.isDirectory())
@@ -52,24 +59,24 @@ public class AbstractRunner {
     public void setFileName(){
         String type = "";
         // lenskit does not provide a factorizer class. This check is to actually see if it's a Mahout or Lenskit SVD.
-        if(properties.containsKey(Recommend.factorizer) || properties.containsKey(Recommend.similarity)){
-            type = (properties.containsKey(Recommend.factorizer) ?
-                    properties.getProperty(Recommend.factorizer) :
-                    properties.getProperty(Recommend.similarity));
+        if(properties.containsKey(RecommendationRunner.factorizer) || properties.containsKey(RecommendationRunner.similarity)){
+            type = (properties.containsKey(RecommendationRunner.factorizer) ?
+                    properties.getProperty(RecommendationRunner.factorizer) :
+                    properties.getProperty(RecommendationRunner.similarity));
             type = type.substring(type.lastIndexOf(".") + 1)+".";
         }
         String num = "";
-        if (properties.containsKey(Recommend.factors) || properties.containsKey(Recommend.neighborhood))
-            num = (properties.containsKey(Recommend.factors) ?
-                    properties.getProperty(Recommend.factors) :
-                    properties.getProperty(Recommend.neighborhood)) + ".";
+        if (properties.containsKey(RecommendationRunner.factors) || properties.containsKey(RecommendationRunner.neighborhood))
+            num = (properties.containsKey(RecommendationRunner.factors) ?
+                    properties.getProperty(RecommendationRunner.factors) :
+                    properties.getProperty(RecommendationRunner.neighborhood)) + ".";
 
-        String trainingSet =  properties.getProperty(Recommend.trainingSet);
+        String trainingSet =  properties.getProperty(RecommendationRunner.trainingSet);
         trainingSet = trainingSet.substring(trainingSet.lastIndexOf("/") + 1, trainingSet.lastIndexOf("."));
 
         fileName = trainingSet + "." +
-                properties.getProperty(Recommend.framework) + "." +
-                properties.getProperty(Recommend.recommender).substring(properties.getProperty(Recommend.recommender).lastIndexOf(".") + 1) + "." +
+                properties.getProperty(RecommendationRunner.framework) + "." +
+                properties.getProperty(RecommendationRunner.recommender).substring(properties.getProperty(RecommendationRunner.recommender).lastIndexOf(".") + 1) + "." +
                 type +
                 num +
                 "tsv";

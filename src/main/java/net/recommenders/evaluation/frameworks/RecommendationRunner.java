@@ -18,7 +18,7 @@ import java.util.Properties;
  */
 
 
-public class Recommend {
+public class RecommendationRunner {
     public static final String recommender = "recommender";
     public static final String similarity = "similarity";
     public static final String factorizer = "factorizer";
@@ -28,7 +28,7 @@ public class Recommend {
     public static final String trainingSet = "training";
     public static final String testSet = "test";
     public static final String output = "output";
-    public static final String framework = "framework"; 
+    public static final String framework = "framework";
     public static final String MAHOUT = "mahout";
     public static final String LENSKIT = "lenskit";
 
@@ -46,22 +46,27 @@ public class Recommend {
         } catch (IOException ie){
             ie.printStackTrace();
         }
+        recommend(properties);
+    }
+
+    public static void recommend(Properties properties){
         if(properties.getProperty(recommender) == null){
             System.out.println("No recommenderClass specified, exiting.");
-            System.exit(0);
+            return;
         }
         if (properties.getProperty(trainingSet) == null){
             System.out.println("No training set specified, exiting.");
-            System.exit(0);
+            return;
         }
         if (properties.getProperty(testSet) == null){
             System.out.println("No training set specified, exiting.");
-            System.exit(0);
+            return;
         }
+        long time = System.currentTimeMillis();
         if (properties.getProperty(framework).equals(MAHOUT)){
             MahoutRecommenderRunner rr = new MahoutRecommenderRunner(properties);
             try{
-                rr.runRecommender();
+                rr.run();
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -70,10 +75,11 @@ public class Recommend {
             System.out.println("recommend");
             LenskitRecommenderRunner rr = new LenskitRecommenderRunner(properties);
             try {
-                rr.runRecommender();
+                rr.run();
             } catch (IOException e){
                 e.printStackTrace();
             }
         }
+        time = System.currentTimeMillis() - time;
     }
 }

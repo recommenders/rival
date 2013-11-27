@@ -5,7 +5,7 @@
 package net.recommenders.evaluation.frameworks.lenskit;
 
 import net.recommenders.evaluation.frameworks.AbstractRunner;
-import net.recommenders.evaluation.frameworks.Recommend;
+import net.recommenders.evaluation.frameworks.RecommendationRunner;
 import org.grouplens.lenskit.ItemRecommender;
 import org.grouplens.lenskit.ItemScorer;
 import org.grouplens.lenskit.Recommender;
@@ -45,41 +45,42 @@ public class LenskitRecommenderRunner extends AbstractRunner{
         super(_properties);
     }
 
-    public void runRecommender() throws IOException {
-
-
-        File trainingFile = new File(properties.getProperty(Recommend.trainingSet));
-        File testFile = new File(properties.getProperty(Recommend.testSet));
+    public void run() throws IOException {
+        if(alreadyRecomended)
+            return;
+        File trainingFile = new File(properties.getProperty(RecommendationRunner.trainingSet));
+        File testFile = new File(properties.getProperty(RecommendationRunner.testSet));
         EventDAO base = new SimpleFileRatingDAO(trainingFile,"\t");
         EventDAO dao = new EventCollectionDAO(Cursors.makeList(base.streamEvents()));
         LenskitConfiguration config = new LenskitConfiguration();
         config.bind(EventDAO.class).to(dao);
 
+
         try {
-            config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(properties.getProperty(Recommend.recommender)));
+            config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(properties.getProperty(RecommendationRunner.recommender)));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        if (properties.getProperty(Recommend.recommender).contains(".user.")){
+        if (properties.getProperty(RecommendationRunner.recommender).contains(".user.")){
             config.bind(NeighborhoodFinder.class).to(SimpleNeighborhoodFinder.class);
-            config.set(NeighborhoodSize.class).to(Integer.parseInt(properties.getProperty(Recommend.neighborhood)));
+            config.set(NeighborhoodSize.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.neighborhood)));
         }
-        if (properties.containsKey(Recommend.similarity)){
+        if (properties.containsKey(RecommendationRunner.similarity)){
             try {
-                config.within(ItemSimilarity.class).bind(VectorSimilarity.class).to((Class<? extends VectorSimilarity>)Class.forName(properties.getProperty(Recommend.similarity)));
+                config.within(ItemSimilarity.class).bind(VectorSimilarity.class).to((Class<? extends VectorSimilarity>)Class.forName(properties.getProperty(RecommendationRunner.similarity)));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        if (properties.containsKey(Recommend.factors)){
+        if (properties.containsKey(RecommendationRunner.factors)){
 //            config.bind(PreferenceSnapshot.class).to(PackedPreferenceSnapshot.class);
 //            config.bind(ItemScorer.class).to(FunkSVDItemScorer.class);
             // not possible to do FunkSVD without baseline (see Funk's paper)
             config.bind(BaselineScorer.class, ItemScorer.class).to(UserMeanItemScorer.class);
 //            config.bind(UserMeanBaseline.class, ItemScorer.class).to(ItemMeanRatingItemScorer.class);
             config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
-            config.set(IterationCount.class).to(Integer.parseInt(properties.getProperty(Recommend.iterations)));
-            config.set(FeatureCount.class).to(Integer.parseInt(properties.getProperty(Recommend.factors)));
+            config.set(IterationCount.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.iterations)));
+            config.set(FeatureCount.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
         }
 
         UserDAO test = new PrefetchingUserDAO(new SimpleFileRatingDAO(testFile, "\t"));
@@ -97,7 +98,7 @@ public class LenskitRecommenderRunner extends AbstractRunner{
 
         for(long user : test.getUserIds()){
             List<ScoredId> recs = irec.recommend(user);
-            writeData(properties.getProperty(Recommend.output), user, recs);
+            writeData(user, recs);
         }
     }
 }

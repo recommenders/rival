@@ -19,6 +19,7 @@ public final class GenericRecommenderBuilder<T>
         implements RecommenderBuilder {
 
     public static final int DEFAULT_N = 50;
+    public static final int NO_N = 0;
     public static final int NOITER = 0;
     public static final int NOFACTORS = 0;
 
@@ -71,9 +72,20 @@ public final class GenericRecommenderBuilder<T>
         return buildRecommender(dataModel, recType, simType, nbSize, NOFACTORS, NOITER, null);
     }
 
+    /**
+     * SVD
+     * @param dataModel
+     * @param recType
+     * @param facType
+     * @param iterations
+     * @param factors
+     * @return
+     * @throws TasteException
+     * @throws RecommenderException
+     */
     public Recommender buildRecommender(DataModel dataModel, String recType, String facType, int iterations, int factors)
             throws TasteException, RecommenderException {
-        return buildRecommender(dataModel, recType, null, DEFAULT_N, factors, iterations, facType);
+        return buildRecommender(dataModel, recType, null, NO_N, factors, iterations, facType);
     }
 
 
@@ -117,7 +129,8 @@ public final class GenericRecommenderBuilder<T>
              * Instantiate neighborhood class
              */
             Object neighObj = null;
-            if (neighborhoodType != null){
+            //if (neighborhoodType != null){
+            if (neighborhoodSize != NO_N){
                 Class<?> neighborhoodClass = null;
                 try {
                     neighborhoodClass = Class.forName(neighborhoodType);
