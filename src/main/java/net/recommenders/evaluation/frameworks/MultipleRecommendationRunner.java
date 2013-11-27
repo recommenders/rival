@@ -32,6 +32,10 @@ public class MultipleRecommendationRunner {
     public static final String output = "output";
     public static String[] neighborhoods;
     public static String[] svdIterations;
+    public static String[] ibRecs;
+    public static String[] ubRecs;
+    public static String[] svdRecs;
+    public static String[] similarities;
 
     public static Properties properties;
     public static ArrayList<String> paths;
@@ -52,18 +56,72 @@ public class MultipleRecommendationRunner {
         neighborhoods = properties.getProperty(n).split(",");
         svdIterations = properties.getProperty(svdIter).split(",");
 
-        runMahoutRecommeders();
 
-
+        runLenskitRecommeders();
+//        runMahoutRecommeders();
 
     }
 
-    public static void runMahoutRecommeders(){
-        String[] ibRecs = properties.getProperty(mahoutItemBasedRecs).split(",");
-        String[] ubRecs = properties.getProperty(mahoutUserBasedRecs).split(",");
-        String[] svdRecs = properties.getProperty(mahoutSVDRecs).split(",");
+    public static void runLenskitRecommeders(){
+        try{
+            ibRecs = properties.getProperty(lenskitItemBasedRecs).split(",");
+            ubRecs = properties.getProperty(lenskitUserBasedRecs).split(",");
+            svdRecs = properties.getProperty(lenskitSVDRecs).split(",");
+            similarities = properties.getProperty(lenskitSimilarities).split(",");
+        } catch (NullPointerException e){
+            System.out.println("Properties not set");
+            return;
+        }
 
-        String[] similarities = properties.getProperty(mahoutSimilarities).split(",");
+        for(String path : paths){
+            Properties prop = new Properties();
+            prop.setProperty(RecommendationRunner.trainingSet, path + ".train");
+            prop.setProperty(RecommendationRunner.testSet, path + ".test");
+            prop.setProperty(RecommendationRunner.output, properties.getProperty(output));
+            prop.setProperty(RecommendationRunner.framework, "lenskit");
+            for (String ubRec : ubRecs){
+                prop.setProperty(RecommendationRunner.recommender, ubRec);
+                for (String sim : similarities){
+                    prop.setProperty(RecommendationRunner.similarity, sim);
+                    for (String n : neighborhoods){
+                        prop.setProperty(RecommendationRunner.neighborhood, n);
+                        RecommendationRunner.recommend(prop);
+                    }
+                    prop.remove(RecommendationRunner.similarity);
+//                    prop.remove(RecommendationRunner.neighborhood);
+                }
+            }
+            for (String ibRec : ibRecs){
+                prop.setProperty(RecommendationRunner.recommender, ibRec);
+                for (String sim : similarities){
+                    prop.setProperty(RecommendationRunner.similarity, sim);
+                    RecommendationRunner.recommend(prop);
+                    prop.remove(RecommendationRunner.similarity);
+                }
+            }
+            for (String svdRec : svdRecs){
+                prop.setProperty(RecommendationRunner.recommender, svdRec);
+                for (String f : neighborhoods){
+                    prop.setProperty(RecommendationRunner.factors, f);
+                    RecommendationRunner.recommend(prop);
+                }
+                prop.remove(RecommendationRunner.factorizer);
+            }
+        }
+    }
+
+    public static void runMahoutRecommeders(){
+        try{
+            ibRecs = properties.getProperty(mahoutItemBasedRecs).split(",");
+            ubRecs = properties.getProperty(mahoutUserBasedRecs).split(",");
+            svdRecs = properties.getProperty(mahoutSVDRecs).split(",");
+
+            similarities = properties.getProperty(mahoutSimilarities).split(",");
+
+        } catch (NullPointerException e){
+            System.out.println("Properties not set");
+            return;
+        }
         String[] factorizers = properties.getProperty(mahoutSVDFactorizer).split(",");
 
         for(String path : paths){
