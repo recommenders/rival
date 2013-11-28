@@ -46,10 +46,56 @@
             <artifactId>lenskit-svd</artifactId>
             <version>${lenskit.version}</version>
         </dependency>
+
+
+        <!-- memory meter -->
+        <dependency>
+            <groupId>com.github.stephenc</groupId>
+            <artifactId>jamm</artifactId>
+            <version>0.2.5</version>
+        </dependency>
     </dependencies>
     
     <build>
         <plugins>
+
+            <!-- memory meter
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.stephenc</groupId>
+                                    <artifactId>jamm</artifactId>
+                                    <version>0.2.5</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>jamm.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.14</version>
+                <configuration>
+                    <argLine>-javaagent:${project.build.directory}/jamm.jar</argLine>
+                </configuration>
+            </plugin>
+-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -62,6 +108,15 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <executable>java</executable>
+                    <mainClass>net.recommenders.evaluation.frameworks.MultipleRecommendationRunner</mainClass>
+                    <!--
+                    <arguments>
+                        <argument>-javaagent:${project.build.directory}/jamm.jar</argument>
+                    </arguments>
+                    -->
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -69,9 +124,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <mainClass>net.recommenders.evaluation.frameworks.MultipleRecommendationRunner</mainClass>
-                </configuration>
                 <version>1.2</version>
             </plugin>
         </plugins>

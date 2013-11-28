@@ -51,6 +51,7 @@ public class RecommendationRunner {
     }
 
     public static void recommend(Properties properties){
+        long memory = 0;
         if(properties.getProperty(recommender) == null){
             System.out.println("No recommenderClass specified, exiting.");
             return;
@@ -65,6 +66,7 @@ public class RecommendationRunner {
         }
         time = System.currentTimeMillis();
 
+//        MemoryMeter meter = new MemoryMeter();
         AbstractRunner rr;
         if (properties.getProperty(framework).equals(MAHOUT)){
             rr = new MahoutRecommenderRunner(properties);
@@ -74,6 +76,7 @@ public class RecommendationRunner {
             }catch (Exception e){
                 e.printStackTrace();
             }
+  //          memory = meter.measureDeep(rr);
         }
         else if (properties.getProperty(framework).equals(LENSKIT)){
             rr = new LenskitRecommenderRunner(properties);
@@ -83,10 +86,8 @@ public class RecommendationRunner {
             } catch (Exception e){
                 e.printStackTrace();
             }
+    //        memory = meter.measureDeep(rr);
         }
-        Runtime runtime = Runtime.getRuntime();
-        runtime.gc();
-        long memory = runtime.totalMemory() - runtime.freeMemory();
         time = System.currentTimeMillis() - time;
         writeStats(statPath, "time", time);
         writeStats(statPath, "memory", memory);

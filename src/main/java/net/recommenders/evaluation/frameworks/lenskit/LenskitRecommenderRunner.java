@@ -63,6 +63,8 @@ public class LenskitRecommenderRunner extends AbstractRunner {
         }
         if (properties.getProperty(RecommendationRunner.recommender).contains(".user.")){
             config.bind(NeighborhoodFinder.class).to(SimpleNeighborhoodFinder.class);
+            if (properties.getProperty(RecommendationRunner.neighborhood).equals("-1"))
+                properties.setProperty(RecommendationRunner.neighborhood, Math.round(Math.sqrt(new PrefetchingItemDAO(base).getItemIds().size())) + "");
             config.set(NeighborhoodSize.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.neighborhood)));
         }
         if (properties.containsKey(RecommendationRunner.similarity)){
@@ -80,6 +82,8 @@ public class LenskitRecommenderRunner extends AbstractRunner {
 //            config.bind(UserMeanBaseline.class, ItemScorer.class).to(ItemMeanRatingItemScorer.class);
             config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
             config.set(IterationCount.class).to(DEFAULT_ITERATIONS);
+            if (properties.getProperty(RecommendationRunner.factors).equals("-1"))
+                properties.setProperty(RecommendationRunner.factors, Math.round(Math.sqrt(new PrefetchingItemDAO(base).getItemIds().size())) + "");
             config.set(FeatureCount.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
         }
 
