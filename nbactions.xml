@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>build-with-dependencies</actionName>
+            <basedir>..</basedir>
+            <goals>
+                <goal>reactor:make</goal>
+            </goals>
+            <properties>
+                <make.artifacts>${groupId}:${artifactId}</make.artifacts>
+            </properties>
+        </action>
+    </actions>
