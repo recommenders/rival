@@ -6,6 +6,7 @@ package net.recommenders.evaluation.frameworks;
 
 import net.recommenders.evaluation.frameworks.lenskit.LenskitRecommenderRunner;
 import net.recommenders.evaluation.frameworks.mahout.MahoutRecommenderRunner;
+import org.github.jamm.MemoryMeter;
 
 import java.io.*;
 import java.util.Properties;
@@ -66,7 +67,6 @@ public class RecommendationRunner {
         }
         time = System.currentTimeMillis();
 
-//        MemoryMeter meter = new MemoryMeter();
         AbstractRunner rr;
         if (properties.getProperty(framework).equals(MAHOUT)){
             rr = new MahoutRecommenderRunner(properties);
@@ -76,7 +76,6 @@ public class RecommendationRunner {
             }catch (Exception e){
                 e.printStackTrace();
             }
-  //          memory = meter.measureDeep(rr);
         }
         else if (properties.getProperty(framework).equals(LENSKIT)){
             rr = new LenskitRecommenderRunner(properties);
@@ -86,7 +85,6 @@ public class RecommendationRunner {
             } catch (Exception e){
                 e.printStackTrace();
             }
-    //        memory = meter.measureDeep(rr);
         }
         time = System.currentTimeMillis() - time;
         writeStats(statPath, "time", time);
@@ -104,5 +102,15 @@ public class RecommendationRunner {
         }
     }
 
+    /**
+     * Memory meter, only works when jamm.jar is given as -javaagent to the JVM.
+     * Using this will slow down the execution, usage of this needs to be rethought.
+     */
+    public static class RecommenderMemoryMeeter{
+        public long measureDeepMemoryUsage(AbstractRunner runner){
+            MemoryMeter meter = new MemoryMeter();
+            return meter.measureDeep(runner);
+        }
+    }
 
 }
