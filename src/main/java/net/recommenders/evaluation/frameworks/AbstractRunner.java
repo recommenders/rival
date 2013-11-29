@@ -95,6 +95,10 @@ public class AbstractRunner {
         this.properties = properties;
     }
 
+    public boolean getAlreadyRecommended(){
+        return alreadyRecomended;
+    }
+
     public void run() throws Exception{
 
     }

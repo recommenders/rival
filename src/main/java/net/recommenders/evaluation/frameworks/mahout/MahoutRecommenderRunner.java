@@ -13,6 +13,7 @@ import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
+import org.grouplens.lenskit.data.dao.PrefetchingItemDAO;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,13 @@ public class MahoutRecommenderRunner extends AbstractRunner {
         DataModel trainModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.trainingSet)));
         DataModel testModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.testSet)));
         GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
+
+        if (properties.containsKey(RecommendationRunner.neighborhood) && properties.getProperty(RecommendationRunner.neighborhood).equals("-1"))
+            properties.setProperty(RecommendationRunner.neighborhood, Math.round(Math.sqrt(trainModel.getNumItems())) + "");
+        if (properties.containsKey(RecommendationRunner.factors) && properties.getProperty(RecommendationRunner.factors).equals("-1"))
+            properties.setProperty(RecommendationRunner.factors, Math.round(Math.sqrt(trainModel.getNumItems())) + "");
+
+
         Recommender recommender = null;
         try{
             if(properties.getProperty(RecommendationRunner.factors) == null)

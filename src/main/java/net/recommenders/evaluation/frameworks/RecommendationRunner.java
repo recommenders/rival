@@ -68,9 +68,11 @@ public class RecommendationRunner {
         time = System.currentTimeMillis();
 
         AbstractRunner rr;
+        boolean statsExist = false;
         if (properties.getProperty(framework).equals(MAHOUT)){
             rr = new MahoutRecommenderRunner(properties);
             statPath = rr.getCanonicalFileName();
+            statsExist = rr.getAlreadyRecommended();
             try{
                 rr.run();
             }catch (Exception e){
@@ -80,6 +82,7 @@ public class RecommendationRunner {
         else if (properties.getProperty(framework).equals(LENSKIT)){
             rr = new LenskitRecommenderRunner(properties);
             statPath = rr.getCanonicalFileName();
+            statsExist = rr.getAlreadyRecommended();
             try {
                 rr.run();
             } catch (Exception e){
@@ -87,8 +90,10 @@ public class RecommendationRunner {
             }
         }
         time = System.currentTimeMillis() - time;
-        writeStats(statPath, "time", time);
-        writeStats(statPath, "memory", memory);
+        if (!statsExist){
+            writeStats(statPath, "time", time);
+            writeStats(statPath, "memory", memory);
+        }
     }
 
     public static void writeStats(String path, String statLabel, long stat){
@@ -105,6 +110,7 @@ public class RecommendationRunner {
     /**
      * Memory meter, only works when jamm.jar is given as -javaagent to the JVM.
      * Using this will slow down the execution, usage of this needs to be rethought.
+     * See http://blog.javabenchmark.org/2013/07/compute-java-object-memory-footprint-at.html
      */
     public static class RecommenderMemoryMeeter{
         public long measureDeepMemoryUsage(AbstractRunner runner){
