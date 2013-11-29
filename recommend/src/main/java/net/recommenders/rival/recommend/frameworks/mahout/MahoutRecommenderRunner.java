@@ -2,18 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.recommenders.evaluation.frameworks.mahout;
+package net.recommenders.rival.recommend.frameworks.mahout;
 
-import net.recommenders.evaluation.frameworks.AbstractRunner;
-import net.recommenders.evaluation.frameworks.RecommendationRunner;
-import net.recommenders.evaluation.frameworks.mahout.exceptions.RecommenderException;
+import net.recommenders.rival.recommend.frameworks.AbstractRunner;
+import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
+import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
-import org.grouplens.lenskit.data.dao.PrefetchingItemDAO;
 
 import java.io.File;
 import java.io.IOException;

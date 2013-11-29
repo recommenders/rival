@@ -1,4 +1,4 @@
-package net.recommenders.evaluation.frameworks;
+package net.recommenders.rival.recommend.frameworks;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

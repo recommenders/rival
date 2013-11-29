@@ -1,4 +1,4 @@
-package net.recommenders.evaluation.frameworks;
+package net.recommenders.rival.recommend.frameworks;
 
 import java.io.File;
 import java.io.FileInputStream;

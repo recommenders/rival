@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.recommenders.evaluation.frameworks.lenskit;
+package net.recommenders.rival.recommend.frameworks.lenskit;
 
-import net.recommenders.evaluation.frameworks.AbstractRunner;
-import net.recommenders.evaluation.frameworks.RecommendationRunner;
+import net.recommenders.rival.recommend.frameworks.AbstractRunner;
+import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
 import org.grouplens.lenskit.ItemRecommender;
 import org.grouplens.lenskit.ItemScorer;
 import org.grouplens.lenskit.Recommender;

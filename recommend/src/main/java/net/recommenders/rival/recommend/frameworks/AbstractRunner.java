@@ -1,4 +1,4 @@
-package net.recommenders.evaluation.frameworks;
+package net.recommenders.rival.recommend.frameworks;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.grouplens.lenskit.scored.ScoredId;

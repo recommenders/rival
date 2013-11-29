@@ -1,4 +1,4 @@
-package net.recommenders.evaluation.frameworks.mahout.exceptions;
+package net.recommenders.rival.recommend.frameworks.mahout.exceptions;
 
 /**
  * Created with IntelliJ IDEA.

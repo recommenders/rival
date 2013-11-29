@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.recommenders.evaluation.frameworks;
+package net.recommenders.rival.recommend.frameworks;
 
-import net.recommenders.evaluation.frameworks.lenskit.LenskitRecommenderRunner;
-import net.recommenders.evaluation.frameworks.mahout.MahoutRecommenderRunner;
+import net.recommenders.rival.recommend.frameworks.lenskit.LenskitRecommenderRunner;
+import net.recommenders.rival.recommend.frameworks.mahout.MahoutRecommenderRunner;
 import org.github.jamm.MemoryMeter;
 
 import java.io.*;
