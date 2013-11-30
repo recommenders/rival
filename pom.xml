@@ -9,14 +9,83 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>RiVal</name>
+    <description>Evalaution framework for recommender systems</description>
+    <url>http://www.recommenders.net</url>
+    <organization>
+        <name>recommenders.net</name>
+        <url>http://www.recommenders.net</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>LGPLv2+</name>
+            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/recommenders/rival/issues</url>
+    </issueManagement>
+    <scm>
+        <connection>scm:git:http://github.com/recommenders/rival.git</connection>
+        <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
+        <url>http://github.com/recommenders/rival</url>
+        <tag>rival-0.0.1</tag>
+    </scm>
 
-
-
+    <properties>
+        <rival.version>1.0-SNAPSHOT</rival.version>
+        <copyrightHolder>recommenders.net</copyrightHolder>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <rival.web.url>http://rival.recommenders.net/maven-site/</rival.web.url>
+        <rival.web.path>${rival.web.url}</rival.web.path>
+        <rival.clean.removeAll>false</rival.clean.removeAll>
+    </properties>
     <modules>
-        <module>recommend</module>
-        <module>split</module>
-        <module>evaluate</module>
         <module>core</module>
+        <module>split</module>
+        <module>recommend</module>
+        <module>evaluate</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>3.8.1</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.2</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>

@@ -1,5 +1,7 @@
 package net.recommenders.rival.split.parser;
 
+import net.recommenders.rival.core.DataModel;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

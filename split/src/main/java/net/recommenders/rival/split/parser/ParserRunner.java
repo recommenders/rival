@@ -1,5 +1,7 @@
 package net.recommenders.rival.split.parser;
 
+import net.recommenders.rival.core.DataModel;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
