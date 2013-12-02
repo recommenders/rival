@@ -6,7 +6,6 @@ package net.recommenders.rival.recommend.frameworks;
 
 import net.recommenders.rival.recommend.frameworks.lenskit.LenskitRecommenderRunner;
 import net.recommenders.rival.recommend.frameworks.mahout.MahoutRecommenderRunner;
-import org.github.jamm.MemoryMeter;
 
 import java.io.*;
 import java.util.Properties;
@@ -52,7 +51,6 @@ public class RecommendationRunner {
     }
 
     public static void recommend(Properties properties){
-        long memory = 0;
         if(properties.getProperty(recommender) == null){
             System.out.println("No recommenderClass specified, exiting.");
             return;
@@ -92,7 +90,6 @@ public class RecommendationRunner {
         time = System.currentTimeMillis() - time;
         if (!statsExist){
             writeStats(statPath, "time", time);
-            writeStats(statPath, "memory", memory);
         }
     }
 
@@ -107,16 +104,6 @@ public class RecommendationRunner {
         }
     }
 
-    /**
-     * Memory meter, only works when jamm.jar is given as -javaagent to the JVM.
-     * Using this will slow down the execution, usage of this needs to be rethought.
-     * See http://blog.javabenchmark.org/2013/07/compute-java-object-memory-footprint-at.html
-     */
-    public static class RecommenderMemoryMeeter{
-        public long measureDeepMemoryUsage(AbstractRunner runner){
-            MemoryMeter meter = new MemoryMeter();
-            return meter.measureDeep(runner);
-        }
-    }
+
 
 }

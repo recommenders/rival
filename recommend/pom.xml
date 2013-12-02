@@ -47,12 +47,6 @@
             <version>${lenskit.version}</version>
         </dependency>
 
-        <!-- memory meter -->
-        <dependency>
-            <groupId>com.github.stephenc</groupId>
-            <artifactId>jamm</artifactId>
-            <version>0.2.5</version>
-        </dependency>
     </dependencies>
     
     <build>
