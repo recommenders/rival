@@ -6,12 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
-/**
- * Created with IntelliJ IDEA.
- * User: alan
- * Date: 2013-11-26
- * Time: 15:25
- */
+
 public class MultipleRecommendationRunner {
     public static final String input = "input";
     public static final String mahoutItemBasedRecs = "mahout.rec.ib";
