@@ -1,4 +1,4 @@
-package net.recommenders.rival.split.metric;
+package net.recommenders.rival.evaluation.metric;
 
 import java.util.Map;
 

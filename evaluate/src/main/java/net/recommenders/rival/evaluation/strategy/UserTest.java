@@ -1,4 +1,4 @@
-package net.recommenders.rival.split.strategy;
+package net.recommenders.rival.evaluation.strategy;
 
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;

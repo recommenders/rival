@@ -1,4 +1,4 @@
-package net.recommenders.rival.split.strategy;
+package net.recommenders.rival.evaluation.strategy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +16,7 @@ import java.util.Properties;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
-import net.recommenders.rival.split.strategy.EvaluationStrategy.Pair;
+import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
 
 /**
  *

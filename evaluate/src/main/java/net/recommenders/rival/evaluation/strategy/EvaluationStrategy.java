@@ -1,4 +1,4 @@
-package net.recommenders.rival.split.strategy;
+package net.recommenders.rival.evaluation.strategy;
 
 import java.io.PrintStream;
 import java.util.List;
