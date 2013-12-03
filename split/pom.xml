@@ -10,7 +10,7 @@
     <artifactId>split</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Rival Data Splitter</name>
+    <name>RiVal Data Splitter</name>
 
     <dependencies>
         <dependency>
