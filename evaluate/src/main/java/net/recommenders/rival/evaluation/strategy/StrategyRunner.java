@@ -63,7 +63,7 @@ public class StrategyRunner {
         System.out.println("Parsing finished: test file");
         // read other parameters
         File inputFile = new File(properties.getProperty(INPUT_FILE));
-        Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "true"));
+        Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "false"));
         File rankingFile = new File(properties.getProperty(OUTPUT_FILE));
         File groundtruthFile = new File(properties.getProperty(GROUNDTRUTH_FILE));
         EvaluationStrategy.OUTPUT_FORMAT format = properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;

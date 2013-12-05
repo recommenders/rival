@@ -1,5 +1,6 @@
 package net.recommenders.rival.split.splitter;
 
+import java.io.File;
 import net.recommenders.rival.core.DataModel;
 
 import java.io.FileNotFoundException;
@@ -20,6 +21,7 @@ public class SplitterRunner {
     public static final String SPLIT_CV_NFOLDS = "split.cv.nfolds";
     public static final String SPLIT_RANDOM_PERCENTAGE = "split.random.percentage";
     public static final String SPLIT_OUTPUT_FOLDER = "split.output.folder";
+    public static final String SPLIT_OUTPUT_OVERWRITE = "split.output.overwrite";
     public static final String SPLIT_TRAINING_PREFIX = "split.training.prefix";
     public static final String SPLIT_TRAINING_SUFFIX = "split.training.suffix";
     public static final String SPLIT_TEST_PREFIX = "split.test.prefix";
@@ -33,6 +35,7 @@ public class SplitterRunner {
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(SPLIT_PERUSER));
         Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
         String outputFolder = properties.getProperty(SPLIT_OUTPUT_FOLDER);
+        Boolean overwrite = Boolean.parseBoolean(properties.getProperty(SPLIT_OUTPUT_OVERWRITE, "false"));
         String splitTrainingPrefix = properties.getProperty(SPLIT_TRAINING_PREFIX);
         String splitTrainingSuffix = properties.getProperty(SPLIT_TRAINING_SUFFIX);
         String splitTestPrefix = properties.getProperty(SPLIT_TEST_PREFIX);
@@ -55,28 +58,32 @@ public class SplitterRunner {
             DataModel<Long, Long> test = splits[2 * i + 1];
             String trainingFile = outputFolder + splitTrainingPrefix + i + splitTrainingSuffix;
             String testFile = outputFolder + splitTestPrefix + i + splitTestSuffix;
-            saveDataModel(training, trainingFile);
-            saveDataModel(test, testFile);
+            saveDataModel(training, trainingFile, overwrite);
+            saveDataModel(test, testFile, overwrite);
         }
     }
 
-    public static void saveDataModel(DataModel<Long, Long> model, String outfile) throws FileNotFoundException {
-        PrintStream out = new PrintStream(outfile);
-        for (Long user : model.getUsers()) {
-            Map<Long, Double> userPrefModel = model.getUserItemPreferences().get(user);
-            Map<Long, Set<Long>> userTimeModel = model.getUserItemTimestamps().get(user);
-            for (Long item : userPrefModel.keySet()) {
-                Double pref = userPrefModel.get(item);
-                Set<Long> time = userTimeModel != null ? userTimeModel.get(item) : null;
-                if (time == null) {
-                    out.println(user + "\t" + item + "\t" + pref + "\t-1");
-                } else {
-                    for (Long t : time) {
-                        out.println(user + "\t" + item + "\t" + pref + "\t" + t);
+    public static void saveDataModel(DataModel<Long, Long> model, String outfile, boolean overwrite) throws FileNotFoundException {
+        if (new File(outfile).exists() && !overwrite) {
+            System.out.println("Ignoring " + outfile);
+        } else {
+            PrintStream out = new PrintStream(outfile);
+            for (Long user : model.getUsers()) {
+                Map<Long, Double> userPrefModel = model.getUserItemPreferences().get(user);
+                Map<Long, Set<Long>> userTimeModel = model.getUserItemTimestamps().get(user);
+                for (Long item : userPrefModel.keySet()) {
+                    Double pref = userPrefModel.get(item);
+                    Set<Long> time = userTimeModel != null ? userTimeModel.get(item) : null;
+                    if (time == null) {
+                        out.println(user + "\t" + item + "\t" + pref + "\t-1");
+                    } else {
+                        for (Long t : time) {
+                            out.println(user + "\t" + item + "\t" + pref + "\t" + t);
+                        }
                     }
                 }
             }
+            out.close();
         }
-        out.close();
     }
 }
