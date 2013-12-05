@@ -27,8 +27,8 @@ public class StrategyRunner {
     public static final String TRAINING_FILE = "split.training.file";
     public static final String TEST_FILE = "split.test.file";
     public static final String INPUT_FILE = "recommendation.file";
-    public static final String INPUT_FORMAT = "recommendation.format";
     public static final String OUTPUT_FORMAT = "output.format";
+    public static final String OUTPUT_OVERWRITE = "output.overwrite";
     public static final String OUTPUT_FILE = "output.file.ranking";
     public static final String GROUNDTRUTH_FILE = "output.file.groundtruth";
     public static final String STRATEGY = "strategy.class";
@@ -63,7 +63,7 @@ public class StrategyRunner {
         System.out.println("Parsing finished: test file");
         // read other parameters
         File inputFile = new File(properties.getProperty(INPUT_FILE));
-        String inputFormat = properties.getProperty(INPUT_FORMAT);
+        Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "true"));
         File rankingFile = new File(properties.getProperty(OUTPUT_FILE));
         File groundtruthFile = new File(properties.getProperty(GROUNDTRUTH_FILE));
         EvaluationStrategy.OUTPUT_FORMAT format = properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
@@ -84,31 +84,54 @@ public class StrategyRunner {
         BufferedReader in = new BufferedReader(new FileReader(inputFile));
         String line = null;
         while ((line = in.readLine()) != null) {
-            readLine(line, inputFormat, mapUserRecommendations);
+            readLine(line, mapUserRecommendations);
         }
         in.close();
         // generate output
-        PrintStream outRanking = new PrintStream(rankingFile);
-        PrintStream outGroundtruth = new PrintStream(groundtruthFile);
-        for (Long user : testModel.getUsers()) {
-            final List<Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
-            final Set<Long> items = strategy.getCandidateItemsToRank(user);
-            final List<Pair<Long, Double>> scoredItems = new ArrayList<Pair<Long, Double>>();
-            for (Pair<Long, Double> scoredItem : allScoredItems) {
-                if (items.contains(scoredItem.getFirst())) {
-                    scoredItems.add(scoredItem);
-                }
-            }
-            strategy.printRanking(user, scoredItems, outRanking, format);
-            strategy.printGroundtruth(user, outGroundtruth, format);
-        }
-        outRanking.close();
-        outGroundtruth.close();
+        generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFile, groundtruthFile, overwrite);
     }
 
-    public static void readLine(String line, String format, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException {
+        PrintStream outRanking = null;
+        if (rankingFile.exists() && !overwrite) {
+            System.out.println("Ignoring " + outRanking);
+        } else {
+            outRanking = new PrintStream(rankingFile);
+        }
+        PrintStream outGroundtruth = null;
+        if (groundtruthFile.exists() && !overwrite) {
+            System.out.println("Ignoring " + groundtruthFile);
+        } else {
+            outGroundtruth = new PrintStream(groundtruthFile);
+        }
+        for (Long user : testModel.getUsers()) {
+            if (outRanking != null) {
+                final List<EvaluationStrategy.Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
+                final Set<Long> items = strategy.getCandidateItemsToRank(user);
+                final List<EvaluationStrategy.Pair<Long, Double>> scoredItems = new ArrayList<EvaluationStrategy.Pair<Long, Double>>();
+                for (EvaluationStrategy.Pair<Long, Double> scoredItem : allScoredItems) {
+                    if (items.contains(scoredItem.getFirst())) {
+                        scoredItems.add(scoredItem);
+                    }
+                }
+                strategy.printRanking(user, scoredItems, outRanking, format);
+            }
+            if (outGroundtruth != null) {
+                strategy.printGroundtruth(user, outGroundtruth, format);
+            }
+        }
+        if (outRanking != null) {
+            outRanking.close();
+        }
+        if (outGroundtruth != null) {
+            outGroundtruth.close();
+        }
+    }
+
+    public static void readLine(String line, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
         String[] toks = line.split("\t");
-        if (format != null || format.equals("mymedialite")) {
+        // mymedialite format: user \t [item:score,item:score,...]
+        if (line.contains(":") && line.contains(",")) {
             Long user = Long.parseLong(toks[0]);
             String items = toks[1].replace("[", "").replace("]", "");
             for (String pair : items.split(",")) {

@@ -35,7 +35,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>net.recommenders.rival.split.strategy.StrategyRunner</mainClass>
+                    <mainClass>net.recommenders.rival.split.strategy.MultipleStrategyRunner</mainClass>
                 </configuration>
             </plugin>
         </plugins>
