@@ -92,6 +92,7 @@ public class MultipleStrategyRunner {
                 for (String strategyClassName : strategyClassNames) {
                     Class<?> strategyClass = Class.forName(strategyClassName);
                     for (String threshold : thresholds) {
+                        System.out.println("Generating " + strategyClassName + " with threshold " + threshold);
                         // get strategy and generate output
                         if (strategyClassName.contains("RelPlusN")) {
                             String[] Ns = properties.getProperty(RELPLUSN_N).split(",");
@@ -103,7 +104,7 @@ public class MultipleStrategyRunner {
                                 }
                             }
                         } else {
-                            EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+                            EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
                             generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFolder, groundtruthFolder, inputFileName, strategyClass.getSimpleName(), threshold, "", overwrite);
                         }
                     }
