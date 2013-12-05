@@ -77,7 +77,7 @@ public class MultipleStrategyRunner {
             DataModel<Long, Long> testModel = new SimpleParser().parseData(testFile);
             System.out.println("Parsing finished: test file");
             Set<String> recommendationFiles = new HashSet<String>();
-            getAllRecommendationFiles(recommendationFiles, inputFolder, split, inputSuffix);
+            getAllRecommendationFiles(recommendationFiles, inputFolder, new File(split).getName(), inputSuffix);
             for (String inputFile : recommendationFiles) {
                 String inputFileName = new File(inputFile).getName();
                 // read recommendations: user \t item \t score
