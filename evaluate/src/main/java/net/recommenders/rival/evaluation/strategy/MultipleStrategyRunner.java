@@ -79,6 +79,7 @@ public class MultipleStrategyRunner {
             Set<String> recommendationFiles = new HashSet<String>();
             getAllRecommendationFiles(recommendationFiles, inputFolder, new File(split).getName(), inputSuffix);
             for (String inputFile : recommendationFiles) {
+                System.out.println("Recommendation file: " + inputFile);
                 String inputFileName = new File(inputFile).getName();
                 // read recommendations: user \t item \t score
                 final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<EvaluationStrategy.Pair<Long, Double>>>();
