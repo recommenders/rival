@@ -43,6 +43,10 @@ public class MultipleStrategyRunner {
             ie.printStackTrace();
         }
 
+        for (String pr : properties.stringPropertyNames()) {
+            System.out.println(pr + " : " + properties.getProperty(pr));
+        }
+
         run(properties);
     }
 
@@ -64,12 +68,12 @@ public class MultipleStrategyRunner {
         String[] strategyClassNames = properties.getProperty(STRATEGIES).split(",");
         // process info for each split
         for (String split : splits) {
-            System.out.println("Parsing started: training file");
             File trainingFile = new File(split + trainingSuffix);
+            System.out.println("Parsing started: training file" + trainingFile);
             DataModel<Long, Long> trainingModel = new SimpleParser().parseData(trainingFile);
-            System.out.println("Parsing finished: training file");
-            System.out.println("Parsing started: test file");
+            System.out.println("Parsing finished: training file ");
             File testFile = new File(split + testSuffix);
+            System.out.println("Parsing started: test file" + testFile);
             DataModel<Long, Long> testModel = new SimpleParser().parseData(testFile);
             System.out.println("Parsing finished: test file");
             Set<String> recommendationFiles = new HashSet<String>();
