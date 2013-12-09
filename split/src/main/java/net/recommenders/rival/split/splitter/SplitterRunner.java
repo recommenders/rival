@@ -17,6 +17,7 @@ public class SplitterRunner {
 
     public static final String DATASET_SPLITTER = "dataset.splitter";
     public static final String SPLIT_PERUSER = "split.peruser";
+    public static final String SPLIT_PERITEMS = "split.peritems";
     public static final String SPLIT_SEED = "split.seed";
     public static final String SPLIT_CV_NFOLDS = "split.cv.nfolds";
     public static final String SPLIT_RANDOM_PERCENTAGE = "split.random.percentage";
@@ -33,7 +34,7 @@ public class SplitterRunner {
         // read parameters
         String splitterClassName = properties.getProperty(DATASET_SPLITTER);
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(SPLIT_PERUSER));
-        Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
+        Boolean doSplitPerItems = Boolean.parseBoolean(properties.getProperty(SPLIT_PERITEMS, "true"));
         String outputFolder = properties.getProperty(SPLIT_OUTPUT_FOLDER);
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(SPLIT_OUTPUT_OVERWRITE, "false"));
         String splitTrainingPrefix = properties.getProperty(SPLIT_TRAINING_PREFIX);
@@ -42,11 +43,16 @@ public class SplitterRunner {
         String splitTestSuffix = properties.getProperty(SPLIT_TEST_SUFFIX);
         // generate splits
         if (splitterClassName.contains("CrossValidation")) {
+            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
             splits = new CrossValidationSplitter(nFolds, perUser, seed).split(data);
         } else if (splitterClassName.contains("Random")) {
+            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
-            splits = new RandomSplitter(percentage, perUser, seed).split(data);
+            splits = new RandomSplitter(percentage, perUser, seed, doSplitPerItems).split(data);
+        } else if (splitterClassName.contains("Temporal")) {
+            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
+            splits = new TemporalSplitter(percentage, perUser, doSplitPerItems).split(data);
         }
         if (doDataClear) {
             data.clear();

@@ -5,6 +5,7 @@ import net.recommenders.rival.core.DataModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -17,10 +18,12 @@ public class RandomSplitter implements Splitter<Long, Long> {
     private float percentageTraining;
     private boolean perUser;
     private Random rnd;
+    private boolean doSplitPerItems;
 
-    public RandomSplitter(float percentageTraining, boolean perUser, long seed) {
+    public RandomSplitter(float percentageTraining, boolean perUser, long seed, boolean doSplitPerItems) {
         this.percentageTraining = percentageTraining;
         this.perUser = perUser;
+        this.doSplitPerItems = doSplitPerItems;
 
         rnd = new Random(seed);
     }
@@ -31,26 +34,57 @@ public class RandomSplitter implements Splitter<Long, Long> {
         splits[1] = new DataModel<Long, Long>(); // test
         if (perUser) {
             for (Long user : data.getUsers()) {
-                List<Long> items = new ArrayList<Long>(data.getUserItemPreferences().get(user).keySet());
-                Collections.shuffle(items, rnd);
-                int splitPoint = Math.round(percentageTraining * items.size());
-                for (int i = 0; i < items.size(); i++) {
-                    Long item = items.get(i);
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
-                    Set<Long> time = null;
-                    if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
-                        time = data.getUserItemTimestamps().get(user).get(item);
+                if (doSplitPerItems) {
+                    List<Long> items = new ArrayList<Long>(data.getUserItemPreferences().get(user).keySet());
+                    Collections.shuffle(items, rnd);
+                    int splitPoint = Math.round(percentageTraining * items.size());
+                    for (int i = 0; i < items.size(); i++) {
+                        Long item = items.get(i);
+                        Double pref = data.getUserItemPreferences().get(user).get(item);
+                        Set<Long> time = null;
+                        if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
+                            time = data.getUserItemTimestamps().get(user).get(item);
+                        }
+                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        if (i > splitPoint) {
+                            datamodel = splits[1]; // test
+                        }
+                        if (pref != null) {
+                            datamodel.addPreference(user, item, pref);
+                        }
+                        if (time != null) {
+                            for (Long t : time) {
+                                datamodel.addTimestamp(user, item, t);
+                            }
+                        }
                     }
-                    DataModel<Long, Long> datamodel = splits[0]; // training
-                    if (i > splitPoint) {
-                        datamodel = splits[1]; // test
+                } else {
+                    if (!data.getUserItemTimestamps().containsKey(user)) {
+                        continue;
                     }
-                    if (pref != null) {
-                        datamodel.addPreference(user, item, pref);
+                    List<String> itemsTime = new ArrayList<String>();
+                    for (Entry<Long, Set<Long>> e : data.getUserItemTimestamps().get(user).entrySet()) {
+                        long i = e.getKey();
+                        for (Long t : e.getValue()) {
+                            itemsTime.add(i + "_" + t);
+                        }
                     }
-                    if (time != null) {
-                        for (Long t : time) {
-                            datamodel.addTimestamp(user, item, t);
+                    Collections.shuffle(itemsTime, rnd);
+                    int splitPoint = Math.round(percentageTraining * itemsTime.size());
+                    for (int i = 0; i < itemsTime.size(); i++) {
+                        String it = itemsTime.get(i);
+                        Long item = Long.parseLong(it.split("_")[0]);
+                        Long time = Long.parseLong(it.split("_")[1]);
+                        Double pref = data.getUserItemPreferences().get(user).get(item);
+                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        if (i > splitPoint) {
+                            datamodel = splits[1]; // test
+                        }
+                        if (pref != null) {
+                            datamodel.addPreference(user, item, pref);
+                        }
+                        if (time != null) {
+                            datamodel.addTimestamp(user, item, time);
                         }
                     }
                 }
@@ -63,16 +97,39 @@ public class RandomSplitter implements Splitter<Long, Long> {
                     if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
                         time = data.getUserItemTimestamps().get(user).get(item);
                     }
-                    DataModel<Long, Long> datamodel = splits[0]; // training
-                    if (rnd.nextDouble() > percentageTraining) {
-                        datamodel = splits[1]; // test
-                    }
-                    if (pref != null) {
-                        datamodel.addPreference(user, item, pref);
-                    }
-                    if (time != null) {
-                        for (Long t : time) {
-                            datamodel.addTimestamp(user, item, t);
+                    if (doSplitPerItems) {
+                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        if (rnd.nextDouble() > percentageTraining) {
+                            datamodel = splits[1]; // test
+                        }
+                        if (pref != null) {
+                            datamodel.addPreference(user, item, pref);
+                        }
+                        if (time != null) {
+                            for (Long t : time) {
+                                datamodel.addTimestamp(user, item, t);
+                            }
+                        }
+                    } else {
+                        if (time != null) {
+                            for (Long t : time) {
+                                DataModel<Long, Long> datamodel = splits[0]; // training
+                                if (rnd.nextDouble() > percentageTraining) {
+                                    datamodel = splits[1]; // test
+                                }
+                                if (pref != null) {
+                                    datamodel.addPreference(user, item, pref);
+                                }
+                                datamodel.addTimestamp(user, item, t);
+                            }
+                        } else {
+                            DataModel<Long, Long> datamodel = splits[0]; // training
+                            if (rnd.nextDouble() > percentageTraining) {
+                                datamodel = splits[1]; // test
+                            }
+                            if (pref != null) {
+                                datamodel.addPreference(user, item, pref);
+                            }
                         }
                     }
                 }
