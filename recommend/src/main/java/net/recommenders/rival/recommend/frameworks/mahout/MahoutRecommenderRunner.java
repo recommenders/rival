@@ -33,7 +33,7 @@ public class MahoutRecommenderRunner extends AbstractRunner {
 
     @Override
     public void run() throws IOException, TasteException {
-        if(alreadyRecomended)
+        if(alreadyRecommended)
             return;
         DataModel trainModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.trainingSet)));
         DataModel testModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.testSet)));

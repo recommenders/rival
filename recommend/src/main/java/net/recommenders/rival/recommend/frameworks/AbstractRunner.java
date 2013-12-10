@@ -19,14 +19,14 @@ public abstract class AbstractRunner {
     public Properties properties;
     private String fileName;
     private String path;
-    protected boolean alreadyRecomended;
+    protected boolean alreadyRecommended;
 
     public AbstractRunner(Properties properties) {
         this.properties = properties;
         this.setFileName();
         String filePath = properties.getProperty(RecommendationRunner.output) + "/" + fileName;
-        alreadyRecomended = new File(filePath).exists();
-        if (alreadyRecomended) {
+        alreadyRecommended = new File(filePath).exists();
+        if (alreadyRecommended) {
             System.out.println("File exists: " + filePath);
         }
         path = properties.getProperty(RecommendationRunner.output);
@@ -93,7 +93,7 @@ public abstract class AbstractRunner {
     }
 
     public boolean getAlreadyRecommended() {
-        return alreadyRecomended;
+        return alreadyRecommended;
     }
 
     public abstract void run() throws Exception;

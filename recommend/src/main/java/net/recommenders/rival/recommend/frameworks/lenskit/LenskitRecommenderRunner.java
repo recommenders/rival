@@ -46,7 +46,7 @@ public class LenskitRecommenderRunner extends AbstractRunner {
     }
     @Override
     public void run() throws IOException {
-        if(alreadyRecomended)
+        if(alreadyRecommended)
             return;
         File trainingFile = new File(properties.getProperty(RecommendationRunner.trainingSet));
         File testFile = new File(properties.getProperty(RecommendationRunner.testSet));
