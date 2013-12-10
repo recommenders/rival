@@ -27,8 +27,7 @@ echo $overwrite
 for (( i=1; i <= $num_fold; i++ ))
 do
     dataset_shuf=$dataset\_shuf
-    #shuf $dataset > $dataset_shuf
-    cp $dataset $dataset_shuf
+    shuf $dataset > $dataset_shuf
 
     training_file=$output_folder$training_prefix$i$training_suffix
     test_file=$output_folder$test_prefix$i$test_suffix

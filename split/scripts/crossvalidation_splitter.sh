@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # similar to 'split_ratings.sh' from movielens10m package
 
 # usage: dataset field_separator num_folds output_folder training_prefix training_suffix test_prefix test_suffix per_user overwrite
