@@ -10,7 +10,7 @@ training_suffix=${6}
 test_prefix=${7}
 test_suffix=${8}
 per_user=${9}
-per_items=${10}
+per_items=${10} # unused
 overwrite=${11}
 
 if [[ $field_separator == "	" ]]
