@@ -13,53 +13,98 @@ test_suffix=${8}
 per_user=${9}
 overwrite=${10}
 
-RATINGS_COUNT=`wc -l $dataset | cut -d ' ' -f 1`
-echo "ratings count: $RATINGS_COUNT"
-SET_SIZE=`expr $RATINGS_COUNT / $num_fold`
-echo "set size: $SET_SIZE"
-REMAINDER=`expr $RATINGS_COUNT % $num_fold`
-echo "remainder: $REMAINDER"
+if [[ $field_separator == "	" ]]
+then
+	users=`cut -f1 $dataset | sort | uniq`
+else
+	users=`cut -f1 -d $'$field_separator' $dataset | sort | uniq`
+fi
 
+if $per_user
+then
+	# per_user cross validation
+	for (( i=1; i <= $num_fold; i++ ))
+	do
+	    training_file=$output_folder$training_prefix$i$training_suffix
+	    test_file=$output_folder$test_prefix$i$test_suffix
 
-dataset_shuf=$dataset\_shuf
-shuf $dataset > $dataset_shuf
+	    if [ -f $training_file ] && [ -f $test_file ] && ! $overwrite
+	    then
+		echo "ignoring $training_file and $test_file "
+	    else
+		    if [ -f $training_file ]
+		    then
+			rm $training_file
+		    fi
+		    if [ -f $test_file ]
+		    then
+			rm $test_file
+		    fi
+		    for user in $users
+		    do
+			dataset_user=$dataset\_$user
+			grep -P "^$user$field_separator" $dataset | shuf > $dataset_user
 
-for (( i=1; i <= $num_fold; i++ ))
-do
-    training_file=$output_folder$training_prefix$i$training_suffix
-    test_file=$output_folder$test_prefix$i$test_suffix
+			RATINGS_COUNT=`wc -l $dataset_user | cut -d ' ' -f 1`
+			SET_SIZE=`expr $RATINGS_COUNT / $num_fold`
+			REMAINDER=`expr $RATINGS_COUNT % $num_fold`
 
-    if [ -f $training_file ] && ! $overwrite
-    then
-	echo "ignoring $training_file"
-    else
-	head -`expr \( $i - 1 \) \* $SET_SIZE` $dataset_shuf > $training_file
-	tail -`expr \( $num_fold - $i \) \* $SET_SIZE` $dataset_shuf >> $training_file
-	if [ $i -ne $num_fold ]; then
-		tail -$REMAINDER $dataset_shuf >> $training_file
-	fi
-	echo "$training_file created.  `wc -l $training_file | cut -d " " -f 1` lines."
-    fi
+			# training
+			head -`expr \( $i - 1 \) \* $SET_SIZE` $dataset_user >> $training_file
+			tail -`expr \( $num_fold - $i \) \* $SET_SIZE` $dataset_user >> $training_file
+			if [ $i -ne $num_fold ]; then
+				tail -$REMAINDER $dataset_user >> $training_file
+			fi
 
-    if [ -f $test_file ] && ! $overwrite
-    then
-	echo "ignoring $test_file"
-    else
-	head -`expr $i \* $SET_SIZE` $dataset_shuf | tail -$SET_SIZE > $test_file
-	if [ $i -eq $num_fold ]; then
-		tail -$REMAINDER $dataset_shuf >> $test_file
-	fi
-	echo "$test_file created.  `wc -l $test_file | cut -d " " -f 1` lines."
-    fi
+			# test
+			head -`expr $i \* $SET_SIZE` $dataset_user | tail -$SET_SIZE >> $test_file
+			if [ $i -eq $num_fold ]; then
+				tail -$REMAINDER $dataset_user >> $test_file
+			fi
 
+			rm $dataset_user
+		    done
+		    echo "$training_file created.  `wc -l $training_file | cut -d " " -f 1` lines."
+		    echo "$test_file created.  `wc -l $test_file | cut -d " " -f 1` lines."
+	    fi
+	done
+else
+	# global cross validation
+	dataset_shuf=$dataset\_shuf
+	shuf $dataset > $dataset_shuf
 
+	RATINGS_COUNT=`wc -l $dataset_shuf| cut -d ' ' -f 1`
+	SET_SIZE=`expr $RATINGS_COUNT / $num_fold`
+	REMAINDER=`expr $RATINGS_COUNT % $num_fold`
 
-    if [ $i -eq $num_fold ]; then
-       tail -$REMAINDER $dataset_shuf >> $test_file
-    else
-       tail -$REMAINDER $dataset_shuf >> $training_file
-    fi
+	for (( i=1; i <= $num_fold; i++ ))
+	do
+	    training_file=$output_folder$training_prefix$i$training_suffix
+	    test_file=$output_folder$test_prefix$i$test_suffix
 
-done
+	    if [ -f $training_file ] && ! $overwrite
+	    then
+		echo "ignoring $training_file"
+	    else
+		head -`expr \( $i - 1 \) \* $SET_SIZE` $dataset_shuf > $training_file
+		tail -`expr \( $num_fold - $i \) \* $SET_SIZE` $dataset_shuf >> $training_file
+		if [ $i -ne $num_fold ]; then
+			tail -$REMAINDER $dataset_shuf >> $training_file
+		fi
+		echo "$training_file created.  `wc -l $training_file | cut -d " " -f 1` lines."
+	    fi
 
-rm $dataset_shuf
+	    if [ -f $test_file ] && ! $overwrite
+	    then
+		echo "ignoring $test_file"
+	    else
+		head -`expr $i \* $SET_SIZE` $dataset_shuf | tail -$SET_SIZE > $test_file
+		if [ $i -eq $num_fold ]; then
+			tail -$REMAINDER $dataset_shuf >> $test_file
+		fi
+		echo "$test_file created.  `wc -l $test_file | cut -d " " -f 1` lines."
+	    fi
+	done
+
+	rm $dataset_shuf
+fi
