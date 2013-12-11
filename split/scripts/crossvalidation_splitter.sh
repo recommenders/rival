@@ -13,6 +13,7 @@ test_suffix=${8}
 per_user=${9}
 overwrite=${10}
 
+# a tab is passed as $'\t'
 if [[ $field_separator == "	" ]]
 then
 	users=`cut -f1 $dataset | sort | uniq`
