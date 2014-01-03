@@ -94,7 +94,7 @@ public class StrategyRunner {
     public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException {
         PrintStream outRanking = null;
         if (rankingFile.exists() && !overwrite) {
-            System.out.println("Ignoring " + outRanking);
+            System.out.println("Ignoring " + rankingFile);
         } else {
             outRanking = new PrintStream(rankingFile);
         }
@@ -107,9 +107,9 @@ public class StrategyRunner {
         for (Long user : testModel.getUsers()) {
             if (outRanking != null) {
                 final List<EvaluationStrategy.Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
-		if (allScoredItems == null){
-			continue;
-		}
+                if (allScoredItems == null) {
+                    continue;
+                }
                 final Set<Long> items = strategy.getCandidateItemsToRank(user);
                 final List<EvaluationStrategy.Pair<Long, Double>> scoredItems = new ArrayList<EvaluationStrategy.Pair<Long, Double>>();
                 for (EvaluationStrategy.Pair<Long, Double> scoredItem : allScoredItems) {
