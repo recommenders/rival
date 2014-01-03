@@ -107,6 +107,9 @@ public class StrategyRunner {
         for (Long user : testModel.getUsers()) {
             if (outRanking != null) {
                 final List<EvaluationStrategy.Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
+		if (allScoredItems == null){
+			continue;
+		}
                 final Set<Long> items = strategy.getCandidateItemsToRank(user);
                 final List<EvaluationStrategy.Pair<Long, Double>> scoredItems = new ArrayList<EvaluationStrategy.Pair<Long, Double>>();
                 for (EvaluationStrategy.Pair<Long, Double> scoredItem : allScoredItems) {
