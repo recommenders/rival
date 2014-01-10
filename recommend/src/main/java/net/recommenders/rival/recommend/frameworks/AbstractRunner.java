@@ -72,7 +72,7 @@ public abstract class AbstractRunner {
         }
 
         String trainingSet = properties.getProperty(RecommendationRunner.trainingSet);
-        trainingSet = trainingSet.substring(trainingSet.lastIndexOf("/") + 1, trainingSet.lastIndexOf("."));
+        trainingSet = trainingSet.substring(trainingSet.lastIndexOf("/") + 1, trainingSet.lastIndexOf("_train"));
 
         fileName = trainingSet + "."
                 + properties.getProperty(RecommendationRunner.framework) + "."

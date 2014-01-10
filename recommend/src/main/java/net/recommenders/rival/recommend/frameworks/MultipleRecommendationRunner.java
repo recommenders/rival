@@ -54,8 +54,8 @@ public class MultipleRecommendationRunner {
 
             for (String path : paths) {
                 Properties prop = new Properties();
-                prop.setProperty(RecommendationRunner.trainingSet, path + ".train");
-                prop.setProperty(RecommendationRunner.testSet, path + ".test");
+                prop.setProperty(RecommendationRunner.trainingSet, path + "_train.dat");
+                prop.setProperty(RecommendationRunner.testSet, path + "_test.dat");
                 prop.setProperty(RecommendationRunner.output, properties.getProperty(OUTPUT));
                 prop.setProperty(RecommendationRunner.framework, "lenskit");
                 for (String ubRec : ubRecs) {
@@ -104,8 +104,8 @@ public class MultipleRecommendationRunner {
 
             for (String path : paths) {
                 Properties prop = new Properties();
-                prop.setProperty(RecommendationRunner.trainingSet, path + ".train");
-                prop.setProperty(RecommendationRunner.testSet, path + ".test");
+                prop.setProperty(RecommendationRunner.trainingSet, path + "_train.dat");
+                prop.setProperty(RecommendationRunner.testSet, path + "_test.dat");
                 prop.setProperty(RecommendationRunner.output, properties.getProperty(OUTPUT));
                 prop.setProperty(RecommendationRunner.framework, "mahout");
                 for (String ubRec : ubRecs) {
@@ -151,8 +151,8 @@ public class MultipleRecommendationRunner {
         for (File file : new File(path).listFiles()) {
             if (file.isDirectory()) {
                 listAllFiles(paths, file.getAbsolutePath());
-            } else if (file.getName().contains("train")) {
-                paths.add(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(".")));
+            } else if (file.getName().contains("_train.dat")) {
+                paths.add(file.getAbsolutePath().replaceAll("_train.dat", ""));
             }
         }
     }
