@@ -12,12 +12,13 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.recommenders.rival.core.ParserWithIdMapping;
 
 /**
  *
  * @author Alejandro
  */
-public class LastfmCelma1KParser extends AbstractLastfmCelmaParser {
+public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
 
     public static final int USER_TOK = 0;
     public static final int ARTIST_TOK = 3;
@@ -28,7 +29,8 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser {
         super(useArtists);
     }
 
-    public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException, ParseException {
+    @Override
+    public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         Map<String, Long> mapUserIds = new HashMap<String, Long>();
@@ -68,7 +70,11 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser {
             // timestamp
             long timestamp = -1;
             if (TIME_TOK != -1) {
-                timestamp = sdf.parse(toks[TIME_TOK]).getTime();
+                try {
+                    timestamp = sdf.parse(toks[TIME_TOK]).getTime();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
             // preference
             double preference = 1.0;

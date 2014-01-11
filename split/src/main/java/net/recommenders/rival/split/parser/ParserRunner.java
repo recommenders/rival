@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+import net.recommenders.rival.core.Parser;
 
 /**
  *
@@ -24,14 +25,14 @@ public class ParserRunner {
         File file = new File(properties.getProperty(DATASET_FILE));
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
-        if (parserClassName.contains("Movielens")) {
-            MovielensParser parser = (MovielensParser) parserClass.getConstructor().newInstance();
-            model = parser.parseData(file);
-        } else if (parserClassName.contains("LastfmCelma")) {
+        if (parserClassName.contains("LastfmCelma")) {
             String mapIdsPrefix = properties.getProperty(LASTFM_IDS_PREFIX);
             Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
             Object parser = parserClass.getConstructor(boolean.class).newInstance(useArtists);
             model = (DataModel<Long, Long>) parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
+        } else {
+            Parser parser = (Parser) parserClass.getConstructor().newInstance();
+            model = parser.parseData(file);
         }
         System.out.println("Parsing finished");
         return model;

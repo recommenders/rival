@@ -10,12 +10,13 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.recommenders.rival.core.ParserWithIdMapping;
 
 /**
  *
  * @author Alejandro
  */
-public class LastfmCelma360KParser extends AbstractLastfmCelmaParser {
+public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
 
     public static final int USER_TOK = 0;
     public static final int ARTIST_TOK = 1;
@@ -26,6 +27,7 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser {
         super(useArtists);
     }
 
+    @Override
     public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
