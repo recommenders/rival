@@ -36,10 +36,14 @@ public class SimpleParser implements Parser {
         long userId = Long.parseLong(toks[USER_TOK]);
         // item
         long itemId = Long.parseLong(toks[ITEM_TOK]);
-        // timestamp
-        long timestamp = Long.parseLong(toks[TIME_TOK]);
         // preference
         double preference = Double.parseDouble(toks[RATING_TOK]);
+        // timestamp
+        long timestamp = -1;
+        // allow no timestamp information
+        if (toks.length > 3) {
+            timestamp = Long.parseLong(toks[TIME_TOK]);
+        }
         //////
         // update information
         //////
