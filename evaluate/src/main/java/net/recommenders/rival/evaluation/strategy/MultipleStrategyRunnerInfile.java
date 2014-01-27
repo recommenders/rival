@@ -1,16 +1,11 @@
 package net.recommenders.rival.evaluation.strategy;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
@@ -82,14 +77,6 @@ public class MultipleStrategyRunnerInfile {
                 System.out.println("Recommendation file: " + inputFileString);
                 File inputFile = new File(inputFileString);
                 String inputFileName = inputFile.getName();
-                // read recommendations: user \t item \t score
-                final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<EvaluationStrategy.Pair<Long, Double>>>();
-                BufferedReader in = new BufferedReader(new FileReader(inputFileString));
-                String line = null;
-                while ((line = in.readLine()) != null) {
-                    StrategyRunner.readLine(line, mapUserRecommendations);
-                }
-                in.close();
                 // generate output for each strategy
                 for (String strategyClassName : strategyClassNames) {
                     Class<?> strategyClass = Class.forName(strategyClassName);
