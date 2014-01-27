@@ -29,10 +29,12 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
 
     protected Set<Long> getModelTrainingDifference(DataModel<Long, Long> model, Long user) {
         final Set<Long> items = new HashSet<Long>();
-        final Set<Long> trainingItems = training.getUserItemPreferences().get(user).keySet();
-        for (Long item : model.getItems()) {
-            if (!trainingItems.contains(item)) {
-                items.add(item);
+        if (training.getUserItemPreferences().containsKey(user)) {
+            final Set<Long> trainingItems = training.getUserItemPreferences().get(user).keySet();
+            for (Long item : model.getItems()) {
+                if (!trainingItems.contains(item)) {
+                    items.add(item);
+                }
             }
         }
         return items;
