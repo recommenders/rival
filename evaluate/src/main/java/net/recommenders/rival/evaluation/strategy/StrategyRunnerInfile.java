@@ -127,11 +127,17 @@ public class StrategyRunnerInfile {
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
         BufferedReader in = new BufferedReader(new FileReader(userRecommendationFile));
         String line = null;
+        boolean foundUser = false;
         // read recommendations: user \t item \t score
         while ((line = in.readLine()) != null) {
             String[] toks = line.split("\t");
-            if (toks[0].equals(user + "")) {
+            String u = toks[0];
+            if (u.equals(user + "")) {
                 readLine(line, mapUserRecommendations);
+                foundUser = true;
+            } else if (foundUser) {
+                // assuming a sorted file (at least, per user)
+                break;
             }
         }
         in.close();
