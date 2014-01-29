@@ -1,4 +1,4 @@
 rival
 =====
-Recommendation Evaluation Framework.
+Recommender System Evaluation Toolkit.
 
