@@ -8,7 +8,7 @@ If you have not used RiVal before, do check out the [Getting Started][] guide.
 
 [website]: http://rival.recommenders.net
 [wiki]: http://github.com/recommenders/rival/wiki/
-[Getting Started]: http://github.com/rival/recommenders/wiki/GettingStarted
+[Getting Started]: http://github.com/recommenders/rival/wiki/GettingStarted
 
 RiVal is made available under the GNU Lesser General Public License
 (LGPL), version 2.1 or later.
