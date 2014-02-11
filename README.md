@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/recommenders/rival.png?branch=master)](https://travis-ci.org/recommenders/rival)
 
 RiVal is an implementation of strategies for data splitting an evalution of recommender systems. This file contains information on how to work with the RiVal code and how to compile RiVal.
-For more information about RiVal and the documentation, visit the RiVal [web site][] or [wiki][].
+For more information about RiVal and the documentation, visit the RiVal [website][http://rival.recommenders.net] or [wiki][].
 If you have not used RiVal before, do check out the [Getting Started][] guide.
 
 [website]: http://rival.recommenders.net
@@ -27,13 +27,13 @@ module is a container module used to build the submodules and provide all needed
 and dependencies.  The four sub-modules are as follows:
 
 * `core` -- the common data structures and similar object used throughout RiVal.
-* `evaluate` --
-* `recommend` --
-* `split` --
+* `evaluate` -- the evaluation module, contains the evaluation metrics and strategies used for evalution.
+* `recommend` -- the recommendation modeule, contains hooks to Apache Mahout and LensKit.
+* `split` -- the data splitting module, contains different data splitting strategies.
 
 ## Contributing to RiVal
   
-We'll be very happy if you want to contribute to RiVal. If you are not sure on what to work on, have a look a the current tickets [Trac][wiki].
+We'll be very happy if you want to contribute to RiVal. If you are not sure on what to work on, have a look a the current tickets [Trac][issues].
 
 If you want to contribute, to it in the form of GitHub pull requests. To do this:
 
