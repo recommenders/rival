@@ -108,6 +108,15 @@ public class MultipleRecommendationRunner {
                 prop.setProperty(RecommendationRunner.testSet, path + "_test.dat");
                 prop.setProperty(RecommendationRunner.output, properties.getProperty(OUTPUT));
                 prop.setProperty(RecommendationRunner.framework, "mahout");
+                // first IB because it (should) does not have neighborhood
+                for (String ibRec : ibRecs) {
+                    prop.setProperty(RecommendationRunner.recommender, ibRec);
+                    for (String sim : similarities) {
+                        prop.setProperty(RecommendationRunner.similarity, sim);
+                        RecommendationRunner.recommend(prop);
+                        prop.remove(RecommendationRunner.similarity);
+                    }
+                }
                 for (String ubRec : ubRecs) {
                     prop.setProperty(RecommendationRunner.recommender, ubRec);
                     for (String sim : similarities) {
@@ -118,14 +127,6 @@ public class MultipleRecommendationRunner {
                         }
                         prop.remove(RecommendationRunner.similarity);
 //                    prop.remove(RecommendationRunner.neighborhood);
-                    }
-                }
-                for (String ibRec : ibRecs) {
-                    prop.setProperty(RecommendationRunner.recommender, ibRec);
-                    for (String sim : similarities) {
-                        prop.setProperty(RecommendationRunner.similarity, sim);
-                        RecommendationRunner.recommend(prop);
-                        prop.remove(RecommendationRunner.similarity);
                     }
                 }
                 for (String svdRec : svdRecs) {
