@@ -12,7 +12,7 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
- *
+ * A basic evaluation strategy,
  * @author Alejandro
  */
 public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long> {
@@ -21,12 +21,24 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     protected DataModel<Long, Long> test;
     protected double threshold;
 
+    /**
+     * Default constructor for the evaluation strategy.
+     * @param training  The training set.
+     * @param test  The test set.
+     * @param threshold The relevance threshold.
+     */
     public AbstractStrategy(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
         this.training = training;
         this.test = test;
         this.threshold = threshold;
     }
 
+    /**
+     * Get the items appearing in the training set and not in the data model.
+     * @param model The data model.
+     * @param user  The user.
+     * @return  The items not appearing in the training set.
+     */
     protected Set<Long> getModelTrainingDifference(DataModel<Long, Long> model, Long user) {
         final Set<Long> items = new HashSet<Long>();
         if (training.getUserItemPreferences().containsKey(user)) {
@@ -40,6 +52,13 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
         return items;
     }
 
+    /**
+     * Print the item ranking and scores for a specific user.
+     * @param user  The user (as a Long).
+     * @param scoredItems   The item to print rankings for.
+     * @param out   Where to direct the print.
+     * @param format    The format of the printer.
+     */
     public void printRanking(Long user, List<Pair<Long, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Long, Double> scores = new HashMap<Long, Double>();
         for (Pair<Long, Double> p : scoredItems) {
@@ -48,6 +67,13 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
         printRanking("" + user, scores, out, format);
     }
 
+    /**
+     * Print the item ranking and scores for a specific user.
+     * @param user  The user (as a String).
+     * @param scoredItems   The item to print rankings for.
+     * @param out   Where to direct the print.
+     * @param format    The format of the printer.
+     */
     protected void printRanking(String user, Map<Long, Double> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Double, Set<Long>> preferenceMap = new HashMap<Double, Set<Long>>();
         for (Map.Entry<Long, Double> e : scoredItems.entrySet()) {
@@ -83,6 +109,12 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
         }
     }
 
+    /**
+     * Print the ground truth (the test set).
+     * @param user  The user (as a Long).
+     * @param out   Where to print.
+     * @param format    The format of the printer.
+     */
     public void printGroundtruth(Long user, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Long, Double> relItems = new HashMap<Long, Double>();
         for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
@@ -93,6 +125,12 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
         printGroundtruth("" + user, relItems, out, format);
     }
 
+    /**
+     * Print the ground truth (the test set).
+     * @param user  The user (as a String).
+     * @param out   Where to print.
+     * @param format    The format of the printer.
+     */
     protected void printGroundtruth(String user, Map<Long, Double> groundtruthItems, PrintStream out, OUTPUT_FORMAT format) {
         for (Entry<Long, Double> e : groundtruthItems.entrySet()) {
             switch (format) {

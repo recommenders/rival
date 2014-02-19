@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import net.recommenders.rival.core.ParserWithIdMapping;
 
 /**
- *
+ * @inheritDoc
  * @author Alejandro
  */
 public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {

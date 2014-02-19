@@ -19,7 +19,7 @@ import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
 
 /**
- *
+ * Runner for a single strategy.
  * @author Alejandro
  */
 public class StrategyRunner {
@@ -36,6 +36,11 @@ public class StrategyRunner {
     public static final String RELPLUSN_N = "strategy.relplusn.N";
     public static final String RELPLUSN_SEED = "strategy.relplusn.seed";
 
+    /**
+     * Main method for running a single evalution strategy.
+     * @param args Arguments.
+     * @throws Exception    If file not found.
+     */
     public static void main(String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
@@ -51,6 +56,18 @@ public class StrategyRunner {
         run(properties);
     }
 
+    /**
+     * Run a single evaluation strategy.
+     * @param properties    The properties of the strategy.
+     * @throws IOException  if file not found.
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // read splits
         System.out.println("Parsing started: training file");
@@ -91,6 +108,17 @@ public class StrategyRunner {
         generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFile, groundtruthFile, overwrite);
     }
 
+    /**
+     * Generates the output of the evaluation.
+     * @param testModel The test model.
+     * @param mapUserRecommendations    The recommendations for the users.
+     * @param strategy  The strategy.
+     * @param format    The printer format.
+     * @param rankingFile   The ranking file.
+     * @param groundtruthFile   The ground truth.
+     * @param overwrite Whether or not to overwrite results file.
+     * @throws FileNotFoundException    If file not found.
+     */
     public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException {
         PrintStream outRanking = null;
         if (rankingFile.exists() && !overwrite) {
@@ -131,6 +159,11 @@ public class StrategyRunner {
         }
     }
 
+    /**
+     * Read a file from the recommended items file.
+     * @param line  The line.
+     * @param mapUserRecommendations The recommendations for the users.
+     */
     public static void readLine(String line, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
         String[] toks = line.split("\t");
         // mymedialite format: user \t [item:score,item:score,...]

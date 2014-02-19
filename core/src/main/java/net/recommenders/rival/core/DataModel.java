@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * Data model used throughout the toolkit. Able to store users, items, preferences, timestamps.
  * @author Alejandro, Alan
  */
 public class DataModel<U, I> {
@@ -42,7 +42,6 @@ public class DataModel<U, I> {
         Map<I, Double> userPreferences = userItemPreferences.get(u);
         if (userPreferences == null) {
             userPreferences = new HashMap<I, Double>();
-//            userPreferences = new FastMap<I, Double>();
             userItemPreferences.put(u, userPreferences);
         }
         Double preference = userPreferences.get(i);

@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- *
+ * Data parser for tab-separated data files.
  * @author Alejandro
  */
 public class SimpleParser implements Parser {
@@ -16,6 +16,9 @@ public class SimpleParser implements Parser {
     public static final int RATING_TOK = 2;
     public static final int TIME_TOK = 3;
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
@@ -30,6 +33,11 @@ public class SimpleParser implements Parser {
         return dataset;
     }
 
+    /**
+     * Parse line from data file.
+     * @param line  The line to be parsed.
+     * @param dataset The dataset to add data from line to.
+     */
     private void parseLine(String line, DataModel<Long, Long> dataset) {
         String[] toks = line.split("\t");
         // user

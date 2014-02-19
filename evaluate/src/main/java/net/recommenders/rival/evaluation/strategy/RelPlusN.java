@@ -13,7 +13,7 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
- *
+ * Implementation of the Relevant + N Evaluation Strategy as described by Cremonesi et al. [http://dx.doi.org/10.1145/1864708.1864721]
  * @author Alejandro
  */
 public class RelPlusN extends AbstractStrategy {
@@ -21,6 +21,14 @@ public class RelPlusN extends AbstractStrategy {
     protected int N;
     protected Random rnd;
 
+    /**
+     * Default constructor for the strategy.
+     * @param training  The training data model.
+     * @param test  The test data model.
+     * @param N The N (as described by Cremonesi et al.)
+     * @param threshold The relevance threshold.
+     * @param seed  Randomization seed.
+     */
     public RelPlusN(DataModel<Long, Long> training, DataModel<Long, Long> test, int N, double threshold, long seed) {
         super(training, test, threshold);
         this.N = N;
@@ -28,6 +36,11 @@ public class RelPlusN extends AbstractStrategy {
         rnd = new Random(seed);
     }
 
+    /**
+     * Get the candidate items to rank for the user.
+     * @param user  The user.
+     * @return The candidate items to rank.
+     */
     public Set<Long> getCandidateItemsToRank(Long user) {
         final Set<Long> allItems = getModelTrainingDifference(training, user);
         allItems.addAll(getModelTrainingDifference(test, user));
@@ -45,6 +58,9 @@ public class RelPlusN extends AbstractStrategy {
         return items;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void printRanking(Long user, List<Pair<Long, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
         final Set<Long> relItems = new HashSet<Long>();
@@ -69,6 +85,9 @@ public class RelPlusN extends AbstractStrategy {
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void printGroundtruth(Long user, PrintStream out, OUTPUT_FORMAT format) {
         for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {

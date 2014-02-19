@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
+ * An inteface for evaluation strategies.
  * @author Alejandro
  */
 public interface EvaluationStrategy<U, I> {
@@ -16,12 +16,35 @@ public interface EvaluationStrategy<U, I> {
         TRECEVAL;
     }
 
+    /**
+     * Get the items to rank.
+     * @param user  The user.
+     * @return  The items to rank.
+     */
     public Set<I> getCandidateItemsToRank(U user);
 
+    /**
+     * Print rankings for a user.
+     * @param user  The user.
+     * @param scoredItems   The scored items to print.
+     * @param out   Where to print.
+     * @param format    The format of the printer.
+     */
     public void printRanking(U user, List<Pair<I, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format);
 
+    /**
+     * Print the ground truth.
+     * @param user  The user.
+     * @param out   Where to print.
+     * @param format    The format of the printer.
+     */
     public void printGroundtruth(U user, PrintStream out, OUTPUT_FORMAT format);
 
+    /**
+     *
+     * @param <A>
+     * @param <B>
+     */
     public static class Pair<A, B> {
 
         private A first;

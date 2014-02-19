@@ -19,7 +19,7 @@ import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
 
 /**
- *
+ * Runner for?
  * @author Alejandro
  */
 public class StrategyRunnerInfile {

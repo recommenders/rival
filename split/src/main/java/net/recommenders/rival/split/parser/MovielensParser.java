@@ -9,7 +9,7 @@ import java.io.IOException;
 import net.recommenders.rival.core.Parser;
 
 /**
- *
+ * @inheritDoc
  * @author Alejandro
  */
 public class MovielensParser implements Parser {

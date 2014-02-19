@@ -9,7 +9,7 @@ import java.util.Properties;
 import net.recommenders.rival.core.Parser;
 
 /**
- *
+ * Runner for the parser classes.
  * @author Alejandro
  */
 public class ParserRunner {
@@ -19,6 +19,19 @@ public class ParserRunner {
     public static final String LASTFM_IDS_PREFIX = "dataset.parser.lastfm.idsprefix";
     public static final String LASTFM_USEARTISTS = "dataset.parser.lastfm.useartists";
 
+    /**
+     * Run the parser based on given properties.
+     * @param properties    The properties
+     * @return  The data model.
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     * @throws IOException
+     */
     public static DataModel<Long, Long> run(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
         System.out.println("Parsing started");
         DataModel<Long, Long> model = null;

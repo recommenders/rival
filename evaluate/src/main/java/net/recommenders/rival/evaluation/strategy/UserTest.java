@@ -4,7 +4,7 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
- *
+ * @inheritDoc
  * @author Alejandro
  */
 public class UserTest extends AbstractStrategy {

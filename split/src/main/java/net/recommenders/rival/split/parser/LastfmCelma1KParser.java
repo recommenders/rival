@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 import net.recommenders.rival.core.ParserWithIdMapping;
 
 /**
- *
+ * @inheritDoc
  * @author Alejandro
  */
 public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
@@ -29,6 +29,13 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
         super(useArtists);
     }
 
+    /**
+     * Parser for the data file.
+     * @param f The file.
+     * @param mapIdsPrefix  The prefix (?)
+     * @return  The data model.
+     * @throws IOException ?
+     */
     @Override
     public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
