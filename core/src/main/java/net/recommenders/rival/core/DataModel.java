@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * Data model used throughout the toolkit. Able to store users, items, preferences, timestamps.
- * @author Alejandro, Alan
+ * @author <a href="http://github.com/abellogin">Alejandro</a>, <a href="http://github.com/alansaid">Alan</a>
  */
 public class DataModel<U, I> {
 
