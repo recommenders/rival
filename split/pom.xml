@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.recommenders.rival</groupId>
         <artifactId>rival</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>split</artifactId>
     <version>1.0-SNAPSHOT</version>

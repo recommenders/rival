@@ -7,7 +7,7 @@
     <parent>
         <artifactId>rival</artifactId>
         <groupId>net.recommenders.rival</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>core</artifactId>
     <name>RiVal Core</name>
