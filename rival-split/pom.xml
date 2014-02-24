@@ -7,7 +7,7 @@
         <artifactId>rival</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>split</artifactId>
+    <artifactId>rival-split</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>RiVal Data Splitter</name>
@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>rival-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

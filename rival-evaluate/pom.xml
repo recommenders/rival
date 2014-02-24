@@ -8,7 +8,7 @@
         <version>0.1-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
-    <artifactId>evaluate</artifactId>
+    <artifactId>rival-evaluate</artifactId>
     <packaging>jar</packaging>
     <name>RiVal Evaluation</name>
 
@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>net.recommenders.rival</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>rival-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

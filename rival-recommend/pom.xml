@@ -8,7 +8,7 @@
         <artifactId>rival</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>recommend</artifactId>
+    <artifactId>rival-recommend</artifactId>
     <packaging>jar</packaging>
     <name>RiVal Recommendation</name>
 

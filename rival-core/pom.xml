@@ -9,7 +9,7 @@
         <groupId>net.recommenders.rival</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>core</artifactId>
+    <artifactId>rival-core</artifactId>
     <name>RiVal Core</name>
 
     <dependencies>
