@@ -38,7 +38,7 @@
         <copyrightHolder>recommenders.net</copyrightHolder>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <rival.web.url>http://rival.recommenders.net/maven-site/</rival.web.url>
+        <rival.web.url>http://rival.recommenders.net/</rival.web.url>
         <rival.web.path>${rival.web.url}</rival.web.path>
         <rival.clean.removeAll>false</rival.clean.removeAll>
     </properties>
