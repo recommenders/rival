@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
  * @author Alan
  */
 @RunWith(JUnit4.class)
-public class TestDataModel<U,I> {
+public class DataModelTest<U,I> {
 
     DataModel dm = new DataModel();
     static final int USERS = 3;
