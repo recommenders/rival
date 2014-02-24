@@ -9,7 +9,7 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>RiVal</name>
-    <description>Evalaution toolkit for recommender systems</description>
+    <description>Evaluation toolkit for recommender systems</description>
     <url>http://rival.recommenders.net</url>
     <organization>
         <name>recommenders.net</name>
