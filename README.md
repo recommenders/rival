@@ -24,12 +24,13 @@ this repository and run `mvn install`. This will make it available for other Mav
 
 RiVal is comprised of one top-level module and four sub-modules. The top-level `rival`
 module is a container module used to build the submodules and provide all needed settings
-and dependencies.  The four sub-modules are as follows:
+and dependencies.  The five sub-modules are as follows:
 
-* `core` -- the common data structures and similar object used throughout RiVal.
-* `evaluate` -- the evaluation module, contains the evaluation metrics and strategies used for evalution.
-* `recommend` -- the recommendation modeule, contains hooks to Apache Mahout and LensKit.
-* `split` -- the data splitting module, contains different data splitting strategies.
+* `rival-core` -- the common data structures and similar object used throughout RiVal.
+* `rival-evaluate` -- the evaluation module, contains the evaluation metrics and strategies used for evalution.
+* `rival-recommend` -- the recommendation modeule, contains hooks to Apache Mahout and LensKit.
+* `rival-split` -- the data splitting module, contains different data splitting strategies.
+* `rival-package` -- a configuration module for bulding rival distributions.
 
 ## Contributing to RiVal
   
