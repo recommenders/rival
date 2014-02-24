@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>rival</artifactId>
+        <groupId>net.recommenders.rival</groupId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <artifactId>rival-package</artifactId>
+    <name>RiVal Package</name>
+    <description>
+        This module prepares the packaging of the binary RiVal distribution.
+    </description>
+
+    <properties>
+        <jar.directory>${project.build.directory}/jars</jar.directory>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.recommenders.rival</groupId>
+            <artifactId>rival-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.recommenders.rival</groupId>
+            <artifactId>rival-evaluate</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.recommenders.rival</groupId>
+            <artifactId>rival-split</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.recommenders.rival</groupId>
+            <artifactId>rival-recommend</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <assembleDirectory>${project.build.directory}/dist/rival</assembleDirectory>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <repositoryName>lib</repositoryName>
+                    <programs>
+                        <!--program> the cli main class
+                            <mainClass>net.recommenders.rival.package.CLI class</mainClass>
+                            <name>rival-evaluate</name>
+                        </program-->
+                    </programs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>assemble</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>dist-package</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <chmod perm="a+x">
+                                            <fileset dir="${project.build.directory}/dist/rival">
+                                                <include name="bin/*" />
+                                            </fileset>
+                                        </chmod>
+                                        <tar destfile="${project.build.directory}/rival-${project.version}.tar.gz" compression="gzip">
+                                            <tarfileset dir="${project.build.directory}/dist/rival" prefix="rival-${project.version}/" />
+                                        </tar>
+                                        <zip destfile="${project.build.directory}/rival-${project.version}.zip">
+                                            <zipfileset dir="${project.build.directory}/dist/rival" prefix="rival-${project.version}/" />
+                                        </zip>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

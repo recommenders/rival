@@ -43,10 +43,11 @@
         <rival.clean.removeAll>false</rival.clean.removeAll>
     </properties>
     <modules>
-        <module>core</module>
-        <module>split</module>
-        <module>recommend</module>
-        <module>evaluate</module>
+        <module>rival-core</module>
+        <module>rival-split</module>
+        <module>rival-recommend</module>
+        <module>rival-evaluate</module>
+        <module>rival-package</module>
     </modules>
 
     <dependencyManagement>
@@ -68,6 +69,8 @@
     <build>
         <pluginManagement>
             <plugins>
+
+                <!-- Compiler config -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -77,6 +80,8 @@
                         <target>1.6</target>
                     </configuration>
                 </plugin>
+
+                <!-- Packaging and building -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
@@ -91,8 +96,25 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+
+                <!-- Javadoc and checkstyle plugins -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9</version>
+                    <version>2.9.1</version>
                     <configuration>
                         <show>private</show>
                         <nohelp>true</nohelp>
@@ -120,8 +142,53 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <!-- Site generation -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-ssh-external</artifactId>
+                            <version>2.2</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.velocity</groupId>
+                            <artifactId>velocity</artifactId>
+                            <version>1.6</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <!-- Validate that we're running on a proper Maven and Java. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <id>validate-environment</id>
+                        <goals><goal>enforce</goal></goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[1.6.0,)</version>
+                                    <message>Java 6 required to build RiVal.</message>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.0.0,)</version>
+                                    <message>Maven 3 required to build RiVal.</message>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
     <reporting>
         <plugins>
@@ -184,7 +251,6 @@
                         </reports>
                     </reportSet>
                 </reportSets>
-
             </plugin>
         </plugins>
     </reporting>
@@ -196,6 +262,7 @@
                 <property>
                     <name>prepare</name>
                 </property>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -254,9 +321,12 @@
         </profile>
         <profile>
             <id>sign</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <build>
                 <plugins>
-                    <!-- Sign the artifacts for release builds. -->
+                    <!-- Sign artifacts for release builds. -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
