@@ -1,18 +1,17 @@
 package net.recommenders.rival.recommend.frameworks.mahout.exceptions;
 
 /**
- * Created with IntelliJ IDEA.
- * User: alan
- * Date: 2013-11-05
- * Time: 09:54
+ *
+ * @author Alan
  */
 @SuppressWarnings("serial")
-public class RecommenderException extends Exception{
-    public RecommenderException(String msg){
+public class RecommenderException extends Exception {
+
+    public RecommenderException(String msg) {
         super(msg);
     }
 
-    public RecommenderException(String msg, Throwable t){
-        super(msg,t);
+    public RecommenderException(String msg, Throwable t) {
+        super(msg, t);
     }
 }

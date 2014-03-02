@@ -63,7 +63,7 @@ public class TemporalSplitter implements Splitter<Long, Long> {
                         DataModel<Long, Long> datamodel = splits[0]; // training
                         if (inTest) {
                             datamodel = splits[1]; // test
-                            }
+                        }
                         if (pref != null) {
                             datamodel.addPreference(user, item, pref);
                         }
@@ -128,7 +128,7 @@ public class TemporalSplitter implements Splitter<Long, Long> {
                         DataModel<Long, Long> datamodel = splits[0]; // training
                         if (inTest) {
                             datamodel = splits[1]; // test
-                            }
+                        }
                         if (pref != null) {
                             datamodel.addPreference(user, item, pref);
                         }

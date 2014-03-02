@@ -1,21 +1,17 @@
 package net.recommenders.rival.split.parser;
 
-import net.recommenders.rival.core.DataModel;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.ParserWithIdMapping;
 
 /**
  * @inheritDoc
+ *
  * @author Alejandro
  */
 public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
@@ -30,20 +26,14 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
     }
 
     /**
-     * Parser for the data file.
-     * @param f The file.
-     * @param mapIdsPrefix  The prefix (?)
-     * @return  The data model.
-     * @throws IOException ?
+     * @inheritDoc
      */
     @Override
     public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         Map<String, Long> mapUserIds = new HashMap<String, Long>();
-//        Map<String, Long> mapUserIds = new FastMap<String, Long>();
         Map<String, Long> mapItemIds = new HashMap<String, Long>();
-//        Map<String, Long> mapItemIds = new FastMap<String, Long>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         long curUser = getIndexMap(new File(mapIdsPrefix + "_userId.txt"), mapUserIds);

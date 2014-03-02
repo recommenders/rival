@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * An inteface for evaluation strategies.
+ * An interface for evaluation strategies.
+ *
  * @author Alejandro
  */
 public interface EvaluationStrategy<U, I> {
@@ -18,32 +19,36 @@ public interface EvaluationStrategy<U, I> {
 
     /**
      * Get the items to rank.
-     * @param user  The user.
-     * @return  The items to rank.
+     *
+     * @param user The user.
+     * @return The items to rank.
      */
     public Set<I> getCandidateItemsToRank(U user);
 
     /**
      * Print rankings for a user.
-     * @param user  The user.
-     * @param scoredItems   The scored items to print.
-     * @param out   Where to print.
-     * @param format    The format of the printer.
+     *
+     * @param user The user.
+     * @param scoredItems The scored items to print.
+     * @param out Where to print.
+     * @param format The format of the printer.
      */
     public void printRanking(U user, List<Pair<I, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format);
 
     /**
      * Print the ground truth.
-     * @param user  The user.
-     * @param out   Where to print.
-     * @param format    The format of the printer.
+     *
+     * @param user The user.
+     * @param out Where to print.
+     * @param format The format of the printer.
      */
     public void printGroundtruth(U user, PrintStream out, OUTPUT_FORMAT format);
 
     /**
+     * Bean class to store an element of type A and another of type B
      *
-     * @param <A>
-     * @param <B>
+     * @param <A> The type of the first element in the pair.
+     * @param <B> The type of the second element in the pair.
      */
     public static class Pair<A, B> {
 

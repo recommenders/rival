@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.recommenders.rival.recommend.frameworks.mahout;
 
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
@@ -21,7 +17,7 @@ import java.util.Properties;
 
 /**
  *
- * @author alejandr, alan
+ * @author Alejandro, Alan
  */
 public class MahoutRecommenderRunner extends AbstractRunner {
 

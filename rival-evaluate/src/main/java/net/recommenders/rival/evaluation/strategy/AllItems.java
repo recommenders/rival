@@ -4,15 +4,17 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
- * @inheritDoc
+ * An evaluation strategy where all the items are used as candidates.
+ *
  * @author Alejandro
  */
 public class AllItems extends AbstractStrategy {
 
     /**
      * Default constructor.
-     * @param training  The training data.
-     * @param test  The test data.
+     *
+     * @param training The training data.
+     * @param test The test data.
      * @param threshold The relevance threshold.
      */
     public AllItems(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
@@ -20,10 +22,9 @@ public class AllItems extends AbstractStrategy {
     }
 
     /**
-     * Get the candidate items to perform ranking for.
-     * @param user  The user.
-     * @return  The items to rank.
+     * @inheritDoc
      */
+    @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         final Set<Long> items = getModelTrainingDifference(training, user);
         items.addAll(getModelTrainingDifference(test, user));

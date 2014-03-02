@@ -1,12 +1,11 @@
 package net.recommenders.rival.split.splitter;
 
-import net.recommenders.rival.core.DataModel;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import net.recommenders.rival.core.DataModel;
 
 /**
  *

@@ -6,8 +6,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Data model used throughout the toolkit. Able to store users, items, preferences, timestamps.
- * @author <a href="http://github.com/abellogin">Alejandro</a>, <a href="http://github.com/alansaid">Alan</a>
+ * Data model used throughout the toolkit. Able to store users, items,
+ * preferences, timestamps.
+ *
+ * @author <a href="http://github.com/abellogin">Alejandro</a>, <a
+ * href="http://github.com/alansaid">Alan</a>
  */
 public class DataModel<U, I> {
 
@@ -54,7 +57,6 @@ public class DataModel<U, I> {
         Map<U, Double> itemPreferences = itemUserPreferences.get(i);
         if (itemPreferences == null) {
             itemPreferences = new HashMap<U, Double>();
-//            itemPreferences = new FastMap<U, Double>();
             itemUserPreferences.put(i, itemPreferences);
         }
         itemPreferences.put(u, preference);
@@ -64,13 +66,11 @@ public class DataModel<U, I> {
         Map<I, Set<Long>> userTimestamps = userItemTimestamps.get(u);
         if (userTimestamps == null) {
             userTimestamps = new HashMap<I, Set<Long>>();
-//            userTimestamps = new FastMap<I, Set<Long>>();
             userItemTimestamps.put(u, userTimestamps);
         }
         Set<Long> timestamps = userTimestamps.get(i);
         if (timestamps == null) {
             timestamps = new HashSet<Long>();
-//            timestamps = new FastSet<Long>();
             userTimestamps.put(i, timestamps);
         }
         timestamps.add(t);

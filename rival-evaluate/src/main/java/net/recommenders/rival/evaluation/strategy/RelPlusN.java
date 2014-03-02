@@ -13,7 +13,9 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
- * Implementation of the Relevant + N Evaluation Strategy as described by Cremonesi et al. [http://dx.doi.org/10.1145/1864708.1864721]
+ * Implementation of the Relevant + N Evaluation Strategy as described by
+ * Cremonesi et al. [http://dx.doi.org/10.1145/1864708.1864721]
+ *
  * @author Alejandro
  */
 public class RelPlusN extends AbstractStrategy {
@@ -23,11 +25,12 @@ public class RelPlusN extends AbstractStrategy {
 
     /**
      * Default constructor for the strategy.
-     * @param training  The training data model.
-     * @param test  The test data model.
+     *
+     * @param training The training data model.
+     * @param test The test data model.
      * @param N The N (as described by Cremonesi et al.)
      * @param threshold The relevance threshold.
-     * @param seed  Randomization seed.
+     * @param seed Randomization seed.
      */
     public RelPlusN(DataModel<Long, Long> training, DataModel<Long, Long> test, int N, double threshold, long seed) {
         super(training, test, threshold);
@@ -37,10 +40,9 @@ public class RelPlusN extends AbstractStrategy {
     }
 
     /**
-     * Get the candidate items to rank for the user.
-     * @param user  The user.
-     * @return The candidate items to rank.
+     * @inheritDoc
      */
+    @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         final Set<Long> allItems = getModelTrainingDifference(training, user);
         allItems.addAll(getModelTrainingDifference(test, user));

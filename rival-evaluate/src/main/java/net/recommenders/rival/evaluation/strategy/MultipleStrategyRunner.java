@@ -1,11 +1,6 @@
 package net.recommenders.rival.evaluation.strategy;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +13,8 @@ import net.recommenders.rival.core.SimpleParser;
 
 /**
  * Runner of multiple evaluation strategies.
+ *
+ * @author Alejandro
  */
 public class MultipleStrategyRunner {
 
@@ -36,8 +33,9 @@ public class MultipleStrategyRunner {
 
     /**
      * Main class.
-     * @param args  Input arguments.
-     * @throws Exception    if no properties can be read.
+     *
+     * @param args Input arguments.
+     * @throws Exception if no properties can be read.
      */
     public static void main(String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
@@ -60,9 +58,10 @@ public class MultipleStrategyRunner {
 
     /**
      * Run a strategy.
-     * @param properties    The properties of the strategy to run.
-     * @throws IOException  If files cannot be read.
-     * @throws ClassNotFoundException   If class does not exist.
+     *
+     * @param properties The properties of the strategy to run.
+     * @throws IOException If files cannot be read.
+     * @throws ClassNotFoundException If class does not exist.
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      * @throws InstantiationException
@@ -136,18 +135,20 @@ public class MultipleStrategyRunner {
 
     /**
      * Generate the output to write.
+     *
      * @param testModel The test datamodel.
-     * @param mapUserRecommendations    A map with the recommendations for the users.
-     * @param strategy  The strategy to use.
-     * @param format    The format of the printer
+     * @param mapUserRecommendations A map with the recommendations for the
+     * users.
+     * @param strategy The strategy to use.
+     * @param format The format of the printer
      * @param rankingFolder Where to write output.
      * @param groundtruthFolder Where to read test set.
      * @param inputFileName The file names to read.
-     * @param strategyClassSimpleName   The class name of the strategy.
+     * @param strategyClassSimpleName The class name of the strategy.
      * @param threshold The relevance threshold.
-     * @param suffix    The file suffix.
+     * @param suffix The file suffix.
      * @param overwrite Whether or not to overwrite the results file.
-     * @throws FileNotFoundException    if file does not exist.
+     * @throws FileNotFoundException if file does not exist.
      */
     public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException {
         File outRanking = new File(rankingFolder, "out" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
@@ -157,10 +158,11 @@ public class MultipleStrategyRunner {
 
     /**
      * Get all training/test splits.
-     * @param splits    The splits.
-     * @param path  The path where the splits are.
-     * @param trainingSuffix    The suffix of the training files.
-     * @param testSuffix    The suffix of the test files.
+     *
+     * @param splits The splits.
+     * @param path The path where the splits are.
+     * @param trainingSuffix The suffix of the training files.
+     * @param testSuffix The suffix of the test files.
      */
     public static void getAllSplits(Set<String> splits, File path, String trainingSuffix, String testSuffix) {
         for (File file : path.listFiles()) {
@@ -176,10 +178,11 @@ public class MultipleStrategyRunner {
 
     /**
      * Get all recommendation files.
-     * @param recommendationFiles   The recommendation files (what is this?)
-     * @param path  The path of the recommendation files.
-     * @param prefix    The prefix of the recommendation files.
-     * @param suffix    The suffix of the recommendation files.
+     *
+     * @param recommendationFiles The recommendation files (what is this?)
+     * @param path The path of the recommendation files.
+     * @param prefix The prefix of the recommendation files.
+     * @param suffix The suffix of the recommendation files.
      */
     public static void getAllRecommendationFiles(Set<String> recommendationFiles, File path, String prefix, String suffix) {
         for (File file : path.listFiles()) {

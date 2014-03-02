@@ -7,6 +7,7 @@ import java.io.IOException;
 
 /**
  * Data parser for tab-separated data files.
+ *
  * @author Alejandro
  */
 public class SimpleParser implements Parser {
@@ -35,7 +36,8 @@ public class SimpleParser implements Parser {
 
     /**
      * Parse line from data file.
-     * @param line  The line to be parsed.
+     *
+     * @param line The line to be parsed.
      * @param dataset The dataset to add data from line to.
      */
     private void parseLine(String line, DataModel<Long, Long> dataset) {

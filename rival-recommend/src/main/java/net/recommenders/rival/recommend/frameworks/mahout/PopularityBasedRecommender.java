@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.recommenders.rival.recommend.frameworks.mahout;
 
 import java.util.Collection;
@@ -17,7 +13,7 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 
 /**
  *
- * @author alejandr
+ * @author Alejandro
  */
 public class PopularityBasedRecommender extends AbstractRecommender implements Recommender {
 

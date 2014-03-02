@@ -4,7 +4,8 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
- * @inheritDoc
+ * An evaluation strategy where only the items in training are used as candidates.
+ *
  * @author Alejandro
  */
 public class TrainItems extends AbstractStrategy {
@@ -13,6 +14,10 @@ public class TrainItems extends AbstractStrategy {
         super(training, test, threshold);
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         return getModelTrainingDifference(training, user);
     }

@@ -1,13 +1,12 @@
 package net.recommenders.rival.split.splitter;
 
 import java.io.File;
-import net.recommenders.rival.core.DataModel;
-
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import net.recommenders.rival.core.DataModel;
 
 /**
  *

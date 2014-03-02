@@ -7,6 +7,10 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ *
+ * @author Alan
+ */
 public class MultipleRecommendationRunner {
 
     public static final String INPUT = "input";

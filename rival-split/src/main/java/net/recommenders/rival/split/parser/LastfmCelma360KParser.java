@@ -1,19 +1,15 @@
 package net.recommenders.rival.split.parser;
 
-import net.recommenders.rival.core.DataModel;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.ParserWithIdMapping;
 
 /**
  * @inheritDoc
+ *
  * @author Alejandro
  */
 public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
@@ -23,6 +19,9 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
     public static final int TRACK_TOK = 2;
     public static final int PREF_TOK = 3;
 
+    /**
+     * @inheritDoc
+     */
     public LastfmCelma360KParser(boolean useArtists) {
         super(useArtists);
     }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * Parser for the Last.fm dataset by Celma.
+ *
  * @author Alejandro
  */
 public class AbstractLastfmCelmaParser {
@@ -16,18 +17,22 @@ public class AbstractLastfmCelmaParser {
 
     /**
      * Default constructor.
-     * @param useArtists
+     *
+     * @param useArtists Flag to consider artists as the items (instead of
+     * tracks).
      */
     public AbstractLastfmCelmaParser(boolean useArtists) {
         this.useArtists = useArtists;
     }
 
     /**
-     * Get the maximum index number in the dataset.
-     * @param in The dataset file.
-     * @param map   The data (?)
-     * @return  The largest id number.
-     * @throws IOException  if file does not exist.
+     * Read a user/item mapping (user/item original value, user/item internal
+     * id) from a file and return the maximum index number in that file.
+     *
+     * @param in The file with id mapping.
+     * @param map The user/item mapping
+     * @return The largest id number.
+     * @throws IOException if file does not exist.
      */
     public static long getIndexMap(File in, Map<String, Long> map) throws IOException {
         long id = 0;

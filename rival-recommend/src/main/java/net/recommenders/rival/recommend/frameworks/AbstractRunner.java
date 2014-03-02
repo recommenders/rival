@@ -1,17 +1,20 @@
 package net.recommenders.rival.recommend.frameworks;
 
-import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.grouplens.lenskit.scored.ScoredId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.grouplens.lenskit.scored.ScoredId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author Alan
+ */
 public abstract class AbstractRunner {
 
     private final static Logger logger = LoggerFactory.getLogger(AbstractRunner.class);

@@ -1,18 +1,13 @@
 package net.recommenders.rival.evaluation.strategy;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
- * A basic evaluation strategy,
+ * A basic evaluation strategy.
+ *
  * @author Alejandro
  */
 public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long> {
@@ -23,8 +18,9 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
 
     /**
      * Default constructor for the evaluation strategy.
-     * @param training  The training set.
-     * @param test  The test set.
+     *
+     * @param training The training set.
+     * @param test The test set.
      * @param threshold The relevance threshold.
      */
     public AbstractStrategy(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
@@ -35,9 +31,10 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
 
     /**
      * Get the items appearing in the training set and not in the data model.
+     *
      * @param model The data model.
-     * @param user  The user.
-     * @return  The items not appearing in the training set.
+     * @param user The user.
+     * @return The items not appearing in the training set.
      */
     protected Set<Long> getModelTrainingDifference(DataModel<Long, Long> model, Long user) {
         final Set<Long> items = new HashSet<Long>();
@@ -53,12 +50,9 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     }
 
     /**
-     * Print the item ranking and scores for a specific user.
-     * @param user  The user (as a Long).
-     * @param scoredItems   The item to print rankings for.
-     * @param out   Where to direct the print.
-     * @param format    The format of the printer.
+     * @inheritDoc
      */
+    @Override
     public void printRanking(Long user, List<Pair<Long, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Long, Double> scores = new HashMap<Long, Double>();
         for (Pair<Long, Double> p : scoredItems) {
@@ -69,10 +63,11 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
 
     /**
      * Print the item ranking and scores for a specific user.
-     * @param user  The user (as a String).
-     * @param scoredItems   The item to print rankings for.
-     * @param out   Where to direct the print.
-     * @param format    The format of the printer.
+     *
+     * @param user The user (as a String).
+     * @param scoredItems The item to print rankings for.
+     * @param out Where to direct the print.
+     * @param format The format of the printer.
      */
     protected void printRanking(String user, Map<Long, Double> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Double, Set<Long>> preferenceMap = new HashMap<Double, Set<Long>>();
@@ -110,11 +105,9 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     }
 
     /**
-     * Print the ground truth (the test set).
-     * @param user  The user (as a Long).
-     * @param out   Where to print.
-     * @param format    The format of the printer.
+     * @inheritDoc
      */
+    @Override
     public void printGroundtruth(Long user, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Long, Double> relItems = new HashMap<Long, Double>();
         for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
@@ -126,10 +119,12 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     }
 
     /**
-     * Print the ground truth (the test set).
-     * @param user  The user (as a String).
-     * @param out   Where to print.
-     * @param format    The format of the printer.
+     * Internal function to print the ground truth (the test set).
+     *
+     * @param user The user (as a String).
+     * @param groundtruthItems The ground truth items for the user.
+     * @param out Where to print.
+     * @param format The format of the printer.
      */
     protected void printGroundtruth(String user, Map<Long, Double> groundtruthItems, PrintStream out, OUTPUT_FORMAT format) {
         for (Entry<Long, Double> e : groundtruthItems.entrySet()) {
