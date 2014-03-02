@@ -11,6 +11,11 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
 
+/**
+ * Runner of multiple evaluation strategies using StrategyRunnerInfile.
+ * 
+ * @author Alejandro
+ */
 public class MultipleStrategyRunnerInfile {
 
     public static final String SPLITS_FOLDER = "split.folder";

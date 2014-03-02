@@ -1,12 +1,6 @@
 package net.recommenders.rival.evaluation.strategy;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +13,9 @@ import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
 
 /**
- * Runner for?
+ * Runner for a strategy where the information is not completely stored in
+ * memory, only in a per user basis.
+ *
  * @author Alejandro
  */
 public class StrategyRunnerInfile {
