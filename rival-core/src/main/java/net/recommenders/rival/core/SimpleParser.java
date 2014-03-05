@@ -12,9 +12,21 @@ import java.io.IOException;
  */
 public class SimpleParser implements Parser {
 
+    /**
+     * The column index for the user id in the file.
+     */
     public static final int USER_TOK = 0;
+    /**
+     * The column index for the item id in the file.
+     */
     public static final int ITEM_TOK = 1;
+    /**
+     * The column index for the rating in the file.
+     */
     public static final int RATING_TOK = 2;
+    /**
+     * The column index for the time in the file.
+     */
     public static final int TIME_TOK = 3;
 
     /**

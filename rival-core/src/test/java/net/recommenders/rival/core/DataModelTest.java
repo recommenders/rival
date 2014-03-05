@@ -15,9 +15,18 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class DataModelTest<U, I> {
 
-    DataModel dm = new DataModel();
-    static final int USERS = 3;
-    static final int ITEMS = 3;
+    /**
+     * The data model.
+     */
+    private DataModel dm = new DataModel();
+    /**
+     * The number of users in the data model.
+     */
+    private static final int USERS = 3;
+    /**
+     * The number of items in the data model.
+     */
+    private static final int ITEMS = 3;
 
     @Before
     public void initialize() {
