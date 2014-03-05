@@ -14,9 +14,21 @@ import net.recommenders.rival.core.ParserWithIdMapping;
  */
 public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
 
+    /**
+     * The column index for the user id in the file.
+     */
     public static final int USER_TOK = 0;
+    /**
+     * The column index for the artist id in the file.
+     */
     public static final int ARTIST_TOK = 1;
+    /**
+     * The column index for the track id in the file.
+     */
     public static final int TRACK_TOK = 2;
+    /**
+     * The column index for the preference number in the file.
+     */
     public static final int PREF_TOK = 3;
 
     /**

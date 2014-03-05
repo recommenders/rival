@@ -15,14 +15,23 @@ import net.recommenders.rival.core.DataModel;
  */
 public class CrossValidationSplitter implements Splitter<Long, Long> {
 
+    /**
+     * The number of folds that the data will be split into.
+     */
     private int nFolds;
+    /**
+     * The flag that indicates if the split should be done in a per user basis.
+     */
     private boolean perUser;
+    /**
+     * An instance of a Random class.
+     */
     private Random rnd;
 
     /**
      * Constructor
      *
-     * @param nFolds number of folds that the training data will be split into
+     * @param nFolds number of folds that the data will be split into
      * @param perUser flag to do the split in a per user basis
      * @param seed value to initialize a Random class
      */

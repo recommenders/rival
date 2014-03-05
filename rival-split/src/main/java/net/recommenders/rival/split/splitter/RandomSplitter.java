@@ -15,10 +15,23 @@ import net.recommenders.rival.core.DataModel;
  */
 public class RandomSplitter implements Splitter<Long, Long> {
 
+    /**
+     * The percentage of training to be used by the splitter.
+     */
     private float percentageTraining;
+    /**
+     * The flag that indicates if the split should be done in a per user basis.
+     */
     private boolean perUser;
-    private Random rnd;
+    /**
+     * The flag that indicates if the split should consider all the items
+     * independently.
+     */
     private boolean doSplitPerItems;
+    /**
+     * An instance of a Random class.
+     */
+    private Random rnd;
 
     /**
      * Constructor

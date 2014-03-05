@@ -14,11 +14,26 @@ import net.recommenders.rival.core.Parser;
  */
 public class MovielensParser implements Parser {
 
+    /**
+     * The column index for the user id in the file.
+     */
     public static final int USER_TOK = 0;
+    /**
+     * The column index for the item id in the file.
+     */
     public static final int ITEM_TOK = 1;
+    /**
+     * The column index for the rating in the file.
+     */
     public static final int RATING_TOK = 2;
+    /**
+     * The column index for the time in the file.
+     */
     public static final int TIME_TOK = 3;
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
@@ -33,6 +48,13 @@ public class MovielensParser implements Parser {
         return dataset;
     }
 
+    /**
+     * A method that parses a line from the file.
+     *
+     * @param line the line to be parsed
+     * @param dataset the dataset where the information parsed from the line
+     * will be stored into.
+     */
     private void parseLine(String line, DataModel<Long, Long> dataset) {
         String[] toks = line.contains("::") ? line.split("::") : line.split("\t");
         // user

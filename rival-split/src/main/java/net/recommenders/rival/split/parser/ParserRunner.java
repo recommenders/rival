@@ -14,6 +14,9 @@ import net.recommenders.rival.core.Parser;
  */
 public class ParserRunner {
 
+    /**
+     * Variables that represent the name of several properties in the file.
+     */
     public static final String DATASET_FILE = "dataset.file";
     public static final String DATASET_PARSER = "dataset.parser";
     public static final String LASTFM_IDS_PREFIX = "dataset.parser.lastfm.idsprefix";

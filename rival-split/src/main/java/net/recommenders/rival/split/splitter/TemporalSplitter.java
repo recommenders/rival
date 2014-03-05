@@ -17,8 +17,18 @@ import java.util.Set;
  */
 public class TemporalSplitter implements Splitter<Long, Long> {
 
+    /**
+     * The percentage of training to be used by the splitter.
+     */
     private float percentageTraining;
+    /**
+     * The flag that indicates if the split should be done in a per user basis.
+     */
     private boolean perUser;
+    /**
+     * The flag that indicates if the split should consider all the items
+     * independently.
+     */
     private boolean doSplitPerItems;
 
     /**

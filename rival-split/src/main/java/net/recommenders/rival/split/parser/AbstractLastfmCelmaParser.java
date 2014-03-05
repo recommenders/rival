@@ -13,6 +13,10 @@ import java.util.Map;
  */
 public class AbstractLastfmCelmaParser {
 
+    /**
+     * A flag that indicates if the artists should be considered as the items
+     * (instead of tracks).
+     */
     protected boolean useArtists;
 
     /**

@@ -15,6 +15,9 @@ import net.recommenders.rival.core.DataModel;
  */
 public class SplitterRunner {
 
+    /**
+     * Variables that represent the name of several properties in the file.
+     */
     public static final String DATASET_SPLITTER = "dataset.splitter";
     public static final String SPLIT_PERUSER = "split.peruser";
     public static final String SPLIT_PERITEMS = "split.peritems";
