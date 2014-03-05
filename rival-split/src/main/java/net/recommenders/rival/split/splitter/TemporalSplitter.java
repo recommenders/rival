@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class TemporalSplitter implements Splitter<Long, Long> {
 

@@ -13,7 +13,7 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 
 /**
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class PopularityBasedRecommender extends AbstractRecommender implements Recommender {
 

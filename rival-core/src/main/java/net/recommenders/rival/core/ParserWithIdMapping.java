@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Parser of files where users or items are not represented as integer ids
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public interface ParserWithIdMapping {
 

@@ -5,7 +5,7 @@ import net.recommenders.rival.core.DataModel;
 /**
  * Interface for the data splitter.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public interface Splitter<U, I> {
 

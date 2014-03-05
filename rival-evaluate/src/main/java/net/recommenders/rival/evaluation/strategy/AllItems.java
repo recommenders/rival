@@ -6,7 +6,7 @@ import net.recommenders.rival.core.DataModel;
 /**
  * An evaluation strategy where all the items are used as candidates.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class AllItems extends AbstractStrategy {
 

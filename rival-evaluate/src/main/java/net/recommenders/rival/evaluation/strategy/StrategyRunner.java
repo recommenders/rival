@@ -15,7 +15,7 @@ import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
 /**
  * Runner for a single strategy.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class StrategyRunner {
 

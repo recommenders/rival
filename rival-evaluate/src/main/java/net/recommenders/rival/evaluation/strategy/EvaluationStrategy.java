@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * An interface for evaluation strategies.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public interface EvaluationStrategy<U, I> {
 

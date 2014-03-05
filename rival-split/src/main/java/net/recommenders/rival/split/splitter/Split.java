@@ -8,7 +8,7 @@ import net.recommenders.rival.split.parser.ParserRunner;
 
 /**
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class Split {
 

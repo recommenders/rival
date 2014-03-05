@@ -7,7 +7,7 @@ import net.recommenders.rival.core.DataModel;
  * An evaluation strategy where all only the items in the user's test are used
  * as candidates.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class UserTest extends AbstractStrategy {
 

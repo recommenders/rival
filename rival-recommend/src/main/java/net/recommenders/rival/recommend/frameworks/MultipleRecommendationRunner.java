@@ -9,7 +9,7 @@ import java.util.Set;
 
 /**
  *
- * @author Alan
+ * @author <a href="http://github.com/alansaid">Alan</a>
  */
 public class MultipleRecommendationRunner {
 

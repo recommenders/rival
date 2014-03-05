@@ -9,7 +9,7 @@ import net.recommenders.rival.core.DataModel;
 
 /**
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class CrossValidationSplitter implements Splitter<Long, Long> {
 

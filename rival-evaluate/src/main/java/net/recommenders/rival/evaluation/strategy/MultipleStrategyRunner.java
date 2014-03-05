@@ -14,7 +14,7 @@ import net.recommenders.rival.core.SimpleParser;
 /**
  * Runner of multiple evaluation strategies.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class MultipleStrategyRunner {
 

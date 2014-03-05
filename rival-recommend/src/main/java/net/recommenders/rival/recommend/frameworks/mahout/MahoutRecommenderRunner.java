@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /**
  *
- * @author Alejandro, Alan
+ * @author <a href="http://github.com/abellogin">Alejandro</a>, <a href="http://github.com/alansaid">Alan</a>
  */
 public class MahoutRecommenderRunner extends AbstractRunner {
 

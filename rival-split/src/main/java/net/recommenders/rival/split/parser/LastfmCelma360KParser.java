@@ -10,7 +10,7 @@ import net.recommenders.rival.core.ParserWithIdMapping;
 /**
  * @inheritDoc
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
 

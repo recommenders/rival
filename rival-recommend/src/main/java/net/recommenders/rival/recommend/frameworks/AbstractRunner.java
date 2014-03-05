@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Alan
+ * @author <a href="http://github.com/alansaid">Alan</a>
  */
 public abstract class AbstractRunner {
 

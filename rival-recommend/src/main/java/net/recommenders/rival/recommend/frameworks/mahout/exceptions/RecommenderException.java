@@ -2,7 +2,7 @@ package net.recommenders.rival.recommend.frameworks.mahout.exceptions;
 
 /**
  *
- * @author Alan
+ * @author <a href="http://github.com/alansaid">Alan</a>
  */
 @SuppressWarnings("serial")
 public class RecommenderException extends Exception {

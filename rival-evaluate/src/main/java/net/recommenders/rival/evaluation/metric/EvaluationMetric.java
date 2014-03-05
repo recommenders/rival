@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * An evaluation metric expressing the quality of the evaluated system.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public interface EvaluationMetric<V> {
 

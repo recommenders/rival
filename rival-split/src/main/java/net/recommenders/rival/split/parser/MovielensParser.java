@@ -9,7 +9,8 @@ import net.recommenders.rival.core.Parser;
 
 /**
  * @inheritDoc
- * @author Alejandro
+ *
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class MovielensParser implements Parser {
 

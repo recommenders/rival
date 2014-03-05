@@ -12,7 +12,7 @@ import java.util.Properties;
 
 /**
  *
- * @author Alan
+ * @author <a href="http://github.com/alansaid">Alan</a>
  */
 public class RecommendationRunner {
 

@@ -9,7 +9,8 @@ import net.recommenders.rival.core.Parser;
 
 /**
  * Runner for the parser classes.
- * @author Alejandro
+ *
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class ParserRunner {
 
@@ -20,8 +21,9 @@ public class ParserRunner {
 
     /**
      * Run the parser based on given properties.
-     * @param properties    The properties
-     * @return  The data model.
+     *
+     * @param properties The properties
+     * @return The data model.
      * @throws ClassNotFoundException
      * @throws IllegalAccessException
      * @throws IllegalArgumentException

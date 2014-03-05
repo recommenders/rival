@@ -16,7 +16,7 @@ import net.recommenders.rival.core.DataModel;
  * Implementation of the Relevant + N Evaluation Strategy as described by
  * Cremonesi et al. [http://dx.doi.org/10.1145/1864708.1864721]
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class RelPlusN extends AbstractStrategy {
 

@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * An interface for the per-item evaluation strategy.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public interface EvaluationStrategyPerItem<U, I> {
 

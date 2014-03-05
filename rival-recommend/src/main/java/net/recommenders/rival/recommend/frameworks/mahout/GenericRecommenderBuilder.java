@@ -14,7 +14,7 @@ import org.grouplens.lenskit.knn.user.UserSimilarity;
 
 /**
  *
- * @author Alan
+ * @author <a href="http://github.com/alansaid">Alan</a>
  * @param <T>
  */
 public final class GenericRecommenderBuilder<T>

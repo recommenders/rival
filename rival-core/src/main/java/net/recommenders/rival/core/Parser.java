@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Data model parser interface.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public interface Parser {
 

@@ -10,7 +10,7 @@ import org.junit.runners.JUnit4;
 /**
  * Tests for {@link net.recommenders.rival.core.DataModel}.
  *
- * @author Alan
+ * @author <a href="http://github.com/alansaid">Alan</a>
  */
 @RunWith(JUnit4.class)
 public class DataModelTest<U, I> {

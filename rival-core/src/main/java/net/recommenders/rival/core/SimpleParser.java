@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Data parser for tab-separated data files.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class SimpleParser implements Parser {
 

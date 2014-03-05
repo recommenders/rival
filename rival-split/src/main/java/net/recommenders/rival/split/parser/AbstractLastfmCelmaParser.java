@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Parser for the Last.fm dataset by Celma.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class AbstractLastfmCelmaParser {
 

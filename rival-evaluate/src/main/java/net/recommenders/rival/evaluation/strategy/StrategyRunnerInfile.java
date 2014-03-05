@@ -16,7 +16,7 @@ import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
  * Runner for a strategy where the information is not completely stored in
  * memory, only in a per user basis.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class StrategyRunnerInfile {
 
