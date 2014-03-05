@@ -12,8 +12,17 @@ import net.recommenders.rival.core.DataModel;
  */
 public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long> {
 
+    /**
+     * The training set.
+     */
     protected DataModel<Long, Long> training;
+    /**
+     * The test set.
+     */
     protected DataModel<Long, Long> test;
+    /**
+     * The relevance threshold.
+     */
     protected double threshold;
 
     /**

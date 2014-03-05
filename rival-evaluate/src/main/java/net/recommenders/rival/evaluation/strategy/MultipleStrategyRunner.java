@@ -18,6 +18,9 @@ import net.recommenders.rival.core.SimpleParser;
  */
 public class MultipleStrategyRunner {
 
+    /**
+     * Variables that represent the name of several properties in the file.
+     */
     public static final String SPLITS_FOLDER = "split.folder";
     public static final String TRAINING_SUFFIX = "split.training.suffix";
     public static final String TEST_SUFFIX = "split.test.suffix";

@@ -11,6 +11,10 @@ import java.util.Set;
  */
 public interface EvaluationStrategy<U, I> {
 
+    /**
+     * Enumeration that defines two output formats: a simple one (tab-separated)
+     * and another compatible with the one used by the treceval program.
+     */
     public enum OUTPUT_FORMAT {
 
         SIMPLE,

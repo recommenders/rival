@@ -19,6 +19,9 @@ import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
  */
 public class StrategyRunner {
 
+    /**
+     * Variables that represent the name of several properties in the file.
+     */
     public static final String TRAINING_FILE = "split.training.file";
     public static final String TEST_FILE = "split.test.file";
     public static final String INPUT_FILE = "recommendation.file";

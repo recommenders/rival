@@ -20,7 +20,14 @@ import net.recommenders.rival.core.DataModel;
  */
 public class RelPlusN extends AbstractStrategy {
 
+    /**
+     * The number of additional non-relevant items to be considered as
+     * candidates.
+     */
     protected int N;
+    /**
+     * An instance of the Random class.
+     */
     protected Random rnd;
 
     /**
