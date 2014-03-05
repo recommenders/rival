@@ -11,11 +11,7 @@ import net.recommenders.rival.core.DataModel;
 public class TestItems extends AbstractStrategy {
 
     /**
-     * Default constructor.
-     *
-     * @param training The training data model.
-     * @param test The test data model.
-     * @param threshold The relevance threshold.
+     * @inheritDoc
      */
     public TestItems(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
         super(training, test, threshold);

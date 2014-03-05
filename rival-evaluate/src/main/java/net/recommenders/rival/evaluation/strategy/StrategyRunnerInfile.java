@@ -32,6 +32,13 @@ public class StrategyRunnerInfile {
     public static final String RELPLUSN_N = "strategy.relplusn.N";
     public static final String RELPLUSN_SEED = "strategy.relplusn.seed";
 
+    /**
+     * Main function. It receives the property file using a system property
+     * ('propertyFile')
+     *
+     * @param args (not used)
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
@@ -47,6 +54,19 @@ public class StrategyRunnerInfile {
         run(properties);
     }
 
+    /**
+     * Process the property file and runs the specified strategies on some data.
+     *
+     * @param properties The property file
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // read splits
         System.out.println("Parsing started: training file");
@@ -79,6 +99,21 @@ public class StrategyRunnerInfile {
         generateOutput(testModel, inputFile, strategy, format, rankingFile, groundtruthFile, overwrite);
     }
 
+    /**
+     * Runs a particular strategy on some data using pre-computed
+     * recommendations and outputs the result into a file.
+     *
+     * @param testModel The test split
+     * @param userRecommendationFile The file where recommendations are stored
+     * @param strategy The strategy to be used
+     * @param format The format of the output
+     * @param rankingFile The file where the ranking will be printed
+     * @param groundtruthFile The file where the ground truth will be printed
+     * @param overwrite The flag that specifies what to do if rankingFile or
+     * groundtruthFile already exists
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, IOException {
         PrintStream outRanking = null;
         if (rankingFile.exists() && !overwrite) {
@@ -119,6 +154,16 @@ public class StrategyRunnerInfile {
         }
     }
 
+    /**
+     * Method that reads the scores given to items by a recommender only for a
+     * given user (it ignores the rest).
+     *
+     * @param userRecommendationFile The file with the recommendation scores
+     * @param user The user
+     * @return the pairs <item, score> contained in the file for that user
+     * @throws IOException
+     * @see StrategyRunnerInfile#readLine(java.lang.String, java.util.Map)
+     */
     public static List<EvaluationStrategy.Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
         BufferedReader in = new BufferedReader(new FileReader(userRecommendationFile));
@@ -140,6 +185,17 @@ public class StrategyRunnerInfile {
         return mapUserRecommendations.get(user);
     }
 
+    /**
+     * Method that reads a line that contains a(some) recommendation(s) and
+     * store it in a map.
+     *
+     * The line can have a simple format <br/> "user \t item \t score" <br/> or
+     * the one used in MyMediaLite <br/> "user \t [item:score,item:score,...]".
+     *
+     * @param line The line to be parsed.
+     * @param mapUserRecommendations The map where the parsed recommendations
+     * will be stored.
+     */
     public static void readLine(String line, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
         String[] toks = line.split("\t");
         // mymedialite format: user \t [item:score,item:score,...]

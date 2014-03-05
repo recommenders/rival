@@ -32,9 +32,10 @@ public class MultipleStrategyRunner {
     public static final String RELPLUSN_SEED = "strategy.relplusn.seed";
 
     /**
-     * Main class.
+     * Main method. It receives the property file using a system property
+     * ('propertyFile')
      *
-     * @param args Input arguments.
+     * @param args Input arguments (not used).
      * @throws Exception if no properties can be read.
      */
     public static void main(String[] args) throws Exception {
@@ -57,9 +58,9 @@ public class MultipleStrategyRunner {
     }
 
     /**
-     * Run a strategy.
+     * Method that runs several strategies (depending on the properties).
      *
-     * @param properties The properties of the strategy to run.
+     * @param properties The properties of the strategies to run.
      * @throws IOException If files cannot be read.
      * @throws ClassNotFoundException If class does not exist.
      * @throws IllegalAccessException
@@ -134,7 +135,7 @@ public class MultipleStrategyRunner {
     }
 
     /**
-     * Generate the output to write.
+     * Runs a particular strategy on some data and outputs the result into a file.
      *
      * @param testModel The test datamodel.
      * @param mapUserRecommendations A map with the recommendations for the
