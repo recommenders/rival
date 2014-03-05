@@ -9,6 +9,7 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
+ * Class that splits a dataset randomly.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -19,6 +20,16 @@ public class RandomSplitter implements Splitter<Long, Long> {
     private Random rnd;
     private boolean doSplitPerItems;
 
+    /**
+     * Constructor
+     *
+     * @param percentageTraining percentage of training data to be split
+     * @param perUser flag to do the split in a per user basis
+     * @param seed value to initialize a Random class
+     * @param doSplitPerItems if true, every interaction between a user and a
+     * specific item is considered as one, and hence all of them will be either
+     * on the training or on the test split
+     */
     public RandomSplitter(float percentageTraining, boolean perUser, long seed, boolean doSplitPerItems) {
         this.percentageTraining = percentageTraining;
         this.perUser = perUser;
@@ -27,6 +38,10 @@ public class RandomSplitter implements Splitter<Long, Long> {
         rnd = new Random(seed);
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
         final DataModel<Long, Long>[] splits = new DataModel[2];
         splits[0] = new DataModel<Long, Long>(); // training

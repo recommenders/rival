@@ -7,6 +7,7 @@ import java.util.Properties;
 import net.recommenders.rival.split.parser.ParserRunner;
 
 /**
+ * Main class that parses a data set and splits it according to a property file.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */

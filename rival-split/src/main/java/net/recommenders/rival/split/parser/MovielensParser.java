@@ -8,7 +8,7 @@ import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 
 /**
- * @inheritDoc
+ * A parser based on the format of Movielens files
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */

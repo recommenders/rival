@@ -26,6 +26,9 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
         super(useArtists);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();

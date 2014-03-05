@@ -8,6 +8,8 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
+ * Class that splits a dataset using a cross validation technique (every
+ * interaction in the data only appears once in each test split).
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -17,6 +19,13 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
     private boolean perUser;
     private Random rnd;
 
+    /**
+     * Constructor
+     *
+     * @param nFolds number of folds that the training data will be split into
+     * @param perUser flag to do the split in a per user basis
+     * @param seed value to initialize a Random class
+     */
     public CrossValidationSplitter(int nFolds, boolean perUser, long seed) {
         this.nFolds = nFolds;
         this.perUser = perUser;
@@ -24,6 +33,10 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
         rnd = new Random(seed);
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
         final DataModel<Long, Long>[] splits = new DataModel[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {

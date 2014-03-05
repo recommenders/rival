@@ -9,6 +9,7 @@ import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 
 /**
+ * Class that splits a dataset according to some properties.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -27,6 +28,16 @@ public class SplitterRunner {
     public static final String SPLIT_TEST_PREFIX = "split.test.prefix";
     public static final String SPLIT_TEST_SUFFIX = "split.test.suffix";
 
+    /**
+     * Runs a Splitter instance based on the properties.
+     *
+     * @param properties property file
+     * @param data the data to be split
+     * @param doDataClear flag to clear the memory used for the data before
+     * saving the splits
+     * @throws ClassNotFoundException
+     * @throws FileNotFoundException
+     */
     public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws ClassNotFoundException, FileNotFoundException {
         System.out.println("Start splitting");
         DataModel<Long, Long>[] splits = null;
@@ -68,6 +79,14 @@ public class SplitterRunner {
         }
     }
 
+    /**
+     * Method that saves a data model to a file.
+     * 
+     * @param model model to be saved
+     * @param outfile file where the model will be saved
+     * @param overwrite flag that indicates if the file should be overwritten
+     * @throws FileNotFoundException 
+     */
     public static void saveDataModel(DataModel<Long, Long> model, String outfile, boolean overwrite) throws FileNotFoundException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);

@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
+ * Splitter that takes into account the timestamps in the data (older
+ * interactions are kept only in the training set).
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -19,12 +21,25 @@ public class TemporalSplitter implements Splitter<Long, Long> {
     private boolean perUser;
     private boolean doSplitPerItems;
 
+    /**
+     * Constructor
+     *
+     * @param percentageTraining percentage of training data to be split
+     * @param perUser flag to do the split in a per user basis
+     * @param doSplitPerItems if true, every interaction between a user and an
+     * item will be kept in the test set if at least one interaction belongs to
+     * the corresponding timestamp (according to the rest of the parameters)
+     */
     public TemporalSplitter(float percentageTraining, boolean perUser, boolean doSplitPerItems) {
         this.percentageTraining = percentageTraining;
         this.perUser = perUser;
         this.doSplitPerItems = doSplitPerItems;
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
         final DataModel<Long, Long>[] splits = new DataModel[2];
         splits[0] = new DataModel<Long, Long>(); // training

@@ -21,6 +21,9 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
     public static final int TRACK_TOK = 5;
     public static final int TIME_TOK = 1;
 
+    /**
+     * @inheritDoc
+     */
     public LastfmCelma1KParser(boolean useArtists) {
         super(useArtists);
     }
