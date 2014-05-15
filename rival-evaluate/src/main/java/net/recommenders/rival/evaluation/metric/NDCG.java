@@ -13,7 +13,7 @@ public class NDCG extends AbstractMetric {
     /**
      * @inheritDoc
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int at){ // at should be an array
+    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int at){ // at should be an array if ndcg at sevaral at's is to be found
         super(predictions, test);
     }
 

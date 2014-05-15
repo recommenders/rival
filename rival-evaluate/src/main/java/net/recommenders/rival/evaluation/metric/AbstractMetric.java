@@ -12,7 +12,7 @@ public abstract class AbstractMetric implements EvaluationMetric {
     /**
      * The predictions.
      */
-    protected Map<Long, Double> predictions;
+    protected DataModel<Long, Long> predictions;
     /**
      * The test set.
      */
@@ -21,14 +21,14 @@ public abstract class AbstractMetric implements EvaluationMetric {
     /**
      * The level of recall.
      */
-    protected int at;
+    protected int at = 0;
     /**
      * Default constructor for the metric.
      *
      * @param predictions The predictions.
      * @param test The test set.
      */
-    public AbstractMetric(Map<Long, Double> predictions, DataModel<Long, Long> test) {
+    public AbstractMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this.predictions = predictions;
         this.test = test;
     }
@@ -39,7 +39,7 @@ public abstract class AbstractMetric implements EvaluationMetric {
      * @param predictions The predictions.
      * @param test The test set.
      */
-    public AbstractMetric(Map<Long, Double> predictions, DataModel<Long, Long> test, int at) {
+    public AbstractMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int at) {
         this.predictions = predictions;
         this.test = test;
         this.at = at;
