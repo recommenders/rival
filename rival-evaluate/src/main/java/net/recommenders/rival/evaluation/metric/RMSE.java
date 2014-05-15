@@ -12,7 +12,7 @@ public class RMSE extends AbstractMetric {
         super(predictions, test);
     }
 
-    public double getRMSE(){
+    public double computeRMSE(){
 
         Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
         Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
