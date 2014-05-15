@@ -14,10 +14,14 @@ public class NDCG extends AbstractMetric {
      * @inheritDoc
      */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int at){ // at should be an array if ndcg at sevaral at's is to be found
-        super(predictions, test);
+        super(predictions, test, at);
     }
 
-
+    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test){ // at should be an array if ndcg at sevaral at's is to be found
+        super(predictions, test);
+    }
+    double ndcg = 0.0;
+    Map<Long, Double> perUserNDCG = new HashMap<Long, Double>();
     /**
      * Computes the global NDCG by first summing the NDCG for each user and then averaging by the number of users.
      *
@@ -25,20 +29,23 @@ public class NDCG extends AbstractMetric {
      */
     public double computeNDCG(){
         Set<Long> predictedUsers = predictions.getUsers();
-        double ndcg = 0.0;
         for (long user : predictedUsers){
             double dcg = 0.0;
-            List<Long> sortedList =  rankUser(user);
+            List<Long> sortedList = rankUser(user);
             Map<Long, Double> testItems = test.getUserItemPreferences().get(user);
-            int rank = 0;
+            int rank = 1;
             for (long item : sortedList){
-                if (testItems.containsKey(item))
+                if (testItems.containsKey(item)) {
                     dcg += Math.log(2) / Math.log(rank + 1);
+                }
                 rank ++;
             }
-            ndcg += dcg / computeIDCG(testItems.size());
+            double idcg = computeIDCG(testItems.size());
+            ndcg += dcg / idcg;
+            perUserNDCG.put(user, dcg / idcg);
         }
-        return ndcg / test.getUsers().size();
+        ndcg = ndcg / test.getNumUsers();
+        return ndcg;
     }
 
     /**
@@ -48,7 +55,7 @@ public class NDCG extends AbstractMetric {
      * @return the ranked list
      */
     private List<Long> rankUser(long user){
-        Map<Long, Double> predictedItems = predictions.getItemUserPreferences().get(user);
+        Map<Long, Double> predictedItems = predictions.getUserItemPreferences().get(user);
         Map<Double, Set<Long>> itemsByRank  = new HashMap<Double, Set<Long>>();
         for (Map.Entry<Long, Double> e : predictedItems.entrySet()){
             long item = e.getKey();
@@ -56,8 +63,10 @@ public class NDCG extends AbstractMetric {
             if (Double.isNaN(pref))
                 continue;
             Set<Long> items = itemsByRank.get(pref);
-            if (items == null)
-                itemsByRank.put(pref, new HashSet<Long>());
+            if (items == null) {
+                items = new HashSet<Long>();
+                itemsByRank.put(pref, items);
+            }
             items.add(item);
         }
         List<Double> sortedScores = new ArrayList<Double>(itemsByRank.keySet());
@@ -66,7 +75,7 @@ public class NDCG extends AbstractMetric {
         int num = 0;
         for (double pref : sortedScores){
             for (long itemID : itemsByRank.get(pref)){
-                if (at > 0 || num < at) {
+                if (at == 0 || num < at) {
                     sortedItems.add(itemID);
                     num ++;
                 }
@@ -94,11 +103,11 @@ public class NDCG extends AbstractMetric {
 
     @Override
     public double getValue() {
-        return 0;
+        return ndcg;
     }
 
     @Override
     public Map getValuePerUser() {
-        return null;
+        return perUserNDCG;
     }
 }

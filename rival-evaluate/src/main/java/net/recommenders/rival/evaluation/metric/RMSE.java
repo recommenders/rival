@@ -2,6 +2,7 @@ package net.recommenders.rival.evaluation.metric;
 
 import net.recommenders.rival.core.DataModel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,12 +13,13 @@ public class RMSE extends AbstractMetric {
         super(predictions, test);
     }
 
+    private double rmse;
+    private Map<Long, Double> perUserRMSE = new HashMap<Long, Double>();
     public double computeRMSE(){
-
         Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
         Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
         int testItems = 0;
-        double rmse = 0.0;
+         rmse = 0.0;
         int emptyUsers = 0; // for coverage
         int emptyItems = 0; // for coverage
 
@@ -42,6 +44,8 @@ public class RMSE extends AbstractMetric {
                 }
                 difference = realRating - predictedRating;
                 rmse += difference * difference;
+                perUserRMSE.put(testUser, Math.sqrt((difference * difference) / ratings.size()));
+
             }
         }
         rmse = Math.sqrt(rmse / testItems);
@@ -50,11 +54,11 @@ public class RMSE extends AbstractMetric {
 
     @Override
     public double getValue() {
-        return 0;
+        return rmse;
     }
 
     @Override
     public Map getValuePerUser() {
-        return null;
+        return perUserRMSE;
     }
 }
