@@ -33,10 +33,10 @@ public class NDCGTest<U, V> {
     public void initialize(){
         predictions = new DataModel();
         test = new DataModel();
-        for (int i = 1; i < 2; i ++){
-            for (int j = 1; j < 3; j++){
-                test.addPreference((long) i, (long) j, (double) i * j);
-                predictions.addPreference((long) i, (long) j, (double) i * j);
+        for (int i = 1; i < 20; i ++){
+            for (int j = 1; j < 15; j++){
+                test.addPreference((long) i, (long) j, (double) i * j % 5);
+                predictions.addPreference((long) i, (long) j, (double) i * j % 5);
             }
         }
         ndcg = new NDCG(predictions, test);

@@ -13,7 +13,7 @@ public class NDCG extends AbstractMetric {
     /**
      * Global NDCG
      */
-    double ndcg = -1.0;
+    double ndcg;
     /**
      * Per user NDCG
      */
