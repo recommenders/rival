@@ -38,6 +38,7 @@ public class NDCG extends AbstractMetric {
      * @return NDCG
      */
     public double computeNDCG(){
+        ndcg = 0.0;
         Set<Long> predictedUsers = predictions.getUsers();
         for (long user : predictedUsers){
             double dcg = 0.0;
