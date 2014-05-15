@@ -5,6 +5,7 @@ import net.recommenders.rival.core.DataModel;
 import java.util.*;
 
 /**
+ * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain" target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of items.
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class NDCG extends AbstractMetric {
@@ -16,67 +17,79 @@ public class NDCG extends AbstractMetric {
         super(predictions, test);
     }
 
+
     /**
-     * Prepares (sorts and does at cutoff at "at") the predictions after they are read from file.
+     * Computes the global NDCG by first summing the NDCG for each user and then averaging by the number of users.
      *
+     * @return NDCG
      */
-    public void preparePredictions(){
-        Map<Long, Map<Long, Double>> recommendations = predictions.getUserItemPreferences();
-
-        for (long user : predictions.getUsers()) {
-            final Map<Double, Set<Long>> preferenceMap = new HashMap<Double, Set<Long>>();
-            for (Map.Entry<Long, Double> e : recommendations.get(user).entrySet()) {
-                long item = e.getKey();
-                double pref = e.getValue();
-                // ignore NaN's
-                if (Double.isNaN(pref)) {
-                    continue;
-                }
-                Set<Long> items = preferenceMap.get(pref);
-                if (items == null) {
-                    items = new HashSet<Long>();
-                    preferenceMap.put(pref, items);
-                }
-                items.add(item);
+    public double computeNDCG(){
+        Set<Long> predictedUsers = predictions.getUsers();
+        double ndcg = 0.0;
+        for (long user : predictedUsers){
+            double dcg = 0.0;
+            List<Long> sortedList =  rankUser(user);
+            Map<Long, Double> testItems = test.getUserItemPreferences().get(user);
+            int rank = 0;
+            for (long item : sortedList){
+                if (testItems.containsKey(item))
+                    dcg += Math.log(2) / Math.log(rank + 1);
+                rank ++;
             }
-            final List<Double> sortedScores = new ArrayList<Double>(preferenceMap.keySet());
-            Collections.sort(sortedScores, Collections.reverseOrder());
-            // Write estimated preferences
-            int pos = 1;
-
-
-/**
-            for (double pref : sortedScores) {
-                for (long itemID : preferenceMap.get(pref)) {
-                    switch (format) {
-                        case TRECEVAL:
-                            out.println(user + "\tQ0\t" + itemID + "\t" + pos + "\t" + pref + "\t" + "r");
-                            break;
-                        case SIMPLE:
-                            out.println(user + "\t" + itemID + "\t" + pref);
-                            break;
-                    }
-                    pos++;
-                }
-            }
- */
+            ndcg += dcg / computeIDCG(testItems.size());
         }
-
-
-/**
-
-        Map<Long, Map<Long, Double>> recommendations = predictions.getUserItemPreferences();
-        for (long user : predictions.getUsers()){
-            Map<Long, Double> sortedRatings = MapUtil.sortByValue(recommendations.get(user));
-
-            for(Map.Entry<Long, Double> entry : sortedRatings.entrySet()){
-
-            }
-
-        }
- */
-
+        return ndcg / test.getUsers().size();
     }
+
+    /**
+     * Ranks the set of items by predicted rating.
+     *
+     * @param user
+     * @return the ranked list
+     */
+    private List<Long> rankUser(long user){
+        Map<Long, Double> predictedItems = predictions.getItemUserPreferences().get(user);
+        Map<Double, Set<Long>> itemsByRank  = new HashMap<Double, Set<Long>>();
+        for (Map.Entry<Long, Double> e : predictedItems.entrySet()){
+            long item = e.getKey();
+            double pref = e.getValue();
+            if (Double.isNaN(pref))
+                continue;
+            Set<Long> items = itemsByRank.get(pref);
+            if (items == null)
+                itemsByRank.put(pref, new HashSet<Long>());
+            items.add(item);
+        }
+        List<Double> sortedScores = new ArrayList<Double>(itemsByRank.keySet());
+        Collections.sort(sortedScores, Collections.reverseOrder());
+        List<Long> sortedItems = new ArrayList<Long>();
+        int num = 0;
+        for (double pref : sortedScores){
+            for (long itemID : itemsByRank.get(pref)){
+                if (at > 0 || num < at) {
+                    sortedItems.add(itemID);
+                    num ++;
+                }
+                else
+                    break;
+            }
+        }
+        return sortedItems;
+    }
+
+    /**
+     * Computes the ideal <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain" target="_blank">discounted cumulative gain</a> (IDCG) given the number of items in the test set (correct items).
+     *
+     * @param testItems the number of correct items.
+     * @return  the IDCG
+     */
+    static double computeIDCG(int testItems){
+        double idcg = 0.0;
+        for (int i = 0; i < testItems; i++)
+            idcg += Math.log(2) / Math.log(i + 2);
+        return idcg;
+    }
+
 
 
     @Override
