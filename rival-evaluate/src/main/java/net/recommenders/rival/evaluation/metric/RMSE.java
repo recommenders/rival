@@ -6,20 +6,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * <a href="http://recsyswiki.com/wiki/RMSE" target="_blank">Root mean square error</a> (RMSE) of a list of predicted ratings.
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class RMSE extends AbstractMetric {
+
+    /**
+     * @inheritDoc
+     */
     public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         super(predictions, test);
     }
 
+    /**
+     * Global RMSE
+      */
     private double rmse;
+    /**
+     * Per user RMSE
+     */
     private Map<Long, Double> perUserRMSE = new HashMap<Long, Double>();
+
+    /**
+     * Instantiates and computes the RMSE value. Prior to running this, there is no RMSE value calculated.
+     * @return The global RMSE
+     */
     public double computeRMSE(){
         Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
         Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
         int testItems = 0;
-         rmse = 0.0;
+        rmse = 0.0;
         int emptyUsers = 0; // for coverage
         int emptyItems = 0; // for coverage
 
@@ -52,11 +68,17 @@ public class RMSE extends AbstractMetric {
         return rmse;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public double getValue() {
         return rmse;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Map getValuePerUser() {
         return perUserRMSE;

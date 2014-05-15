@@ -38,6 +38,7 @@ public abstract class AbstractMetric implements EvaluationMetric {
      *
      * @param predictions The predictions.
      * @param test The test set.
+     * @param at The level of recall.
      */
     public AbstractMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int at) {
         this.predictions = predictions;

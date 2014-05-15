@@ -11,17 +11,27 @@ import java.util.*;
 public class NDCG extends AbstractMetric {
 
     /**
+     * Global NDCG
+     */
+    double ndcg = -1.0;
+    /**
+     * Per user NDCG
+     */
+    Map<Long, Double> perUserNDCG = new HashMap<Long, Double>();
+
+    /**
      * @inheritDoc
      */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int at){ // at should be an array if ndcg at sevaral at's is to be found
         super(predictions, test, at);
     }
 
+    /**
+     * @inheritDoc
+     */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test){ // at should be an array if ndcg at sevaral at's is to be found
         super(predictions, test);
     }
-    double ndcg = 0.0;
-    Map<Long, Double> perUserNDCG = new HashMap<Long, Double>();
     /**
      * Computes the global NDCG by first summing the NDCG for each user and then averaging by the number of users.
      *
