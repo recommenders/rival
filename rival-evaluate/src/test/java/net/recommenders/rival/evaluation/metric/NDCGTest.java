@@ -40,12 +40,12 @@ public class NDCGTest<U, V> {
             }
         }
         ndcg = new NDCG(predictions, test);
-        ndcg.computeNDCG();
+        ndcg.compute();
     }
     @Test
     public void testComputeNDCG(){
         ndcg = new NDCG(predictions, test);
-        assertEquals(1.0, ndcg.computeNDCG(), 0.0);
+        assertEquals(1.0, ndcg.compute(), 0.0);
     }
 
     @Test

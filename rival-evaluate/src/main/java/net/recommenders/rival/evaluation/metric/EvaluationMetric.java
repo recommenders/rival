@@ -22,4 +22,9 @@ public interface EvaluationMetric<V> {
      * @return Map containing the values per user.
      */
     public Map<V, Double> getValuePerUser();
+
+    /**
+     * Computes the evaluation metric.
+     */
+    public double compute();
 }

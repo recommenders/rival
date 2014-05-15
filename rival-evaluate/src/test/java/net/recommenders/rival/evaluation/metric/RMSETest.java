@@ -37,12 +37,12 @@ public class RMSETest<U, I> {
             }
         }
         rmse = new RMSE(predictions, test);
-        rmse.computeRMSE();
+        rmse.compute();
     }
 
     @Test
     public void testComputeRMSE(){
-        assertEquals(0.0, rmse.computeRMSE(), 0.0);
+        assertEquals(0.0, rmse.compute(), 0.0);
     }
 
     @Test

@@ -29,6 +29,8 @@ public class SimpleParser implements Parser {
      */
     public static final int TIME_TOK = 3;
 
+    public static String token = "\t";
+
     /**
      * @inheritDoc
      */
@@ -46,6 +48,11 @@ public class SimpleParser implements Parser {
         return dataset;
     }
 
+    public DataModel<Long, Long> parseData(File f, String token) throws IOException {
+        this.token = token;
+        return parseData(f);
+    }
+
     /**
      * Parse line from data file.
      *
@@ -53,7 +60,7 @@ public class SimpleParser implements Parser {
      * @param dataset The dataset to add data from line to.
      */
     private void parseLine(String line, DataModel<Long, Long> dataset) {
-        String[] toks = line.split("\t");
+        String[] toks = line.split(token);
         // user
         long userId = Long.parseLong(toks[USER_TOK]);
         // item

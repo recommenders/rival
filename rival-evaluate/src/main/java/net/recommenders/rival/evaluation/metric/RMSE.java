@@ -31,7 +31,7 @@ public class RMSE extends AbstractMetric {
      * Instantiates and computes the RMSE value. Prior to running this, there is no RMSE value calculated.
      * @return The global RMSE
      */
-    public double computeRMSE(){
+    public double compute(){
         Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
         Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
         int testItems = 0;
