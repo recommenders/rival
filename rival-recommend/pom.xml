@@ -46,9 +46,8 @@
             <artifactId>lenskit-svd</artifactId>
             <version>${lenskit.version}</version>
         </dependency>
-
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>

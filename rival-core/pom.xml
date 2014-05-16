@@ -10,6 +10,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>rival-core</artifactId>
+    <packaging>jar</packaging>
     <name>RiVal Core</name>
 
     <dependencies>
