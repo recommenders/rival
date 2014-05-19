@@ -24,7 +24,16 @@ public interface EvaluationMetric<V> {
     public Map<V, Double> getValuePerUser();
 
     /**
+     * Get the value of the metric for a specific user.
+     *
+     * @param u user whose metric value will be computed
+     *
+     * @return a value for user u.
+     */
+    public double getValue(V u);
+
+    /**
      * Computes the evaluation metric.
      */
-    public double compute();
+    public void compute();
 }
