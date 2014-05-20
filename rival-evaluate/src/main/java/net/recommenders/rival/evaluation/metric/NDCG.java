@@ -118,9 +118,11 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
             }
             double idcg = computeIDCG(user, userTestItems);
             double undcg = dcg / idcg;
-            ndcg += undcg;
-            metricPerUser.put(user, undcg);
-            nUsers++;
+            if (!Double.isNaN(undcg)) {
+                ndcg += undcg;
+                metricPerUser.put(user, undcg);
+                nUsers++;
+            }
         }
         ndcg = ndcg / nUsers;
     }
@@ -227,7 +229,7 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
                     n++;
                 }
             }
-            ndcg /= n;
+            ndcg = (n == 0) ? 0.0 : ndcg / n;
             return ndcg;
         }
         return Double.NaN;
