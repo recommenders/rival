@@ -9,6 +9,7 @@ import net.recommenders.rival.core.DataModel;
  * items.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
+ * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
 public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
 
@@ -27,11 +28,11 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
     /**
      * Array of cutoff levels
      */
-    int[] ats;
+    private int[] ats;
     /**
      * Type of nDCG computation (linear or exponential)
      */
-    TYPE type;
+    private TYPE type;
     private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
     private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
 
@@ -189,12 +190,12 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param at cutoff level
      * @return the NDCG corresponding to the requested cutoff level
      */
-    public double getValue(int at) {
+    public double getValueAt(int at) {
         if (userDcgAtCutoff.containsKey(at) && userIdcgAtCutoff.containsKey(at)) {
             int n = 0;
             double ndcg = 0.0;
             for (long u : userIdcgAtCutoff.get(at).keySet()) {
-                double udcg = getValue(u, at);
+                double udcg = getValueAt(u, at);
                 if (!Double.isNaN(udcg)) {
                     ndcg += udcg;
                     n++;
@@ -206,7 +207,7 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
         return Double.NaN;
     }
 
-    public double getValue(long user, int at) {
+    public double getValueAt(long user, int at) {
         if (userDcgAtCutoff.containsKey(at) && userDcgAtCutoff.get(at).containsKey(user)
                 && userIdcgAtCutoff.containsKey(at) && userIdcgAtCutoff.get(at).containsKey(user)) {
             double idcg = userIdcgAtCutoff.get(at).get(user);

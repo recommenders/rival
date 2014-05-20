@@ -43,8 +43,8 @@ public class NDCGTest<U, V> {
     @Test
     public void testComputeNDCGAt() {
         ndcg.compute();
-        assertEquals(1.0, ndcg.getValue(5), 0.0);
-        assertEquals(1.0, ndcg.getValue(10), 0.0);
+        assertEquals(1.0, ndcg.getValueAt(5), 0.0);
+        assertEquals(1.0, ndcg.getValueAt(10), 0.0);
     }
 
     @Test
