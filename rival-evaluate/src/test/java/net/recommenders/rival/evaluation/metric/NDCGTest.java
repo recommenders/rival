@@ -31,13 +31,20 @@ public class NDCGTest<U, V> {
                 predictions.addPreference((long) i, (long) j, (double) i * j % 5 + 1.0);
             }
         }
-        ndcg = new NDCG(predictions, test);
+        ndcg = new NDCG(predictions, test, new int[]{5, 10, 20});
     }
 
     @Test
     public void testComputeNDCG() {
         ndcg.compute();
         assertEquals(1.0, ndcg.getValue(), 0.0);
+    }
+
+    @Test
+    public void testComputeNDCGAt() {
+        ndcg.compute();
+        assertEquals(1.0, ndcg.getValue(5), 0.0);
+        assertEquals(1.0, ndcg.getValue(10), 0.0);
     }
 
     @Test
