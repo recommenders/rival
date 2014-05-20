@@ -35,6 +35,7 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
     private TYPE type;
     private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
     private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
+    private double relevanceThreshold;
 
     /**
      * @inheritDoc
@@ -51,7 +52,7 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param ats cutoffs
      */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats) {
-        this(predictions, test, ats, TYPE.EXP);
+        this(predictions, test, ats, TYPE.EXP, 1.0);
     }
 
     /**
@@ -63,11 +64,12 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param ats cutoffs
      * @param type type of NDCG computation
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats, TYPE type) {
+    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats, TYPE type, double relThreshold) {
         super(predictions, test);
         this.ndcg = Double.NaN;
         this.ats = ats;
         this.type = type;
+        this.relevanceThreshold = relThreshold;
     }
 
     /**
@@ -125,18 +127,20 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
         double dcg = 0.0;
         if (userTestItems.containsKey(item)) {
             double rel = userTestItems.get(item);
-            switch (type) {
-                case EXP: {
-                    dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
-                }
-                break;
-                case LIN: {
-                    dcg = rel;
-                    if (rank > 1) {
-                        dcg /= (Math.log(rank) / Math.log(2));
+            if (rel >= relevanceThreshold) {
+                switch (type) {
+                    case EXP: {
+                        dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
                     }
+                    break;
+                    case LIN: {
+                        dcg = rel;
+                        if (rank > 1) {
+                            dcg /= (Math.log(rank) / Math.log(2));
+                        }
+                    }
+                    break;
                 }
-                break;
             }
         }
         return dcg;
