@@ -9,6 +9,7 @@ import net.recommenders.rival.core.DataModel;
  * items.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
+ * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
 public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
 
@@ -27,13 +28,14 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
     /**
      * Array of cutoff levels
      */
-    int[] ats;
+    private int[] ats;
     /**
      * Type of nDCG computation (linear or exponential)
      */
-    TYPE type;
+    private TYPE type;
     private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
     private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
+    private double relevanceThreshold;
 
     /**
      * @inheritDoc
@@ -50,7 +52,7 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param ats cutoffs
      */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats) {
-        this(predictions, test, ats, TYPE.EXP);
+        this(predictions, test, ats, TYPE.EXP, 1.0);
     }
 
     /**
@@ -62,11 +64,12 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param ats cutoffs
      * @param type type of NDCG computation
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats, TYPE type) {
+    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats, TYPE type, double relThreshold) {
         super(predictions, test);
         this.ndcg = Double.NaN;
         this.ats = ats;
         this.type = type;
+        this.relevanceThreshold = relThreshold;
     }
 
     /**
@@ -102,6 +105,17 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
                 }
                 rank++;
             }
+            // assign the ndcg of the whole list to those cutoffs larger than the list's size
+            for (int at : ats) {
+                if (rank <= at) {
+                    Map<Long, Double> m = userDcgAtCutoff.get(at);
+                    if (m == null) {
+                        m = new HashMap<Long, Double>();
+                        userDcgAtCutoff.put(at, m);
+                    }
+                    m.put(user, dcg);
+                }
+            }
             double idcg = computeIDCG(user, userTestItems);
             double undcg = dcg / idcg;
             ndcg += undcg;
@@ -124,18 +138,20 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
         double dcg = 0.0;
         if (userTestItems.containsKey(item)) {
             double rel = userTestItems.get(item);
-            switch (type) {
-                case EXP: {
-                    dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
-                }
-                break;
-                case LIN: {
-                    dcg = rel;
-                    if (rank > 1) {
-                        dcg /= (Math.log(rank) / Math.log(2));
+            if (rel >= relevanceThreshold) {
+                switch (type) {
+                    case EXP: {
+                        dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
                     }
+                    break;
+                    case LIN: {
+                        dcg = rel;
+                        if (rank > 1) {
+                            dcg /= (Math.log(rank) / Math.log(2));
+                        }
+                    }
+                    break;
                 }
-                break;
             }
         }
         return dcg;
@@ -172,6 +188,17 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
             }
             rank++;
         }
+        // assign the ndcg of the whole list to those cutoffs larger than the list's size
+        for (int at : ats) {
+            if (rank <= at) {
+                Map<Long, Double> m = userIdcgAtCutoff.get(at);
+                if (m == null) {
+                    m = new HashMap<Long, Double>();
+                    userIdcgAtCutoff.put(at, m);
+                }
+                m.put(user, idcg);
+            }
+        }
         return idcg;
     }
 
@@ -189,12 +216,12 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param at cutoff level
      * @return the NDCG corresponding to the requested cutoff level
      */
-    public double getValue(int at) {
+    public double getValueAt(int at) {
         if (userDcgAtCutoff.containsKey(at) && userIdcgAtCutoff.containsKey(at)) {
             int n = 0;
             double ndcg = 0.0;
             for (long u : userIdcgAtCutoff.get(at).keySet()) {
-                double udcg = getValue(u, at);
+                double udcg = getValueAt(u, at);
                 if (!Double.isNaN(udcg)) {
                     ndcg += udcg;
                     n++;
@@ -206,7 +233,7 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
         return Double.NaN;
     }
 
-    public double getValue(long user, int at) {
+    public double getValueAt(long user, int at) {
         if (userDcgAtCutoff.containsKey(at) && userDcgAtCutoff.get(at).containsKey(user)
                 && userIdcgAtCutoff.containsKey(at) && userIdcgAtCutoff.get(at).containsKey(user)) {
             double idcg = userIdcgAtCutoff.get(at).get(user);
