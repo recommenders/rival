@@ -105,6 +105,17 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
                 }
                 rank++;
             }
+            // assign the ndcg of the whole list to those cutoffs larger than the list's size
+            for (int at : ats) {
+                if (rank <= at) {
+                    Map<Long, Double> m = userDcgAtCutoff.get(at);
+                    if (m == null) {
+                        m = new HashMap<Long, Double>();
+                        userDcgAtCutoff.put(at, m);
+                    }
+                    m.put(user, dcg);
+                }
+            }
             double idcg = computeIDCG(user, userTestItems);
             double undcg = dcg / idcg;
             ndcg += undcg;
@@ -176,6 +187,17 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
                 }
             }
             rank++;
+        }
+        // assign the ndcg of the whole list to those cutoffs larger than the list's size
+        for (int at : ats) {
+            if (rank <= at) {
+                Map<Long, Double> m = userIdcgAtCutoff.get(at);
+                if (m == null) {
+                    m = new HashMap<Long, Double>();
+                    userIdcgAtCutoff.put(at, m);
+                }
+                m.put(user, idcg);
+            }
         }
         return idcg;
     }
