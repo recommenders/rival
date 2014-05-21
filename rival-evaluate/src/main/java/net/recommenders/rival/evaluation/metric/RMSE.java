@@ -13,19 +13,22 @@ import java.util.Map;
 public class RMSE extends AbstractMetric implements EvaluationMetric<Long> {
 
     /**
-     * @inheritDoc
-     */
-    public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
-        super(predictions, test);
-    }
-    /**
      * Global RMSE
      */
     private double rmse;
 
     /**
+     * @inheritDoc
+     */
+    public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+        super(predictions, test);
+
+        this.rmse = Double.NaN;
+    }
+
+    /**
      * Instantiates and computes the RMSE value. Prior to running this, there is
-     * no RMSE value calculated.
+     * no valid RMSE value.
      *
      * @return The global RMSE
      */
@@ -38,10 +41,11 @@ public class RMSE extends AbstractMetric implements EvaluationMetric<Long> {
         int emptyItems = 0; // for coverage
 
         for (long testUser : test.getUsers()) {
-            double difference = 0.0;
             Map<Long, Double> ratings = actualRatings.get(testUser);
-            testItems += ratings.size();
+            int userItems = 0;
+            double umse = 0.0;
             for (long testItem : ratings.keySet()) {
+                double difference = 0.0;
                 double realRating = ratings.get(testItem);
                 double predictedRating = 0.0;
                 if (actualRatings.containsKey(testUser)) {
@@ -56,10 +60,11 @@ public class RMSE extends AbstractMetric implements EvaluationMetric<Long> {
                     continue;
                 }
                 difference = realRating - predictedRating;
-                rmse += difference * difference;
-                metricPerUser.put(testUser, Math.sqrt((difference * difference) / ratings.size()));
-
+                umse += difference * difference;
             }
+            testItems += userItems;
+            rmse += umse;
+            metricPerUser.put(testUser, Math.sqrt(umse / userItems));
         }
         rmse = Math.sqrt(rmse / testItems);
     }
