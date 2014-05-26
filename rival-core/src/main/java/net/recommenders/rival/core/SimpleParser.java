@@ -41,7 +41,10 @@ public class SimpleParser implements Parser {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         BufferedReader br = new BufferedReader(new FileReader(f));
-        String line = null;
+        String line = br.readLine();
+        if (!line.matches(".*[a-zA-Z].*")) {
+            parseLine(line, dataset, token);
+        }
         while ((line = br.readLine()) != null) {
             parseLine(line, dataset, token);
         }
