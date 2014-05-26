@@ -29,28 +29,25 @@ public class SimpleParser implements Parser {
      */
     public static final int TIME_TOK = 3;
 
-    public static String token = "\t";
-
     /**
      * @inheritDoc
      */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
+        return parseData(f, "\t");
+    }
+
+    public DataModel<Long, Long> parseData(File f, String token) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         BufferedReader br = new BufferedReader(new FileReader(f));
         String line = null;
         while ((line = br.readLine()) != null) {
-            parseLine(line, dataset);
+            parseLine(line, dataset, token);
         }
         br.close();
 
         return dataset;
-    }
-
-    public DataModel<Long, Long> parseData(File f, String token) throws IOException {
-        this.token = token;
-        return parseData(f);
     }
 
     /**
@@ -59,7 +56,7 @@ public class SimpleParser implements Parser {
      * @param line The line to be parsed.
      * @param dataset The dataset to add data from line to.
      */
-    private void parseLine(String line, DataModel<Long, Long> dataset) {
+    private void parseLine(String line, DataModel<Long, Long> dataset, String token) {
         String[] toks = line.split(token);
         // user
         long userId = Long.parseLong(toks[USER_TOK]);
