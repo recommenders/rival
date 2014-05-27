@@ -1,18 +1,20 @@
-package net.recommenders.rival.evaluation.metric;
+package net.recommenders.rival.evaluation.metric.error;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import net.recommenders.rival.evaluation.metric.*;
 import net.recommenders.rival.core.DataModel;
 
 import java.util.Map;
 
 /**
- * <a href="http://recsyswiki.com/wiki/RMSE" target="_blank">Root mean square
- * error</a> (RMSE) of a list of predicted ratings.
- *
- * @author <a href="http://github.com/alansaid">Alan</a>.
+ * @author <a href="http://github.com/alansaid">Alan</a>, <a
+ * href="http://github.com/abellogin">Alejandro</a>.
  */
-public class RMSE extends AbstractMetric implements EvaluationMetric<Long> {
+public abstract class AbstractErrorMetric extends AbstractMetric implements EvaluationMetric<Long> {
 
-    public static enum RMSEStrategy {
+    public static enum ErrorStrategy {
 
         CONSIDER_EVERYTHING,
         NOT_CONSIDER_NAN,
@@ -21,53 +23,58 @@ public class RMSE extends AbstractMetric implements EvaluationMetric<Long> {
         CONSIDER_NAN_AS_3;
     }
     /**
-     * Global RMSE
+     * Global value
      */
-    private double rmse;
+    protected double value;
     /**
-     * Strategy to decide what to do when there is no predicted value for a 
-     * user and item contained in the test set
+     * For coverage
      */
-    private RMSEStrategy rmseStrategy;
+    protected int emptyUsers; 
+    /**
+     * For coverage
+     */
+    protected int emptyItems;
+    /**
+     * Strategy to decide what to do when there is no predicted value for a user
+     * and item contained in the test set
+     */
+    private ErrorStrategy strategy;
 
     /**
      * @inheritDoc
      */
-    public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
-        this(predictions, test, RMSEStrategy.NOT_CONSIDER_NAN);
+    public AbstractErrorMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+        this(predictions, test, ErrorStrategy.NOT_CONSIDER_NAN);
     }
 
     /**
      *
      * @param predictions
      * @param test
-     * @param rmseStrategy
+     * @param strategy
      */
-    public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, RMSEStrategy rmseStrategy) {
+    public AbstractErrorMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy strategy) {
         super(predictions, test);
 
-        this.rmse = Double.NaN;
-        this.rmseStrategy = rmseStrategy;
+        this.value = Double.NaN;
+        this.strategy = strategy;
     }
 
-    /**
-     * Instantiates and computes the RMSE value. Prior to running this, there is
-     * no valid RMSE value.
-     *
-     * @return The global RMSE
-     */
-    public void compute() {
+    public Map<Long, List<Double>> processData() {
+        Map<Long, List<Double>> data = new HashMap<Long, List<Double>>();
         Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
         Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
-        int testItems = 0;
-        rmse = 0.0;
-        int emptyUsers = 0; // for coverage
-        int emptyItems = 0; // for coverage
+
+        emptyItems = 0;
+        emptyUsers = 0;
 
         for (long testUser : test.getUsers()) {
             Map<Long, Double> ratings = actualRatings.get(testUser);
-            int userItems = 0;
-            double umse = 0.0;
+            List<Double> userData = data.get(testUser);
+            if (userData == null) {
+                userData = new ArrayList<Double>();
+                data.put(testUser, userData);
+            }
             for (long testItem : ratings.keySet()) {
                 double difference = 0.0;
                 double realRating = ratings.get(testItem);
@@ -77,30 +84,23 @@ public class RMSE extends AbstractMetric implements EvaluationMetric<Long> {
                         predictedRating = predictedRatings.get(testUser).get(testItem);
                     } else {
                         emptyItems++;
-//                        continue; // we can delete this because the method considerEstimatedPreference already deals with the other cases
                     }
                 } else {
                     emptyUsers++;
-//                        continue; // we can delete this because the method considerEstimatedPreference already deals with the other cases
                 }
-                // get estimated preference depending on the RMSEstrategy
-                predictedRating = considerEstimatedPreference(rmseStrategy, predictedRating);
+                // get estimated preference depending on the ErrorStrategy
+                predictedRating = considerEstimatedPreference(strategy, predictedRating);
                 // if returned value is NaN, then we ignore the predicted rating
                 if (!Double.isNaN(predictedRating)) {
                     difference = realRating - predictedRating;
-                    umse += difference * difference;
-                    userItems++;
+                    userData.add(difference);
                 }
             }
-            testItems += userItems;
-            rmse += umse;
-            umse = (userItems == 0) ? Double.NaN : Math.sqrt(umse / userItems);
-            metricPerUser.put(testUser, umse);
         }
-        rmse = (testItems == 0) ? Double.NaN : Math.sqrt(rmse / testItems);
+        return data;
     }
 
-    public static double considerEstimatedPreference(RMSEStrategy strategy, double recValue) {
+    public static double considerEstimatedPreference(ErrorStrategy strategy, double recValue) {
         boolean consider = true;
         switch (strategy) {
             case CONSIDER_EVERYTHING:
@@ -136,6 +136,6 @@ public class RMSE extends AbstractMetric implements EvaluationMetric<Long> {
      */
     @Override
     public double getValue() {
-        return rmse;
+        return value;
     }
 }
