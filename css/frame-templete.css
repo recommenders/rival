@@ -97,7 +97,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .bf-docs-nav .navbar-brand {
   padding-left: 60px;
   color: #fff;
-  background: url(../img/nav-logo.png) no-repeat 15px 8px;
+  background: url(../img/nav-logo.png) no-repeat 150px 8px;
 }
 .bf-docs-nav .navbar-nav > li > a {
   margin: 5px 5px 0;
@@ -142,7 +142,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 .bf-masthead .logo {
   background: url(../img/logo.png) no-repeat 50% 0;
-  height: 203px;
+  height: 253px;
 }
 .bf-masthead h1 {
   margin-top: -30px;
