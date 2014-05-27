@@ -95,9 +95,9 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   border-bottom: 1px solid #454545 !important;  
 }
 .bf-docs-nav .navbar-brand {
-  padding-left: 60px;
+  padding-left: 80px;
   color: #fff;
-  background: url(../img/nav-logo.png) no-repeat 150px 8px;
+  background: url(../img/nav-logo.png) no-repeat 15px 3px;
 }
 .bf-docs-nav .navbar-nav > li > a {
   margin: 5px 5px 0;
