@@ -72,6 +72,40 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
     }
 
     /**
+     * Method that computes the number of relevant items in the test set for a
+     * user
+     *
+     * @param user a user
+     * @return the number of relevant items the user has in the test set
+     */
+    protected double getNumberOfRelevantItems(long user) {
+        int n = 0;
+        if (test.getUserItemPreferences().containsKey(user)) {
+            for (Map.Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
+                if (e.getValue() >= relevanceThreshold) {
+                    n++;
+                }
+            }
+        }
+        return n * 1.0;
+    }
+
+    /**
+     * Method that computes the binary precision of a specific item, taking into
+     * account its relevance value.
+     *
+     * @param rel the item's relevance
+     * @return the binary precision of the item
+     */
+    protected double computeBinaryPrecision(double rel) {
+        double prec = 0.0;
+        if (rel >= relevanceThreshold) {
+            prec = 1.0;
+        }
+        return prec;
+    }
+
+    /**
      * @inheritDoc
      */
     @Override

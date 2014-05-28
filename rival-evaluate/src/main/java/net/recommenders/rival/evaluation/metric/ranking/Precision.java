@@ -61,7 +61,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
             double uprec = 0.0;
             int rank = 1;
             for (double rel : sortedList) {
-                uprec += computePrecision(rel);
+                uprec += computeBinaryPrecision(rel);
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
@@ -95,21 +95,6 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
             }
         }
         value = value / nUsers;
-    }
-
-    /**
-     * Method that computes the precision of a specific item, taking into
-     * account its relevance value.
-     *
-     * @param rel the item's relevance
-     * @return the precision of the item
-     */
-    private double computePrecision(double rel) {
-        double prec = 0.0;
-        if (rel >= relevanceThreshold) {
-            prec = 1.0;
-        }
-        return prec;
     }
 
     /**
