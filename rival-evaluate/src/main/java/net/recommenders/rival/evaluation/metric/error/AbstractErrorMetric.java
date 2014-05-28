@@ -9,8 +9,8 @@ import net.recommenders.rival.core.DataModel;
 import java.util.Map;
 
 /**
- * @author <a href="http://github.com/alansaid">Alan</a>, <a
- * href="http://github.com/abellogin">Alejandro</a>.
+ * @author <a href="http://github.com/alansaid">Alan</a>
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public abstract class AbstractErrorMetric extends AbstractMetric implements EvaluationMetric<Long> {
 
@@ -60,7 +60,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
         this.strategy = strategy;
     }
 
-    public Map<Long, List<Double>> processData() {
+    public Map<Long, List<Double>> processDataAsPredictedDifferencesToTest() {
         Map<Long, List<Double>> data = new HashMap<Long, List<Double>>();
         Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
         Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();

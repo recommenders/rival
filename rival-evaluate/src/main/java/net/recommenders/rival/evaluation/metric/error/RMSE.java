@@ -36,7 +36,7 @@ public class RMSE extends AbstractErrorMetric implements EvaluationMetric<Long> 
      * @return The global RMSE
      */
     public void compute() {
-        Map<Long, List<Double>> data = processData();
+        Map<Long, List<Double>> data = processDataAsPredictedDifferencesToTest();
         value = 0.0;
         int testItems = 0;
         for (long testUser : test.getUsers()) {
