@@ -20,9 +20,21 @@ import org.grouplens.lenskit.knn.user.UserSimilarity;
 public final class GenericRecommenderBuilder<T>
         implements RecommenderBuilder {
 
+    /**
+     * Number of neighbors.
+     */
     public static final int DEFAULT_N = 50;
+    /**
+     * Number of neighbors when no neighbors are to be used.
+     */
     public static final int NO_N = 0;
+    /**
+     * No iterations.
+     */
     public static final int NOITER = 0;
+    /**
+     * No factors.
+     */
     public static final int NOFACTORS = 0;
 
     @Override

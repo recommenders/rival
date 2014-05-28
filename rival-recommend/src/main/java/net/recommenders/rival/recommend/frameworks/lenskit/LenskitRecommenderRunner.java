@@ -35,8 +35,15 @@ import org.slf4j.LoggerFactory;
  */
 public class LenskitRecommenderRunner extends AbstractRunner {
 
+    /**
+     * Logger
+     */
     private final static Logger logger = LoggerFactory.getLogger(LenskitRecommenderRunner.class);
 
+    /**
+     * Default constructor
+     * @param _properties properties
+     */
     public LenskitRecommenderRunner(Properties _properties) {
         super(_properties);
     }

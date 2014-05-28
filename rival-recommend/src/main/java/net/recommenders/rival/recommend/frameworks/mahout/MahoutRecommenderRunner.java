@@ -21,9 +21,19 @@ import java.util.Properties;
  */
 public class MahoutRecommenderRunner extends AbstractRunner {
 
+    /**
+     * Default neighborhood size.
+     */
     public static final int DEFAULT_NEIGHBORHOOD_SIZE = 50;
+    /**
+     * Default number of iterations.
+     */
     public static final int DEFAULT_ITERATIONS = 50;
 
+    /**
+     * Default constructor.
+     * @param _properties   the properties.
+     */
     public MahoutRecommenderRunner(Properties _properties) {
         super(_properties);
     }

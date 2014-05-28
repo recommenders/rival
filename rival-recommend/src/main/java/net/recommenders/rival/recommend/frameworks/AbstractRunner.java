@@ -17,13 +17,35 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRunner {
 
+    /**
+     * Logger.
+     */
     private final static Logger logger = LoggerFactory.getLogger(AbstractRunner.class);
+    /**
+     * Default number of iterations.
+     */
     public static final int DEFAULT_ITERATIONS = 50;
+    /**
+     * The properties.
+     */
     public Properties properties;
+    /**
+     * The file name where the properties live.
+     */
     private String fileName;
+    /**
+     * The path where output is written to.
+     */
     private String path;
+    /**
+     * True if this recommender has already been issued and output files exist.
+     */
     protected boolean alreadyRecommended;
 
+    /**
+     * Default constructor.
+     * @param properties    The properties.
+     */
     public AbstractRunner(Properties properties) {
         this.properties = properties;
         this.setFileName();
@@ -35,6 +57,12 @@ public abstract class AbstractRunner {
         path = properties.getProperty(RecommendationRunner.output);
     }
 
+    /**
+     * Write recommendations to file.
+     * @param user  the user
+     * @param recommendations   the recommendations
+     * @param <T>
+     */
     public <T> void writeData(long user, List<T> recommendations) {
         try {
             File dir = new File(path);
@@ -58,6 +86,9 @@ public abstract class AbstractRunner {
         }
     }
 
+    /**
+     * Create the file name of the output file.
+     */
     public void setFileName() {
         String type = "";
         // lenskit does not provide a factorizer class. This check is to actually see if it's a Mahout or Lenskit SVD.
@@ -87,14 +118,26 @@ public abstract class AbstractRunner {
         System.out.println(fileName);
     }
 
+    /**
+     * Get file name with canonical path.
+     * @return the file name and path.
+     */
     public String getCanonicalFileName() {
         return path + "/" + fileName + ".stats";
     }
 
+    /**
+     * Sets the properties.
+     * @param properties    the properties
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
+    /**
+     * Check if there already exist recommendations for this recommender.
+     * @return  true if recommendations exist.
+     */
     public boolean getAlreadyRecommended() {
         return alreadyRecommended;
     }
