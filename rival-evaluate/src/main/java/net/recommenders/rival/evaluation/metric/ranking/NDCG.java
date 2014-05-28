@@ -1,7 +1,10 @@
-package net.recommenders.rival.evaluation.metric;
+package net.recommenders.rival.evaluation.metric.ranking;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
  * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
@@ -11,7 +14,7 @@ import net.recommenders.rival.core.DataModel;
  * @author <a href="http://github.com/alansaid">Alan</a>.
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
+public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long> {
 
     /**
      * Type of nDCG computation (linear or exponential)
@@ -22,20 +25,11 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
         EXP;
     }
     /**
-     * Global NDCG
-     */
-    private double ndcg;
-    /**
-     * Array of cutoff levels
-     */
-    private int[] ats;
-    /**
      * Type of nDCG computation (linear or exponential)
      */
     private TYPE type;
     private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
     private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
-    private double relevanceThreshold;
 
     /**
      * @inheritDoc
@@ -65,11 +59,8 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param type type of NDCG computation
      */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats, TYPE type, double relThreshold) {
-        super(predictions, test);
-        this.ndcg = Double.NaN;
-        this.ats = ats;
+        super(predictions, test, relThreshold, ats);
         this.type = type;
-        this.relevanceThreshold = relThreshold;
     }
 
     /**
@@ -78,20 +69,19 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      */
     @Override
     public void compute() {
-        ndcg = 0.0;
+        value = 0.0;
+        Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
         userDcgAtCutoff = new HashMap<Integer, Map<Long, Double>>();
         userIdcgAtCutoff = new HashMap<Integer, Map<Long, Double>>();
         metricPerUser = new HashMap<Long, Double>();
 
         int nUsers = 0;
-        Set<Long> predictedUsers = predictions.getUsers();
-        for (long user : predictedUsers) {
-            Map<Long, Double> userTestItems = test.getUserItemPreferences().get(user);
-            List<Long> sortedList = rankUserPredictions(user);
+        for (long user : data.keySet()) {
+            List<Double> sortedList = data.get(user);
             double dcg = 0.0;
             int rank = 1;
-            for (long item : sortedList) {
-                dcg += computeDCG(item, rank, userTestItems);
+            for (double rel : sortedList) {
+                dcg += computeDCG(rel, rank);
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
@@ -116,44 +106,40 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
                     m.put(user, dcg);
                 }
             }
-            double idcg = computeIDCG(user, userTestItems);
+            double idcg = computeIDCG(user, test.getUserItemPreferences().get(user));
             double undcg = dcg / idcg;
             if (!Double.isNaN(undcg)) {
-                ndcg += undcg;
+                value += undcg;
                 metricPerUser.put(user, undcg);
                 nUsers++;
             }
         }
-        ndcg = ndcg / nUsers;
+        value = value / nUsers;
     }
 
     /**
      * Method that computes the discounted cumulative gain of a specific item,
-     * taking into account its ranking in a user's list and its relevance.
+     * taking into account its ranking in a user's list and its relevance value.
      *
-     * @param item the item
+     * @param rel the item's relevance
      * @param rank the item's rank in a user's list (sorted by predicted rating)
-     * @param userTestItems groundtruth information for a specific user
      * @return the dcg of the item
      */
-    protected double computeDCG(long item, int rank, Map<Long, Double> userTestItems) {
+    protected double computeDCG(double rel, int rank) {
         double dcg = 0.0;
-        if (userTestItems.containsKey(item)) {
-            double rel = userTestItems.get(item);
-            if (rel >= relevanceThreshold) {
-                switch (type) {
-                    case EXP: {
-                        dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
-                    }
-                    break;
-                    case LIN: {
-                        dcg = rel;
-                        if (rank > 1) {
-                            dcg /= (Math.log(rank) / Math.log(2));
-                        }
-                    }
-                    break;
+        if (rel >= relevanceThreshold) {
+            switch (type) {
+                case EXP: {
+                    dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
                 }
+                break;
+                case LIN: {
+                    dcg = rel;
+                    if (rank > 1) {
+                        dcg /= (Math.log(rank) / Math.log(2));
+                    }
+                }
+                break;
             }
         }
         return dcg;
@@ -173,10 +159,10 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
     private double computeIDCG(long user, Map<Long, Double> userTestItems) {
         double idcg = 0.0;
         // sort the items according to their relevance level
-        List<Long> sortedList = rankUserTest(user);
+        List<Double> sortedList = rankScores(userTestItems);
         int rank = 1;
-        for (long item : sortedList) {
-            idcg += computeDCG(item, rank, userTestItems);
+        for (double itemRel : sortedList) {
+            idcg += computeDCG(itemRel, rank);
             // compute at a particular cutoff
             for (int at : ats) {
                 if (rank == at) {
@@ -202,14 +188,6 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
             }
         }
         return idcg;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public double getValue() {
-        return ndcg;
     }
 
     /**

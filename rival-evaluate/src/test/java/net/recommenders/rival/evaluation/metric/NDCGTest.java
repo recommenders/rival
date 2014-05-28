@@ -1,5 +1,6 @@
 package net.recommenders.rival.evaluation.metric;
 
+import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.Before;

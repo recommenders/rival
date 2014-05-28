@@ -1,47 +1,37 @@
-package net.recommenders.rival.evaluation.metric;
+package net.recommenders.rival.evaluation.metric.ranking;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
- * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
- * target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
- * items.
+ * Recall of a ranked list of items.
  *
- * @author <a href="http://github.com/alansaid">Alan</a>.
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
+public class Recall extends AbstractRankingMetric implements EvaluationMetric<Long> {
 
-    /**
-     * Type of nDCG computation (linear or exponential)
-     */
-    public static enum TYPE {
-
-        LIN,
-        EXP;
-    }
-    /**
-     * Global NDCG
-     */
-    private double ndcg;
-    /**
-     * Array of cutoff levels
-     */
-    private int[] ats;
-    /**
-     * Type of nDCG computation (linear or exponential)
-     */
-    private TYPE type;
-    private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
-    private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
-    private double relevanceThreshold;
+    private Map<Integer, Map<Long, Double>> userRecallAtCutoff;
 
     /**
      * @inheritDoc
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
-        this(predictions, test, new int[]{});
+    public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+        this(predictions, test, 1.0);
+    }
+
+    /**
+     * Constructor where the relevance threshold can be initialized
+     *
+     * @param predictions predicted ratings
+     * @param test groundtruth ratings
+     * @param relThreshold relevance threshold
+     */
+    public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold) {
+        this(predictions, test, relThreshold, new int[]{});
     }
 
     /**
@@ -51,196 +41,126 @@ public class NDCG extends AbstractMetric implements EvaluationMetric<Long> {
      * @param test groundtruth ratings
      * @param ats cutoffs
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats) {
-        this(predictions, test, ats, TYPE.EXP, 1.0);
+    public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {
+        super(predictions, test, relThreshold, ats);
     }
 
     /**
-     * Constructor where the cutoff levels and the type of NDCG computation can
-     * be initialized
-     *
-     * @param predictions predicted ratings
-     * @param test groundtruth ratings
-     * @param ats cutoffs
-     * @param type type of NDCG computation
-     */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats, TYPE type, double relThreshold) {
-        super(predictions, test);
-        this.ndcg = Double.NaN;
-        this.ats = ats;
-        this.type = type;
-        this.relevanceThreshold = relThreshold;
-    }
-
-    /**
-     * Computes the global NDCG by first summing the NDCG for each user and then
-     * averaging by the number of users.
+     * Computes the global recall by first summing the recall for each user and
+     * then averaging by the number of users.
      */
     @Override
     public void compute() {
-        ndcg = 0.0;
-        userDcgAtCutoff = new HashMap<Integer, Map<Long, Double>>();
-        userIdcgAtCutoff = new HashMap<Integer, Map<Long, Double>>();
+        value = 0.0;
+        Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
+        userRecallAtCutoff = new HashMap<Integer, Map<Long, Double>>();
         metricPerUser = new HashMap<Long, Double>();
 
         int nUsers = 0;
-        Set<Long> predictedUsers = predictions.getUsers();
-        for (long user : predictedUsers) {
-            Map<Long, Double> userTestItems = test.getUserItemPreferences().get(user);
-            List<Long> sortedList = rankUserPredictions(user);
-            double dcg = 0.0;
+        for (long user : data.keySet()) {
+            List<Double> sortedList = data.get(user);
+            // number of relevant items for this user
+            double uRel = getNumberOfRelevantItems(user);
+            double urec = 0.0;
             int rank = 1;
-            for (long item : sortedList) {
-                dcg += computeDCG(item, rank, userTestItems);
+            for (double rel : sortedList) {
+                urec += computeRecall(rel);
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
-                        Map<Long, Double> m = userDcgAtCutoff.get(at);
+                        Map<Long, Double> m = userRecallAtCutoff.get(at);
                         if (m == null) {
                             m = new HashMap<Long, Double>();
-                            userDcgAtCutoff.put(at, m);
+                            userRecallAtCutoff.put(at, m);
                         }
-                        m.put(user, dcg);
+                        m.put(user, urec / uRel);
                     }
                 }
                 rank++;
             }
+            // normalize by number of relevant items
+            urec /= uRel;
             // assign the ndcg of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
                 if (rank <= at) {
-                    Map<Long, Double> m = userDcgAtCutoff.get(at);
+                    Map<Long, Double> m = userRecallAtCutoff.get(at);
                     if (m == null) {
                         m = new HashMap<Long, Double>();
-                        userDcgAtCutoff.put(at, m);
+                        userRecallAtCutoff.put(at, m);
                     }
-                    m.put(user, dcg);
+                    m.put(user, urec);
                 }
             }
-            double idcg = computeIDCG(user, userTestItems);
-            double undcg = dcg / idcg;
-            if (!Double.isNaN(undcg)) {
-                ndcg += undcg;
-                metricPerUser.put(user, undcg);
+            if (!Double.isNaN(urec)) {
+                value += urec;
+                metricPerUser.put(user, urec);
                 nUsers++;
             }
         }
-        ndcg = ndcg / nUsers;
+        value = value / nUsers;
     }
 
     /**
-     * Method that computes the discounted cumulative gain of a specific item,
-     * taking into account its ranking in a user's list and its relevance.
+     * Method that computes the recall of a specific item, taking into account
+     * its relevance value.
      *
-     * @param item the item
-     * @param rank the item's rank in a user's list (sorted by predicted rating)
-     * @param userTestItems groundtruth information for a specific user
-     * @return the dcg of the item
+     * @param rel the item's relevance
+     * @return the recall of the item
      */
-    protected double computeDCG(long item, int rank, Map<Long, Double> userTestItems) {
-        double dcg = 0.0;
-        if (userTestItems.containsKey(item)) {
-            double rel = userTestItems.get(item);
-            if (rel >= relevanceThreshold) {
-                switch (type) {
-                    case EXP: {
-                        dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
-                    }
-                    break;
-                    case LIN: {
-                        dcg = rel;
-                        if (rank > 1) {
-                            dcg /= (Math.log(rank) / Math.log(2));
-                        }
-                    }
-                    break;
-                }
-            }
+    private double computeRecall(double rel) {
+        double prec = 0.0;
+        if (rel >= relevanceThreshold) {
+            prec = 1.0;
         }
-        return dcg;
+        return prec;
     }
 
     /**
-     * Computes the ideal <a
-     * href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
-     * target="_blank">discounted cumulative gain</a> (IDCG) given the test set
-     * (groundtruth items) for a user.
+     * Method that computes the number of relevant items in the test set for a
+     * user
      *
-     * @user the user
-     *
-     * @param userTestItems the groundtruth items of a user.
-     * @return the IDCG
+     * @param user a user
+     * @return the number of relevant items the user has in the test set
      */
-    private double computeIDCG(long user, Map<Long, Double> userTestItems) {
-        double idcg = 0.0;
-        // sort the items according to their relevance level
-        List<Long> sortedList = rankUserTest(user);
-        int rank = 1;
-        for (long item : sortedList) {
-            idcg += computeDCG(item, rank, userTestItems);
-            // compute at a particular cutoff
-            for (int at : ats) {
-                if (rank == at) {
-                    Map<Long, Double> m = userIdcgAtCutoff.get(at);
-                    if (m == null) {
-                        m = new HashMap<Long, Double>();
-                        userIdcgAtCutoff.put(at, m);
-                    }
-                    m.put(user, idcg);
-                }
-            }
-            rank++;
-        }
-        // assign the ndcg of the whole list to those cutoffs larger than the list's size
-        for (int at : ats) {
-            if (rank <= at) {
-                Map<Long, Double> m = userIdcgAtCutoff.get(at);
-                if (m == null) {
-                    m = new HashMap<Long, Double>();
-                    userIdcgAtCutoff.put(at, m);
-                }
-                m.put(user, idcg);
-            }
-        }
-        return idcg;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public double getValue() {
-        return ndcg;
-    }
-
-    /**
-     * Method to return the NDCG value at a particular cutoff level.
-     *
-     * @param at cutoff level
-     * @return the NDCG corresponding to the requested cutoff level
-     */
-    public double getValueAt(int at) {
-        if (userDcgAtCutoff.containsKey(at) && userIdcgAtCutoff.containsKey(at)) {
-            int n = 0;
-            double ndcg = 0.0;
-            for (long u : userIdcgAtCutoff.get(at).keySet()) {
-                double udcg = getValueAt(u, at);
-                if (!Double.isNaN(udcg)) {
-                    ndcg += udcg;
+    private double getNumberOfRelevantItems(long user) {
+        int n = 0;
+        if (test.getUserItemPreferences().containsKey(user)) {
+            for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
+                if (e.getValue() >= relevanceThreshold) {
                     n++;
                 }
             }
-            ndcg = (n == 0) ? 0.0 : ndcg / n;
-            return ndcg;
+        }
+        return n * 1.0;
+    }
+
+    /**
+     * Method to return the recall value at a particular cutoff level.
+     *
+     * @param at cutoff level
+     * @return the recall corresponding to the requested cutoff level
+     */
+    public double getValueAt(int at) {
+        if (userRecallAtCutoff.containsKey(at)) {
+            int n = 0;
+            double rec = 0.0;
+            for (long u : userRecallAtCutoff.get(at).keySet()) {
+                double urec = getValueAt(u, at);
+                if (!Double.isNaN(urec)) {
+                    rec += urec;
+                    n++;
+                }
+            }
+            rec = (n == 0) ? 0.0 : rec / n;
+            return rec;
         }
         return Double.NaN;
     }
 
     public double getValueAt(long user, int at) {
-        if (userDcgAtCutoff.containsKey(at) && userDcgAtCutoff.get(at).containsKey(user)
-                && userIdcgAtCutoff.containsKey(at) && userIdcgAtCutoff.get(at).containsKey(user)) {
-            double idcg = userIdcgAtCutoff.get(at).get(user);
-            double dcg = userDcgAtCutoff.get(at).get(user);
-            return dcg / idcg;
+        if (userRecallAtCutoff.containsKey(at) && userRecallAtCutoff.get(at).containsKey(user)) {
+            double rec = userRecallAtCutoff.get(at).get(user);
+            return rec;
         }
         return Double.NaN;
     }

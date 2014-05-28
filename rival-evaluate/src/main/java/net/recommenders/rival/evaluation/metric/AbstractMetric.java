@@ -51,32 +51,12 @@ public abstract class AbstractMetric implements EvaluationMetric<Long> {
     }
 
     /**
-     * Ranks the set of items by predicted rating.
+     * Ranks the set of items by associated score.
      *
-     * @param user
+     * @param userItems map with scores for each item
      * @return the ranked list
      */
-    protected List<Long> rankUserTest(long user) {
-        return rankUserMap(user, test.getUserItemPreferences().get(user));
-    }
-
-    /**
-     * Ranks the set of items by predicted rating.
-     *
-     * @param user
-     * @return the ranked list
-     */
-    protected List<Long> rankUserPredictions(long user) {
-        return rankUserMap(user, predictions.getUserItemPreferences().get(user));
-    }
-
-    /**
-     * Ranks the set of items by predicted rating.
-     *
-     * @param user
-     * @return the ranked list
-     */
-    private List<Long> rankUserMap(long user, Map<Long, Double> userItems) {
+    protected List<Long> rankItems(Map<Long, Double> userItems) {
         List<Long> sortedItems = new ArrayList<Long>();
         if (userItems == null) {
             return sortedItems;
@@ -104,5 +84,28 @@ public abstract class AbstractMetric implements EvaluationMetric<Long> {
             }
         }
         return sortedItems;
+    }
+
+    /**
+     * Ranks the scores of an item-score map.
+     *
+     * @param userItems map with scores for each item
+     * @return the ranked list
+     */
+    protected List<Double> rankScores(Map<Long, Double> userItems) {
+        List<Double> sortedScores = new ArrayList<Double>();
+        if (userItems == null) {
+            return sortedScores;
+        }
+        for (Map.Entry<Long, Double> e : userItems.entrySet()) {
+            double pref = e.getValue();
+            if (Double.isNaN(pref)) {
+                // we ignore any preference assigned as NaN
+                continue;
+            }
+            sortedScores.add(pref);
+        }
+        Collections.sort(sortedScores, Collections.reverseOrder());
+        return sortedScores;
     }
 }
