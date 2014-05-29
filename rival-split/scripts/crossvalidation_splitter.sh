@@ -23,6 +23,7 @@ fi
 
 if $per_user
 then
+	echo "Per user cross validation"
 	# per_user cross validation
 	for (( i=1; i <= $num_fold; i++ ))
 	do
@@ -51,14 +52,13 @@ then
 			REMAINDER=`expr $RATINGS_COUNT % $num_fold`
 
 			# training
-			head -`expr \( $i - 1 \) \* $SET_SIZE` $dataset_user >> $training_file
-			tail -`expr \( $num_fold - $i \) \* $SET_SIZE` $dataset_user >> $training_file
+			head -$(( ($i - 1) * $SET_SIZE )) $dataset_user >> $training_file
 			if [ $i -ne $num_fold ]; then
-				tail -$REMAINDER $dataset_user >> $training_file
+				tail -n +$(( $i * $SET_SIZE + 1 )) $dataset_user >> $training_file
 			fi
 
 			# test
-			head -`expr $i \* $SET_SIZE` $dataset_user | tail -$SET_SIZE >> $test_file
+			sed -n "$(( ($i - 1) * $SET_SIZE + 1 )), $(( $i * SET_SIZE ))p" $dataset_user >> $test_file
 			if [ $i -eq $num_fold ]; then
 				tail -$REMAINDER $dataset_user >> $test_file
 			fi
@@ -70,6 +70,7 @@ then
 	    fi
 	done
 else
+	echo "Global cross validation"
 	# global cross validation
 	dataset_shuf=$dataset\_shuf
 	shuf $dataset > $dataset_shuf
@@ -87,10 +88,9 @@ else
 	    then
 		echo "ignoring $training_file"
 	    else
-		head -`expr \( $i - 1 \) \* $SET_SIZE` $dataset_shuf > $training_file
-		tail -`expr \( $num_fold - $i \) \* $SET_SIZE` $dataset_shuf >> $training_file
+		head -$(( ($i - 1) * $SET_SIZE )) $dataset_shuf > $training_file
 		if [ $i -ne $num_fold ]; then
-			tail -$REMAINDER $dataset_shuf >> $training_file
+			tail -n +$(( $i * $SET_SIZE + 1 )) $dataset_shuf >> $training_file
 		fi
 		echo "$training_file created.  `wc -l $training_file | cut -d " " -f 1` lines."
 	    fi
@@ -99,7 +99,7 @@ else
 	    then
 		echo "ignoring $test_file"
 	    else
-		head -`expr $i \* $SET_SIZE` $dataset_shuf | tail -$SET_SIZE > $test_file
+		sed -n "$(( ($i - 1) * $SET_SIZE + 1 )), $(( $i * SET_SIZE ))p" $dataset_shuf > $test_file
 		if [ $i -eq $num_fold ]; then
 			tail -$REMAINDER $dataset_shuf >> $test_file
 		fi
