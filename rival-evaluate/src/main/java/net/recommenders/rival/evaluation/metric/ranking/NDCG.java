@@ -22,7 +22,8 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
     public static enum TYPE {
 
         LIN,
-        EXP;
+        EXP,
+        TREC_EVAL;
     }
     /**
      * Type of nDCG computation (linear or exponential)
@@ -151,6 +152,10 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
                     if (rank > 1) {
                         dcg /= (Math.log(rank) / Math.log(2));
                     }
+                }
+                break;
+                case TREC_EVAL: {
+                    dcg = rel / (Math.log(rank + 1) / Math.log(2));
                 }
                 break;
             }
