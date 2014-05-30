@@ -40,9 +40,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
      */
     private ErrorStrategy strategy;
 
-    /**
-     * @inheritDoc
-     */
+
     public AbstractErrorMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, ErrorStrategy.NOT_CONSIDER_NAN);
     }

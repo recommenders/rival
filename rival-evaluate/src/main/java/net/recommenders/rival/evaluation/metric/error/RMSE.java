@@ -14,17 +14,11 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  */
 public class RMSE extends AbstractErrorMetric implements EvaluationMetric<Long> {
 
-    /**
-     * @inheritDoc
-     */
+
     public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         super(predictions, test);
     }
 
-    /**
-     *
-     * @inheritDoc
-     */
     public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy errorStrategy) {
         super(predictions, test, errorStrategy);
     }
@@ -33,7 +27,6 @@ public class RMSE extends AbstractErrorMetric implements EvaluationMetric<Long> 
      * Instantiates and computes the RMSE value. Prior to running this, there is
      * no valid value.
      *
-     * @return The global RMSE
      */
     public void compute() {
         Map<Long, List<Double>> data = processDataAsPredictedDifferencesToTest();

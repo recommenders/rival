@@ -8,7 +8,7 @@ import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.ParserWithIdMapping;
 
 /**
- * @inheritDoc
+ *
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -31,9 +31,6 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
      */
     public static final int PREF_TOK = 3;
 
-    /**
-     * @inheritDoc
-     */
     public LastfmCelma360KParser(boolean useArtists) {
         super(useArtists);
     }

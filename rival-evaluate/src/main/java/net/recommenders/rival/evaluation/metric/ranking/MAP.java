@@ -15,9 +15,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
 
     private Map<Integer, Map<Long, Double>> userMAPAtCutoff;
 
-    /**
-     * @inheritDoc
-     */
+
     public MAP(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }

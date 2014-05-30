@@ -1,0 +1,17 @@
+                        ---------------------
+                          Release Notes
+                        ---------------------
+
+#macro ( release $ver )
+#if( $project.version == "${ver}-SNAPSHOT" )##
+* {{{./rival-${ver}.html}Release $ver}} (in progress)
+#else
+* {{{./rival-${ver}.html}Release $ver}}
+#end
+#end
+
+LensKit Releases
+
+  #release("0.1")
+
+  []

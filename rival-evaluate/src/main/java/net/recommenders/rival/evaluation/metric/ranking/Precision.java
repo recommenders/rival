@@ -15,9 +15,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
 
     private Map<Integer, Map<Long, Double>> userPrecAtCutoff;
 
-    /**
-     * @inheritDoc
-     */
+
     public Precision(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }
