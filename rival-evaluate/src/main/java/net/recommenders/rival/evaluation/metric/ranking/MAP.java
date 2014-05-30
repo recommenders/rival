@@ -56,6 +56,10 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
      */
     @Override
     public void compute() {
+        if (!Double.isNaN(value)) {
+            // since the data cannot change, avoid re-doing the calculations
+            return;
+        }
         value = 0.0;
         Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
         userMAPAtCutoff = new HashMap<Integer, Map<Long, Double>>();
@@ -68,10 +72,14 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
             double uRel = getNumberOfRelevantItems(user);
             double uMAP = 0.0;
             double uPrecision = 0.0;
-            int rank = 1;
+            int rank = 0;
             for (double rel : sortedList) {
-                uPrecision += computeBinaryPrecision(rel);
-                uMAP += uPrecision / rank;
+                rank++;
+                double itemPrecision = computeBinaryPrecision(rel);
+                uPrecision += itemPrecision;
+                if (itemPrecision > 0) {
+                    uMAP += uPrecision / rank;
+                }
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
@@ -83,7 +91,6 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
                         m.put(user, uMAP / uRel);
                     }
                 }
-                rank++;
             }
             // normalize by number of relevant items
             uMAP /= uRel;

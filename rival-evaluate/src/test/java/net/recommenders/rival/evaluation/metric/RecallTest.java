@@ -6,36 +6,38 @@ import org.junit.runners.JUnit4;
 import org.junit.runner.RunWith;
 
 import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 
 import java.util.Map;
+import net.recommenders.rival.evaluation.metric.ranking.Recall;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 @RunWith(JUnit4.class)
-public class NDCGTest {
+public class RecallTest {
 
     @Test
     public void testSameGroundtruthAsPredictions() {
         DataModel<Long, Long> predictions = new DataModel<Long, Long>();
         DataModel<Long, Long> test = new DataModel<Long, Long>();
-        for (long i = 1L; i < 20; i++) {
-            for (long j = 1L; j < 15; j++) {
+        int nUsers = 20;
+        int nItems = 15;
+        for (long i = 1L; i < nUsers + 1; i++) {
+            for (long j = 1L; j < nItems + 1; j++) {
                 test.addPreference(i, j, i * j % 5 + 1.0);
                 predictions.addPreference(i, j, i * j % 5 + 1.0);
             }
         }
-        NDCG ndcg = new NDCG(predictions, test, new int[]{5, 10, 20});
+        Recall recall = new Recall(predictions, test, 1.0, new int[]{5, 10, 20});
 
-        ndcg.compute();
+        recall.compute();
 
-        assertEquals(1.0, ndcg.getValue(), 0.0);
-        assertEquals(1.0, ndcg.getValueAt(5), 0.0);
-        assertEquals(1.0, ndcg.getValueAt(10), 0.0);
+        assertEquals(1.0, recall.getValue(), 0.0);
+        assertEquals(5.0 / nItems, recall.getValueAt(5), 0.0001);
+        assertEquals(10.0 / nItems, recall.getValueAt(10), 0.0001);
 
-        Map<Long, Double> ndcgPerUser = ndcg.getValuePerUser();
-        for (Map.Entry<Long, Double> e : ndcgPerUser.entrySet()) {
+        Map<Long, Double> recallPerUser = recall.getValuePerUser();
+        for (Map.Entry<Long, Double> e : recallPerUser.entrySet()) {
             long user = e.getKey();
             double value = e.getValue();
             assertEquals(1.0, value, 0.0);
@@ -56,22 +58,22 @@ public class NDCGTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        NDCG ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+        Recall recall = new Recall(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
 
-        ndcg.compute();
+        recall.compute();
 
-        assertEquals(0.8772, ndcg.getValue(), 0.001);
-        assertEquals(1.0, ndcg.getValueAt(1), 0.001);
-        assertEquals(0.6131, ndcg.getValueAt(2), 0.001);
-        assertEquals(0.6131, ndcg.getValueAt(3), 0.001);
-        assertEquals(0.8772, ndcg.getValueAt(4), 0.001);
-        assertEquals(0.8772, ndcg.getValueAt(5), 0.001);
+        assertEquals(1.0, recall.getValue(), 0.001);
+        assertEquals(0.5, recall.getValueAt(1), 0.001);
+        assertEquals(0.5, recall.getValueAt(2), 0.001);
+        assertEquals(0.5, recall.getValueAt(3), 0.001);
+        assertEquals(1.0, recall.getValueAt(4), 0.001);
+        assertEquals(1.0, recall.getValueAt(5), 0.001);
 
-        Map<Long, Double> ndcgPerUser = ndcg.getValuePerUser();
-        for (Map.Entry<Long, Double> e : ndcgPerUser.entrySet()) {
+        Map<Long, Double> recallPerUser = recall.getValuePerUser();
+        for (Map.Entry<Long, Double> e : recallPerUser.entrySet()) {
             long user = e.getKey();
             double value = e.getValue();
-            assertEquals(0.8772, value, 0.001);
+            assertEquals(1.0, value, 0.001);
         }
     }
 
@@ -89,22 +91,22 @@ public class NDCGTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        NDCG ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+        Recall recall = new Recall(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
 
-        ndcg.compute();
+        recall.compute();
 
-        assertEquals(0.7075, ndcg.getValue(), 0.001);
-        assertEquals(0.5, ndcg.getValueAt(1), 0.001);
-        assertEquals(0.3801, ndcg.getValueAt(2), 0.001);
-        assertEquals(0.3801, ndcg.getValueAt(3), 0.001);
-        assertEquals(0.7075, ndcg.getValueAt(4), 0.001);
-        assertEquals(0.7075, ndcg.getValueAt(5), 0.001);
+        assertEquals(1.0, recall.getValue(), 0.001);
+        assertEquals(0.5, recall.getValueAt(1), 0.001);
+        assertEquals(0.5, recall.getValueAt(2), 0.001);
+        assertEquals(0.5, recall.getValueAt(3), 0.001);
+        assertEquals(1.0, recall.getValueAt(4), 0.001);
+        assertEquals(1.0, recall.getValueAt(5), 0.001);
 
-        Map<Long, Double> ndcgPerUser = ndcg.getValuePerUser();
-        for (Map.Entry<Long, Double> e : ndcgPerUser.entrySet()) {
+        Map<Long, Double> recallPerUser = recall.getValuePerUser();
+        for (Map.Entry<Long, Double> e : recallPerUser.entrySet()) {
             long user = e.getKey();
             double value = e.getValue();
-            assertEquals(0.7075, value, 0.001);
+            assertEquals(1.0, value, 0.001);
         }
     }
 }

@@ -56,6 +56,10 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
      */
     @Override
     public void compute() {
+        if (!Double.isNaN(value)) {
+            // since the data cannot change, avoid re-doing the calculations
+            return;
+        }
         value = 0.0;
         Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
         userRecallAtCutoff = new HashMap<Integer, Map<Long, Double>>();
@@ -67,8 +71,9 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
             // number of relevant items for this user
             double uRel = getNumberOfRelevantItems(user);
             double urec = 0.0;
-            int rank = 1;
+            int rank = 0;
             for (double rel : sortedList) {
+                rank++;
                 urec += computeBinaryPrecision(rel);
                 // compute at a particular cutoff
                 for (int at : ats) {
@@ -81,7 +86,6 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
                         m.put(user, urec / uRel);
                     }
                 }
-                rank++;
             }
             // normalize by number of relevant items
             urec /= uRel;

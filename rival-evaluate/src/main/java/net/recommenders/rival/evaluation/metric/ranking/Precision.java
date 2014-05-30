@@ -56,6 +56,10 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
      */
     @Override
     public void compute() {
+        if (!Double.isNaN(value)) {
+            // since the data cannot change, avoid re-doing the calculations
+            return;
+        }
         value = 0.0;
         Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
         userPrecAtCutoff = new HashMap<Integer, Map<Long, Double>>();
@@ -65,8 +69,9 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
         for (long user : data.keySet()) {
             List<Double> sortedList = data.get(user);
             double uprec = 0.0;
-            int rank = 1;
+            int rank = 0;
             for (double rel : sortedList) {
+                rank++;
                 uprec += computeBinaryPrecision(rel);
                 // compute at a particular cutoff
                 for (int at : ats) {
@@ -79,11 +84,9 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
                         m.put(user, uprec / rank);
                     }
                 }
-                rank++;
             }
-            // normalize by list size
-            uprec /= rank;
-            // assign the precision of the whole list to those cutoffs larger than the list's size
+            // DO NOT assign the precision of the whole list to those cutoffs larger than the list's size
+            // instead, we fill with not relevant items until such cutoff
             for (int at : ats) {
                 if (rank <= at) {
                     Map<Long, Double> m = userPrecAtCutoff.get(at);
@@ -91,9 +94,11 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
                         m = new HashMap<Long, Double>();
                         userPrecAtCutoff.put(at, m);
                     }
-                    m.put(user, uprec);
+                    m.put(user, uprec / at);
                 }
             }
+            // normalize by list size
+            uprec /= rank;
             if (!Double.isNaN(uprec)) {
                 value += uprec;
                 metricPerUser.put(user, uprec);

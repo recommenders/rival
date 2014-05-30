@@ -93,8 +93,9 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
         for (long user : data.keySet()) {
             List<Double> sortedList = data.get(user);
             double dcg = 0.0;
-            int rank = 1;
+            int rank = 0;
             for (double rel : sortedList) {
+                rank++;
                 dcg += computeDCG(rel, rank);
                 // compute at a particular cutoff
                 for (int at : ats) {
@@ -107,7 +108,6 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
                         m.put(user, dcg);
                     }
                 }
-                rank++;
             }
             // assign the ndcg of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
