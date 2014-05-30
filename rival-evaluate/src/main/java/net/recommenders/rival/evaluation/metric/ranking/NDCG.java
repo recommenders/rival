@@ -31,9 +31,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
     private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
     private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
 
-    /**
-     * @inheritDoc
-     */
+
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, new int[]{});
     }

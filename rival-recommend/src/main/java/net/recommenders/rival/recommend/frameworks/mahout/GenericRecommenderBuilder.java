@@ -48,7 +48,7 @@ public final class GenericRecommenderBuilder<T>
      *
      * @param dataModel
      * @param recType
-     * @return
+     * @return the recommender
      * @throws TasteException
      * @throws RecommenderException
      */
@@ -63,7 +63,7 @@ public final class GenericRecommenderBuilder<T>
      * @param dataModel
      * @param recType
      * @param simType
-     * @return
+     * @return the recommender
      * @throws TasteException
      * @throws RecommenderException
      */
@@ -78,7 +78,7 @@ public final class GenericRecommenderBuilder<T>
      * @param dataModel
      * @param recType
      * @param simType
-     * @return
+     * @return the recommender
      * @throws TasteException
      * @throws RecommenderException
      */
@@ -95,7 +95,7 @@ public final class GenericRecommenderBuilder<T>
      * @param facType
      * @param iterations
      * @param factors
-     * @return
+     * @return the recommender
      * @throws TasteException
      * @throws RecommenderException
      */
@@ -108,7 +108,7 @@ public final class GenericRecommenderBuilder<T>
      * @param dataModel the data model
      * @param recType the type of the recommender, e.g. Basic
      * @param similarityType the type of the similarity, e.g. PersonCorrelation
-     * @return
+     * @return the recommender
      * @throws TasteException
      * @throws RecommenderException
      */

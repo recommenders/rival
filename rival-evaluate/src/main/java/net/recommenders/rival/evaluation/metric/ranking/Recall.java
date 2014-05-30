@@ -16,9 +16,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
 
     private Map<Integer, Map<Long, Double>> userRecallAtCutoff;
 
-    /**
-     * @inheritDoc
-     */
+
     public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }

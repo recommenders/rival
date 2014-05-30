@@ -14,17 +14,12 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  */
 public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
 
-    /**
-     * @inheritDoc
-     */
+
     public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         super(predictions, test);
     }
 
-    /**
-     *
-     * @inheritDoc
-     */
+
     public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy maeStrategy) {
         super(predictions, test, maeStrategy);
     }
@@ -33,7 +28,6 @@ public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
      * Instantiates and computes the MAE value. Prior to running this, there is
      * no valid value.
      *
-     * @return The global MAE
      */
     public void compute() {
         Map<Long, List<Double>> data = processDataAsPredictedDifferencesToTest();

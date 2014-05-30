@@ -10,9 +10,7 @@ import net.recommenders.rival.core.DataModel;
  */
 public class AllItems extends AbstractStrategy {
 
-    /**
-     * @inheritDoc
-     */
+
     public AllItems(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
         super(training, test, threshold);
     }

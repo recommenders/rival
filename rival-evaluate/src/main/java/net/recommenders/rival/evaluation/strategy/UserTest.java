@@ -11,9 +11,7 @@ import net.recommenders.rival.core.DataModel;
  */
 public class UserTest extends AbstractStrategy {
 
-    /**
-     * @inheritDoc
-     */
+
     public UserTest(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
         super(training, test, threshold);
     }

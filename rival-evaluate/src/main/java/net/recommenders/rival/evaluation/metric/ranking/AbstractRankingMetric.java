@@ -24,9 +24,7 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
     protected int[] ats;
     protected double relevanceThreshold;
 
-    /**
-     * @inheritDoc
-     */
+
     public AbstractRankingMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }

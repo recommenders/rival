@@ -1,0 +1,44 @@
+#macro( issue $num )##
+{{{https://github.com/recommenders/rival/issues/$num}#$num}}##
+#end
+#macro( user $name)##
+{{{https://github.com/$name}@$name}}##
+#end
+
+#macro( makeHeader $ver $tail )##
+                         --------------------
+                          Release $ver $tail
+                         --------------------
+
+Release $ver $tail
+#end
+
+#macro( header $ver )##
+#if( $project.version == "${ver}-SNAPSHOT" )##
+#makeHeader($ver, "(in progress)")
+#else
+#makeHeader($ver, "")
+#end
+#end
+
+#macro( pmIntro $ver $ms )
+#if( $project.version == "${ver}-SNAPSHOT" )##
+#set( $commits = "commits" )
+#else
+#set( $commits = "commits/rival-$ver" )
+#end
+
+#if($ms)
+  Have a look at the {{{https://github.com/recommenders/rival/$commits}Git changelog}} and the
+  {{{https://github.com/recommenders/rival/issues?milestone=$ms&state=closed}list
+  of tickets}} to see more details on what happened in this version.
+#else
+  Have a look at the {{{https://github.com/recommenders/rival/$commits}Git changelog}} to see more details on what happened in this version.
+#end
+#end
+
+#macro( stdHeader $ver $ms )
+#header($ver)
+
+  #pmIntro($ver, $ms)
+#end
