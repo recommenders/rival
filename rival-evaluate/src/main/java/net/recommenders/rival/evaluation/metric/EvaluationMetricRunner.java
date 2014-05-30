@@ -2,11 +2,7 @@ package net.recommenders.rival.evaluation.metric;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.metric.error.AbstractErrorMetric;
@@ -14,7 +10,6 @@ import net.recommenders.rival.evaluation.metric.ranking.AbstractRankingMetric;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 import net.recommenders.rival.evaluation.parser.TrecEvalParser;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
-import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
 
 /**
  * Runner for a single evaluation metric.

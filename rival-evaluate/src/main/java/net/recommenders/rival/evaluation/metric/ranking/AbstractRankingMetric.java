@@ -23,9 +23,17 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
      * Array of cutoff levels
      */
     protected int[] ats;
+    /**
+     * Relevance threshold
+     */
     protected double relevanceThreshold;
 
-
+    /**
+     * Default constructor with predictions and groundtruth information
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     */
     public AbstractRankingMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }
@@ -56,6 +64,12 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
         this.relevanceThreshold = relThreshold;
     }
 
+    /**
+     * Method that transforms the user data from pairs of <item, score> into
+     * ranked lists of relevance values, by using groundtruth information.
+     *
+     * @return a map with the transformed data, one list per user
+     */
     public Map<Long, List<Double>> processDataAsRankedTestRelevance() {
         Map<Long, List<Double>> data = new HashMap<Long, List<Double>>();
 
@@ -112,7 +126,22 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
         return value;
     }
 
+    /**
+     * Method to return the metric value at a particular cutoff level.
+     *
+     * @param at cutoff level
+     * @return the metric corresponding to the requested cutoff level
+     */
     public abstract double getValueAt(int at);
 
+    /**
+     * Method to return the metric value at a particular cutoff level for a
+     * given user.
+     *
+     * @param user the user
+     * @param at cutoff level
+     * @return the metric corresponding to the requested user at the cutoff
+     * level
+     */
     public abstract double getValueAt(long user, int at);
 }

@@ -28,10 +28,21 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * Type of nDCG computation (linear or exponential)
      */
     private TYPE type;
+    /**
+     * DCG values per user at each cutoff level
+     */
     private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
+    /**
+     * Ideal DCG values per user at each cutoff level
+     */
     private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
 
-
+    /**
+     * Default constructor with predictions and groundtruth information
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, new int[]{});
     }
@@ -194,6 +205,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @param at cutoff level
      * @return the NDCG corresponding to the requested cutoff level
      */
+    @Override
     public double getValueAt(int at) {
         if (userDcgAtCutoff.containsKey(at) && userIdcgAtCutoff.containsKey(at)) {
             int n = 0;
@@ -211,6 +223,15 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
         return Double.NaN;
     }
 
+    /**
+     * Method to return the NDCG value at a particular cutoff level for a given
+     * user.
+     *
+     * @param user the user
+     * @param at cutoff level
+     * @return the NDCG corresponding to the requested user at the cutoff level
+     */
+    @Override
     public double getValueAt(long user, int at) {
         if (userDcgAtCutoff.containsKey(at) && userDcgAtCutoff.get(at).containsKey(user)
                 && userIdcgAtCutoff.containsKey(at) && userIdcgAtCutoff.get(at).containsKey(user)) {

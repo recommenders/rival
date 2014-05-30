@@ -8,7 +8,7 @@ import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 
 /**
- * A parser based on the format of trec_eval output
+ * A parser based on the format of trec_eval output (no timestamp info).
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -63,5 +63,6 @@ public class TrecEvalParser implements Parser {
         // update information
         //////
         dataset.addPreference(userId, itemId, preference);
+        // no timestamp info
     }
 }

@@ -13,9 +13,17 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  */
 public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long> {
 
+    /**
+     * AP (average precision) values per user at each cutoff level
+     */
     private Map<Integer, Map<Long, Double>> userMAPAtCutoff;
 
-
+    /**
+     * Default constructor with predictions and groundtruth information
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     */
     public MAP(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }
@@ -43,8 +51,8 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
     }
 
     /**
-     * Computes the global MAP by first summing the recall for each user and
-     * then averaging by the number of users.
+     * Computes the global MAP by first summing the AP (average precision) for
+     * each user and then averaging by the number of users.
      */
     @Override
     public void compute() {
@@ -79,7 +87,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
             }
             // normalize by number of relevant items
             uMAP /= uRel;
-            // assign the ndcg of the whole list to those cutoffs larger than the list's size
+            // assign the MAP of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
                 if (rank <= at) {
                     Map<Long, Double> m = userMAPAtCutoff.get(at);
@@ -100,11 +108,12 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
     }
 
     /**
-     * Method to return the recall value at a particular cutoff level.
+     * Method to return the MAP value at a particular cutoff level.
      *
      * @param at cutoff level
-     * @return the recall corresponding to the requested cutoff level
+     * @return the MAP corresponding to the requested cutoff level
      */
+    @Override
     public double getValueAt(int at) {
         if (userMAPAtCutoff.containsKey(at)) {
             int n = 0;
@@ -122,6 +131,16 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
         return Double.NaN;
     }
 
+    /**
+     * Method to return the AP (average precision) value at a particular cutoff
+     * level for a given user.
+     *
+     * @param user the user
+     * @param at cutoff level
+     * @return the AP (average precision) corresponding to the requested user at
+     * the cutoff level
+     */
+    @Override
     public double getValueAt(long user, int at) {
         if (userMAPAtCutoff.containsKey(at) && userMAPAtCutoff.get(at).containsKey(user)) {
             double map = userMAPAtCutoff.get(at).get(user);

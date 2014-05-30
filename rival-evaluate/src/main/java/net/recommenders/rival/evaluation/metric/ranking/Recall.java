@@ -3,7 +3,6 @@ package net.recommenders.rival.evaluation.metric.ranking;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
@@ -14,9 +13,17 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  */
 public class Recall extends AbstractRankingMetric implements EvaluationMetric<Long> {
 
+    /**
+     * Recall values per user at each cutoff level
+     */
     private Map<Integer, Map<Long, Double>> userRecallAtCutoff;
 
-
+    /**
+     * Default constructor with predictions and groundtruth information
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     */
     public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }
@@ -78,7 +85,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
             }
             // normalize by number of relevant items
             urec /= uRel;
-            // assign the ndcg of the whole list to those cutoffs larger than the list's size
+            // assign the recall of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
                 if (rank <= at) {
                     Map<Long, Double> m = userRecallAtCutoff.get(at);
@@ -104,6 +111,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
      * @param at cutoff level
      * @return the recall corresponding to the requested cutoff level
      */
+    @Override
     public double getValueAt(int at) {
         if (userRecallAtCutoff.containsKey(at)) {
             int n = 0;
@@ -121,6 +129,16 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
         return Double.NaN;
     }
 
+    /**
+     * Method to return the recall value at a particular cutoff level for a
+     * given user.
+     *
+     * @param user the user
+     * @param at cutoff level
+     * @return the recall corresponding to the requested user at the cutoff
+     * level
+     */
+    @Override
     public double getValueAt(long user, int at) {
         if (userRecallAtCutoff.containsKey(at) && userRecallAtCutoff.get(at).containsKey(user)) {
             double rec = userRecallAtCutoff.get(at).get(user);

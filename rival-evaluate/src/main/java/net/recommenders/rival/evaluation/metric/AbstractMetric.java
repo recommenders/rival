@@ -22,10 +22,10 @@ public abstract class AbstractMetric implements EvaluationMetric<Long> {
     protected Map<Long, Double> metricPerUser;
 
     /**
-     * Default constructor for the metric.
-     *
-     * @param predictions The predictions.
-     * @param test The test set.
+     * Default constructor with predictions and groundtruth information
+     * 
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
      */
     public AbstractMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this.predictions = predictions;

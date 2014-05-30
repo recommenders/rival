@@ -13,9 +13,17 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  */
 public class Precision extends AbstractRankingMetric implements EvaluationMetric<Long> {
 
+    /**
+     * Precision values per user at each cutoff level
+     */
     private Map<Integer, Map<Long, Double>> userPrecAtCutoff;
 
-
+    /**
+     * Default constructor with predictions and groundtruth information
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     */
     public Precision(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, 1.0);
     }
@@ -43,8 +51,8 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
     }
 
     /**
-     * Computes the global precision by first summing the precision for each user and then
-     * averaging by the number of users.
+     * Computes the global precision by first summing the precision for each
+     * user and then averaging by the number of users.
      */
     @Override
     public void compute() {
@@ -75,7 +83,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
             }
             // normalize by list size
             uprec /= rank;
-            // assign the ndcg of the whole list to those cutoffs larger than the list's size
+            // assign the precision of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
                 if (rank <= at) {
                     Map<Long, Double> m = userPrecAtCutoff.get(at);
@@ -101,6 +109,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
      * @param at cutoff level
      * @return the precision corresponding to the requested cutoff level
      */
+    @Override
     public double getValueAt(int at) {
         if (userPrecAtCutoff.containsKey(at)) {
             int n = 0;
@@ -118,6 +127,16 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
         return Double.NaN;
     }
 
+    /**
+     * Method to return the precision value at a particular cutoff level for a
+     * given user.
+     *
+     * @param user the user
+     * @param at cutoff level
+     * @return the precision corresponding to the requested user at the cutoff
+     * level
+     */
+    @Override
     public double getValueAt(long user, int at) {
         if (userPrecAtCutoff.containsKey(at) && userPrecAtCutoff.get(at).containsKey(user)) {
             double prec = userPrecAtCutoff.get(at).get(user);

@@ -14,6 +14,10 @@ import java.util.Map;
  */
 public abstract class AbstractErrorMetric extends AbstractMetric implements EvaluationMetric<Long> {
 
+    /**
+     * Type of error strategy: what to do when there is no predicted rating but
+     * there is groundtruth information
+     */
     public static enum ErrorStrategy {
 
         CONSIDER_EVERYTHING,
@@ -29,7 +33,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
     /**
      * For coverage
      */
-    protected int emptyUsers; 
+    protected int emptyUsers;
     /**
      * For coverage
      */
@@ -40,16 +44,22 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
      */
     private ErrorStrategy strategy;
 
-
+    /**
+     * Default constructor with predictions and groundtruth information
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     */
     public AbstractErrorMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         this(predictions, test, ErrorStrategy.NOT_CONSIDER_NAN);
     }
 
     /**
+     * Constructor where the error strategy can be initialized
      *
-     * @param predictions
-     * @param test
-     * @param strategy
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     * @param strategy the error strategy
      */
     public AbstractErrorMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy strategy) {
         super(predictions, test);
@@ -58,6 +68,12 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
         this.strategy = strategy;
     }
 
+    /**
+     * Method that transforms the user data from pairs of <item, score> into
+     * lists of differences, by using groundtruth information.
+     *
+     * @return a map with the transformed data, one list per user
+     */
     public Map<Long, List<Double>> processDataAsPredictedDifferencesToTest() {
         Map<Long, List<Double>> data = new HashMap<Long, List<Double>>();
         Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
@@ -74,7 +90,6 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
                 data.put(testUser, userData);
             }
             for (long testItem : ratings.keySet()) {
-                double difference = 0.0;
                 double realRating = ratings.get(testItem);
                 double predictedRating = Double.NaN; // NaN as default value
                 if (actualRatings.containsKey(testUser)) {
@@ -90,7 +105,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
                 predictedRating = considerEstimatedPreference(strategy, predictedRating);
                 // if returned value is NaN, then we ignore the predicted rating
                 if (!Double.isNaN(predictedRating)) {
-                    difference = realRating - predictedRating;
+                    double difference = realRating - predictedRating;
                     userData.add(difference);
                 }
             }
@@ -98,6 +113,14 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
         return data;
     }
 
+    /**
+     * Method that returns an estimated preference according to a given value
+     * and an error strategy
+     *
+     * @param strategy the error strategy
+     * @param recValue the predicted value by the recommender
+     * @return an estimated preference according to the provided strategy
+     */
     public static double considerEstimatedPreference(ErrorStrategy strategy, double recValue) {
         boolean consider = true;
         switch (strategy) {

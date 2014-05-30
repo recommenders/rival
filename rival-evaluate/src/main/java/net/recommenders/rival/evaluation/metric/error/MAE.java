@@ -1,9 +1,8 @@
 package net.recommenders.rival.evaluation.metric.error;
 
 import java.util.List;
-import net.recommenders.rival.core.DataModel;
-
 import java.util.Map;
+import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
@@ -14,11 +13,23 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  */
 public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
 
-
+    /**
+     * Default constructor with predictions and groundtruth information
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     */
     public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
         super(predictions, test);
     }
 
+    /**
+     * Constructor where the error strategy can be initialized
+     *
+     * @param predictions predicted scores for users and items
+     * @param test groundtruth information for users and items
+     * @param strategy the error strategy
+     */
     public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy errorStrategy) {
         super(predictions, test, errorStrategy);
     }
@@ -28,6 +39,7 @@ public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
      * no valid value.
      *
      */
+    @Override
     public void compute() {
         Map<Long, List<Double>> data = processDataAsPredictedDifferencesToTest();
         value = 0.0;
