@@ -25,8 +25,8 @@ public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
      *
      * @inheritDoc
      */
-    public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy maeStrategy) {
-        super(predictions, test, maeStrategy);
+    public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy errorStrategy) {
+        super(predictions, test, errorStrategy);
     }
 
     /**

@@ -1,8 +1,9 @@
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import net.recommenders.rival.evaluation.metric.*;
 import java.util.*;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.AbstractMetric;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
  * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
@@ -112,4 +113,8 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
     public double getValue() {
         return value;
     }
+
+    public abstract double getValueAt(int at);
+
+    public abstract double getValueAt(long user, int at);
 }

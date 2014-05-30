@@ -46,7 +46,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @param ats cutoffs
      */
     public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats) {
-        this(predictions, test, ats, TYPE.EXP, 1.0);
+        this(predictions, test, 1.0, ats, TYPE.EXP);
     }
 
     /**
@@ -58,7 +58,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @param ats cutoffs
      * @param type type of NDCG computation
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats, TYPE type, double relThreshold) {
+    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats, TYPE type) {
         super(predictions, test, relThreshold, ats);
         this.type = type;
     }
