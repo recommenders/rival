@@ -78,6 +78,10 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      */
     @Override
     public void compute() {
+        if (!Double.isNaN(value)) {
+            // since the data cannot change, avoid re-doing the calculations
+            return;
+        }
         value = 0.0;
         Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
         userDcgAtCutoff = new HashMap<Integer, Map<Long, Double>>();

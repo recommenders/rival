@@ -76,8 +76,16 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
         Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
         for (long testUser : test.getUsers()) {
             Map<Long, Double> userPredictedRatings = predictedRatings.get(testUser);
+            Map<Long, Double> userRelevance = test.getUserItemPreferences().get(testUser);
             if (userPredictedRatings != null) {
-                List<Double> rankedTestRel = rankScores(userPredictedRatings);
+                List<Double> rankedTestRel = new ArrayList<Double>();
+                for (long item : rankItems(userPredictedRatings)) {
+                    double rel = 0.0;
+                    if (userRelevance.containsKey(item)) {
+                        rel = userRelevance.get(item);
+                    }
+                    rankedTestRel.add(rel);
+                }
                 data.put(testUser, rankedTestRel);
             }
         }
