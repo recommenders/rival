@@ -44,7 +44,7 @@ public class NDCGTest {
     }
 
     @Test
-    public void testOneUser() {
+    public void testOneUserTrecevalStrategySingleRelevance() {
         // groundtruth: ? 0 1 1
         // predictions: 3 4 5 1
         DataModel<Long, Long> test = new DataModel<Long, Long>();
@@ -73,6 +73,39 @@ public class NDCGTest {
             long user = e.getKey();
             double value = e.getValue();
             assertEquals(0.8772, value, 0.001);
+        }
+    }
+
+    @Test
+    public void testOneUserTrecevalStrategyMultipleRelevance() {
+        // groundtruth: ? 0 1 2
+        // predictions: 3 4 5 1
+        DataModel<Long, Long> test = new DataModel<Long, Long>();
+        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
+        test.addPreference(1L, 2L, 0.0);
+        test.addPreference(1L, 3L, 1.0);
+        test.addPreference(1L, 4L, 2.0);
+        predictions.addPreference(1L, 1L, 3.0);
+        predictions.addPreference(1L, 2L, 4.0);
+        predictions.addPreference(1L, 3L, 5.0);
+        predictions.addPreference(1L, 4L, 1.0);
+
+        NDCG ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+
+        ndcg.compute();
+
+        assertEquals(0.7075, ndcg.getValue(), 0.001);
+        assertEquals(0.5, ndcg.getValueAt(1), 0.001);
+        assertEquals(0.3801, ndcg.getValueAt(2), 0.001);
+        assertEquals(0.3801, ndcg.getValueAt(3), 0.001);
+        assertEquals(0.7075, ndcg.getValueAt(4), 0.001);
+        assertEquals(0.7075, ndcg.getValueAt(5), 0.001);
+
+        Map<Long, Double> ndcgPerUser = ndcg.getValuePerUser();
+        for (Map.Entry<Long, Double> e : ndcgPerUser.entrySet()) {
+            long user = e.getKey();
+            double value = e.getValue();
+            assertEquals(0.7075, value, 0.001);
         }
     }
 }
