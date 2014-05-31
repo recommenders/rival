@@ -42,3 +42,5 @@ Release $ver $tail
 
   #pmIntro($ver, $ms)
 #end
+
+-- file based on LensKit -- https://github.com/grouplens/lenskit/blob/master/src/site/markdown/releases/relnotes.vm
