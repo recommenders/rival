@@ -5,4 +5,5 @@
 Release 0.1 (June 1, 2014)
 
   Initial release.
+  Runnable data splitters, recommendations through Mahout or Lenskit, evaluation strategies and basic set of metrics.
 
