@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.recommenders.rival</groupId>
         <artifactId>rival</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
         <relativePath>../</relativePath>
     </parent>
     <artifactId>rival-evaluate</artifactId>
@@ -40,28 +40,7 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>repo1</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </repository>
-        <!--  repository>
-            <id>repo2</id>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-        <repository>
-            <id>repo3</id>
-            <url>http://repository.jboss.com/maven2</url>
-        </repository>
-        <repository>
-            <id>repo4</id>
-            <url>http://maven.apache.org/</url>
-        </repository>
-        <repository>
-            <id>repo5</id>
-            <url>http://repo2.maven.org/maven2</url>
-        </repository -->
-    </repositories>
+
 </project>
 
 

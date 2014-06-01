@@ -6,7 +6,7 @@
 
     <groupId>net.recommenders.rival</groupId>
     <artifactId>rival</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>pom</packaging>
     <name>RiVal</name>
     <description>Evaluation toolkit for recommender systems</description>
@@ -30,11 +30,11 @@
         <connection>scm:git:http://github.com/recommenders/rival.git</connection>
         <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
         <url>http://github.com/recommenders/rival</url>
-        <tag>v0.1</tag>
+        <tag>0.1</tag>
     </scm>
 
     <properties>
-        <rival.version>0.1-SNAPSHOT</rival.version>
+        <rival.version>0.1</rival.version>
         <copyrightHolder>recommenders.net</copyrightHolder>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -49,23 +49,9 @@
         <module>rival-package</module>
     </modules>
 
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
+            <id>sonatype-nexuss</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
@@ -242,12 +228,10 @@
                 </executions>
             </plugin>
 
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <!--configuration>
-                    <stagingDirectory>${project.basedir}/target/stage</stagingDirectory>
-                </configuration-->
                 <executions>
                     <execution>
                         <inherited>false</inherited>
@@ -308,6 +292,38 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>dependencies</report>
+                            <report>dependency-info</report>
+                            <report>dependency-convergence</report>
+                            <report>dependency-management</report>
+                            <report>plugins</report>
+                            <report>plugin-management</report>
+                            <report>summary</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>parent-info</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>modules</report>
+                            <report>issue-tracking</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+
+
         </plugins>
     </reporting>
 
