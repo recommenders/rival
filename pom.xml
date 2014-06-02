@@ -27,7 +27,7 @@
         <scm-publish.scmBranch>gh-pages</scm-publish.scmBranch>
         <scm-publish.siteDocOuputDirectory>${project.reporting.outputDirectory}</scm-publish.siteDocOuputDirectory>
         <site-docs.url>/${project.build.directory}/sitedocs/${project.version}</site-docs.url>
-
+        <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
         <!--
         <github.global.server>rival-github-pages-site</github.global.server>
         <scmPublish.checkoutDirectory>${project.build.directory}/${project.version}</scmPublish.checkoutDirectory>
