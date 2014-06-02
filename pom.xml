@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.recommenders.rival</groupId>
@@ -27,11 +25,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>rival-github-pages-site</github.global.server>
+
         <site-docs.url>/${project.build.directory}/sitedocs/${project.version}</site-docs.url>
         <scmPublish.checkoutDirectory>${project.build.directory}/${project.version}</scmPublish.checkoutDirectory>
         <repository.domain>github.com</repository.domain>
         <scm-publish.scmBranch>gh-pages</scm-publish.scmBranch>
         <scm-publish.siteDocOuputDirectory>${project.reporting.outputDirectory}</scm-publish.siteDocOuputDirectory>
+        <scmVersionType>branch</scmVersionType>
+        <scmVersion>gh-pages</scmVersion>
     </properties>
 
     <issueManagement>
@@ -41,7 +42,7 @@
     <scm>
         <connection>scm:git:http://github.com/recommenders/rival.git</connection>
         <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
-        <url>https://github.com/recommenders/rival</url>
+        <url>http://github.com/recommenders/rival</url>
         <tag>${project.version}</tag>
     </scm>
 
@@ -68,7 +69,6 @@
         <site>
             <id>rival-github-pages-site</id>
             <url>scm:git:ssh://git@github.com/recommenders/rival.git</url>
-            <!--url>site/${project.version}</url-->
         </site>
     </distributionManagement>
 
