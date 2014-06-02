@@ -150,12 +150,24 @@
                     <version>2.4.2</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <mavenExecutorId>forked-path</mavenExecutorId>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <arguments>${arguments} -Psonatype-oss-release</arguments>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>1.4</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <!-- Javadoc and checkstyle plugins -->
@@ -419,9 +431,12 @@
             </build>
         </profile>
         <profile>
-            <id>sign</id>
+            <id>release-sign-artifacts</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
             </activation>
             <build>
                 <plugins>
