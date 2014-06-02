@@ -42,7 +42,7 @@
     <scm>
         <connection>scm:git:http://github.com/recommenders/rival.git</connection>
         <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
-        <url>http://github.com/recommenders/rival</url>
+        <url>scm:git:git@github.com:recommenders/rival.git</url>
         <tag>${project.version}</tag>
     </scm>
 
@@ -71,7 +71,11 @@
             <url>scm:git:ssh://git@github.com/recommenders/rival.git</url>
         </site>
     </distributionManagement>
-
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <dependencyManagement>
         <dependencies>
@@ -196,6 +200,11 @@
                             <groupId>org.apache.velocity</groupId>
                             <artifactId>velocity</artifactId>
                             <version>1.6</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.maven.doxia</groupId>
+                            <artifactId>doxia-module-markdown</artifactId>
+                            <version>1.5</version>
                         </dependency>
                     </dependencies>
                     <configuration>

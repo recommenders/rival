@@ -1,0 +1,14 @@
+Title: Release Notes
+
+
+#macro ( release $ver )
+#if( $project.version == "${ver}-SNAPSHOT" )##
+-   [Release $ver](./rival-${ver}.html) (in progress)
+#else
+-   [Release $ver](./rival-${ver}.html)
+#end
+#end
+
+# RiVal Releases
+
+#release("0.1") (June 2, 2014)
