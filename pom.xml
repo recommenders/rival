@@ -22,6 +22,18 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <properties>
+        <copyrightHolder>recommenders.net</copyrightHolder>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <github.global.server>rival-github-pages-site</github.global.server>
+        <site-docs.url>/${project.build.directory}/sitedocs/${project.version}</site-docs.url>
+        <scmPublish.checkoutDirectory>${project.build.directory}/${project.version}</scmPublish.checkoutDirectory>
+        <repository.domain>github.com</repository.domain>
+        <scm-publish.scmBranch>gh-pages</scm-publish.scmBranch>
+        <scm-publish.siteDocOuputDirectory>${project.reporting.outputDirectory}</scm-publish.siteDocOuputDirectory>
+    </properties>
+
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/recommenders/rival/issues</url>
@@ -29,18 +41,11 @@
     <scm>
         <connection>scm:git:http://github.com/recommenders/rival.git</connection>
         <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
-        <url>http://github.com/recommenders/rival</url>
-        <tag>0.1</tag>
+        <url>https://github.com/recommenders/rival</url>
+        <tag>${project.version}</tag>
     </scm>
 
-    <properties>
-        <rival.version>0.1</rival.version>
-        <copyrightHolder>recommenders.net</copyrightHolder>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <rival.web.url>http://rival.recommenders.net/</rival.web.url>
-        <!-- rival.clean.removeAll>false</rival.clean.removeAll -->
-    </properties>
+
     <modules>
         <module>rival-core</module>
         <module>rival-split</module>
@@ -61,9 +66,9 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <site>
-            <id>rival.recommenders.net</id>
-            <name>RiVal website</name>
-            <url>${rival.web.url}</url>
+            <id>rival-github-pages-site</id>
+            <url>scm:git:ssh://git@github.com/recommenders/rival.git</url>
+            <!--url>site/${project.version}</url-->
         </site>
     </distributionManagement>
 
@@ -193,11 +198,29 @@
                             <version>1.6</version>
                         </dependency>
                     </dependencies>
+                    <configuration>
+                        <skipDeploy>true</skipDeploy>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>1.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <checkoutDirectory>${scmPublish.checkoutDirectory}</checkoutDirectory>
+                    <checkinComment>Publishing Site Docs for ${project.artifactId}:${project.version}
+                    </checkinComment>
+                    <!-- Plugins defaults to "target/staging" and since the distributionManagement section is a pain in the ass for site docs, this is easier -->
+                    <content>${scm-publish.siteDocOuputDirectory}</content>
+                    <skipDeletedFiles>true</skipDeletedFiles>
+                    <scmBranch>${scm-publish.scmBranch}</scmBranch>
+                </configuration>
+            </plugin>
             <plugin>
                 <!-- Validate Maven and Java. -->
                 <groupId>org.apache.maven.plugins</groupId>
