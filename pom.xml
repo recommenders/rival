@@ -4,7 +4,7 @@
 
     <groupId>net.recommenders.rival</groupId>
     <artifactId>rival</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>RiVal</name>
     <description>Evaluation toolkit for recommender systems</description>
@@ -28,7 +28,7 @@
         <connection>scm:git:http://github.com/recommenders/rival.git</connection>
         <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
         <url>http://github.com/recommenders/rival</url>
-        <tag>rival-0.1</tag>
+        <tag>0.1</tag>
     </scm>
 
     <properties>
