@@ -24,15 +24,15 @@
         <copyrightHolder>recommenders.net</copyrightHolder>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <github.global.server>rival-github-pages-site</github.global.server>
-
-        <site-docs.url>/${project.build.directory}/sitedocs/${project.version}</site-docs.url>
-        <scmPublish.checkoutDirectory>${project.build.directory}/${project.version}</scmPublish.checkoutDirectory>
-        <repository.domain>github.com</repository.domain>
         <scm-publish.scmBranch>gh-pages</scm-publish.scmBranch>
         <scm-publish.siteDocOuputDirectory>${project.reporting.outputDirectory}</scm-publish.siteDocOuputDirectory>
-        <scmVersionType>branch</scmVersionType>
-        <scmVersion>gh-pages</scmVersion>
+        <site-docs.url>/${project.build.directory}/sitedocs/${project.version}</site-docs.url>
+
+        <!--
+        <github.global.server>rival-github-pages-site</github.global.server>
+        <scmPublish.checkoutDirectory>${project.build.directory}/${project.version}</scmPublish.checkoutDirectory>
+        <repository.domain>github.com</repository.domain>
+        -->
     </properties>
 
     <issueManagement>
