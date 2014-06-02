@@ -28,7 +28,7 @@ public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
-     * @param strategy the error strategy
+     * @param errorStrategy the error strategy
      */
     public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy errorStrategy) {
         super(predictions, test, errorStrategy);

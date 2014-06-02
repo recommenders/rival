@@ -67,12 +67,12 @@ public class MultipleStrategyRunnerInfile {
      * @param properties The properties of the strategies to run.
      * @throws IOException If files cannot be read.
      * @throws ClassNotFoundException If class does not exist.
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws IllegalAccessException when
+     * @throws IllegalArgumentException when
+     * @throws InstantiationException when
+     * @throws InvocationTargetException when
+     * @throws NoSuchMethodException when
+     * @throws SecurityException when
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // get splits
@@ -148,7 +148,7 @@ public class MultipleStrategyRunnerInfile {
      * @param suffix The file suffix.
      * @param overwrite Whether or not to overwrite the results file.
      * @throws FileNotFoundException if file does not exist.
-     * @throws IOException
+     * @throws IOException when
      */
     public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException, IOException {
         File outRanking = new File(rankingFolder, "out" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);

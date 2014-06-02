@@ -65,6 +65,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
+     * @param relThreshold the relecance threshold
      * @param ats cutoffs
      * @param type type of NDCG computation
      */
@@ -169,8 +170,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * target="_blank">discounted cumulative gain</a> (IDCG) given the test set
      * (groundtruth items) for a user.
      *
-     * @user the user
-     *
+     * @param user the user
      * @param userTestItems the groundtruth items of a user.
      * @return the IDCG
      */

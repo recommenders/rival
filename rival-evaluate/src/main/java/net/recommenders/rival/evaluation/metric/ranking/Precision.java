@@ -44,6 +44,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
+     * @param relThreshold relevance threshold
      * @param ats cutoffs
      */
     public Precision(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {

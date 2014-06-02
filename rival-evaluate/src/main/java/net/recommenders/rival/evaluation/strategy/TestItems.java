@@ -15,10 +15,7 @@ public class TestItems extends AbstractStrategy {
         super(training, test, threshold);
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
+   @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         return getModelTrainingDifference(test, user);
     }

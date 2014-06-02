@@ -15,7 +15,7 @@ import org.grouplens.lenskit.knn.user.UserSimilarity;
 /**
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
- * @param <T>
+ * @param <T> generic parameter
  */
 public final class GenericRecommenderBuilder<T>
         implements RecommenderBuilder {
@@ -46,11 +46,11 @@ public final class GenericRecommenderBuilder<T>
     /**
      * Default CF recommender.
      *
-     * @param dataModel
-     * @param recType
+     * @param dataModel the data model
+     * @param recType the recommender type
      * @return the recommender
-     * @throws TasteException
-     * @throws RecommenderException
+     * @throws TasteException  when
+     * @throws RecommenderException when
      */
     public Recommender buildRecommender(DataModel dataModel, String recType)
             throws TasteException, RecommenderException {
@@ -60,12 +60,12 @@ public final class GenericRecommenderBuilder<T>
     /**
      * Recommender based on given recType and simType
      *
-     * @param dataModel
-     * @param recType
-     * @param simType
+     * @param dataModel the data model
+     * @param recType the recommender type
+     * @param simType the similarity type
      * @return the recommender
-     * @throws TasteException
-     * @throws RecommenderException
+     * @throws TasteException when
+     * @throws RecommenderException when
      */
     public Recommender buildRecommender(DataModel dataModel, String recType, String simType)
             throws TasteException, RecommenderException {
@@ -75,12 +75,13 @@ public final class GenericRecommenderBuilder<T>
     /**
      * Recommender based on given recType, simType and neighborhood type
      *
-     * @param dataModel
-     * @param recType
-     * @param simType
+     * @param dataModel the data model
+     * @param recType the recommender type
+     * @param simType the similarity type
+     * @param nbSize the neighborhood size
      * @return the recommender
-     * @throws TasteException
-     * @throws RecommenderException
+     * @throws TasteException when
+     * @throws RecommenderException when
      */
     public Recommender buildRecommender(DataModel dataModel, String recType, String simType, int nbSize)
             throws TasteException, RecommenderException {
@@ -90,14 +91,14 @@ public final class GenericRecommenderBuilder<T>
     /**
      * SVD
      *
-     * @param dataModel
-     * @param recType
-     * @param facType
-     * @param iterations
-     * @param factors
+     * @param dataModel the data model
+     * @param recType the recommender type
+     * @param facType the factorizer
+     * @param iterations number of iterations
+     * @param factors number of factors
      * @return the recommender
-     * @throws TasteException
-     * @throws RecommenderException
+     * @throws TasteException when
+     * @throws RecommenderException when
      */
     public Recommender buildRecommender(DataModel dataModel, String recType, String facType, int iterations, int factors)
             throws TasteException, RecommenderException {
@@ -108,9 +109,13 @@ public final class GenericRecommenderBuilder<T>
      * @param dataModel the data model
      * @param recType the type of the recommender, e.g. Basic
      * @param similarityType the type of the similarity, e.g. PersonCorrelation
+     * @param neighborhoodSize the neighborhood size
+     * @param factors  number of factors
+     * @param iterations number of iterations
+     * @param facType the factorizer
      * @return the recommender
-     * @throws TasteException
-     * @throws RecommenderException
+     * @throws TasteException when
+     * @throws RecommenderException when
      */
     public Recommender buildRecommender(final DataModel dataModel,
             final String recType,

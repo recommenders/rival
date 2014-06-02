@@ -44,6 +44,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
+     * @param relThreshold relevance threshold
      * @param ats cutoffs
      */
     public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {

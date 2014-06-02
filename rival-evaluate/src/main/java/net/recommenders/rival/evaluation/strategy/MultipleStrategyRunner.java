@@ -66,12 +66,12 @@ public class MultipleStrategyRunner {
      * @param properties The properties of the strategies to run.
      * @throws IOException If files cannot be read.
      * @throws ClassNotFoundException If class does not exist.
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws IllegalAccessException when
+     * @throws IllegalArgumentException when
+     * @throws InstantiationException when
+     * @throws InvocationTargetException when
+     * @throws NoSuchMethodException when
+     * @throws SecurityException when
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // get splits

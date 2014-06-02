@@ -44,6 +44,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
+     * @param relThreshold the relevance threshold
      * @param ats cutoffs
      */
     public MAP(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {

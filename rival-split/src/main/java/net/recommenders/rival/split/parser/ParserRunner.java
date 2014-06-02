@@ -27,14 +27,14 @@ public class ParserRunner {
      *
      * @param properties The properties
      * @return The data model.
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
-     * @throws IOException
+     * @throws ClassNotFoundException when no class found
+     * @throws IllegalAccessException when
+     * @throws IllegalArgumentException when argument is illegal
+     * @throws InstantiationException when
+     * @throws InvocationTargetException when
+     * @throws NoSuchMethodException when
+     * @throws SecurityException when
+     * @throws IOException when
      */
     public static DataModel<Long, Long> run(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
         System.out.println("Parsing started");

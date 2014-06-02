@@ -29,9 +29,6 @@ public class SimpleParser implements Parser {
      */
     public static final int TIME_TOK = 3;
 
-    /**
-     * @inheritDoc
-     */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
         return parseData(f, "\t");

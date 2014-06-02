@@ -40,7 +40,7 @@ public class StrategyRunnerInfile {
      * ('propertyFile')
      *
      * @param args (not used)
-     * @throws Exception
+     * @throws Exception when
      */
     public static void main(String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
@@ -61,14 +61,14 @@ public class StrategyRunnerInfile {
      * Process the property file and runs the specified strategies on some data.
      *
      * @param properties The property file
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws IOException when
+     * @throws ClassNotFoundException when
+     * @throws IllegalAccessException when
+     * @throws IllegalArgumentException when
+     * @throws InstantiationException when
+     * @throws InvocationTargetException when
+     * @throws NoSuchMethodException when
+     * @throws SecurityException when
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // read splits
@@ -114,8 +114,8 @@ public class StrategyRunnerInfile {
      * @param groundtruthFile The file where the ground truth will be printed
      * @param overwrite The flag that specifies what to do if rankingFile or
      * groundtruthFile already exists
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException when
+     * @throws IOException when
      */
     public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, IOException {
         PrintStream outRanking = null;
@@ -163,8 +163,8 @@ public class StrategyRunnerInfile {
      *
      * @param userRecommendationFile The file with the recommendation scores
      * @param user The user
-     * @return the pairs <item, score> contained in the file for that user
-     * @throws IOException
+     * @return the pairs (item, score) contained in the file for that user
+     * @throws IOException when
      * @see StrategyRunnerInfile#readLine(java.lang.String, java.util.Map)
      */
     public static List<EvaluationStrategy.Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {
@@ -192,8 +192,8 @@ public class StrategyRunnerInfile {
      * Method that reads a line that contains a(some) recommendation(s) and
      * store it in a map.
      *
-     * The line can have a simple format <br/> "user \t item \t score" <br/> or
-     * the one used in MyMediaLite <br/> "user \t [item:score,item:score,...]".
+     * The line can have a simple format <br> "user \t item \t score" <br> or
+     * the one used in MyMediaLite <br> "user \t [item:score,item:score,...]".
      *
      * @param line The line to be parsed.
      * @param mapUserRecommendations The map where the parsed recommendations

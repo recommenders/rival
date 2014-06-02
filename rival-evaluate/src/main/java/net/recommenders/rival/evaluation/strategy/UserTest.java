@@ -16,10 +16,7 @@ public class UserTest extends AbstractStrategy {
         super(training, test, threshold);
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
+   @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         return test.getUserItemPreferences().get(user).keySet();
     }

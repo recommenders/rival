@@ -61,7 +61,7 @@ public abstract class AbstractRunner {
      * Write recommendations to file.
      * @param user  the user
      * @param recommendations   the recommendations
-     * @param <T>
+     * @param <T> list
      */
     public <T> void writeData(long user, List<T> recommendations) {
         try {

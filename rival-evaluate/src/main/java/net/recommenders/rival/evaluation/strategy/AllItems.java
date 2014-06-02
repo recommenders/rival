@@ -15,10 +15,7 @@ public class AllItems extends AbstractStrategy {
         super(training, test, threshold);
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
+   @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         final Set<Long> items = getModelTrainingDifference(training, user);
         items.addAll(getModelTrainingDifference(test, user));

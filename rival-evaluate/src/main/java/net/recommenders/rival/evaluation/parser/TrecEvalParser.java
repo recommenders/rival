@@ -27,10 +27,7 @@ public class TrecEvalParser implements Parser {
      */
     public static final int RATING_TOK = 4;
 
-    /**
-     * @inheritDoc
-     */
-    @Override
+   @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 

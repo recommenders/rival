@@ -42,9 +42,7 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
         rnd = new Random(seed);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
         final DataModel<Long, Long>[] splits = new DataModel[2 * nFolds];

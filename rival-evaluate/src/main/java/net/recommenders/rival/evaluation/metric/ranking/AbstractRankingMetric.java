@@ -65,8 +65,8 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
     }
 
     /**
-     * Method that transforms the user data from pairs of <item, score> into
-     * ranked lists of relevance values, by using groundtruth information.
+     * Method that transforms the user data from pairs of (item, score) into
+     * ranked lists of relevance values, by using ground truth information.
      *
      * @return a map with the transformed data, one list per user
      */
@@ -126,10 +126,7 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
         return prec;
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
+   @Override
     public double getValue() {
         return value;
     }

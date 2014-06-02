@@ -38,8 +38,8 @@ public class SplitterRunner {
      * @param data the data to be split
      * @param doDataClear flag to clear the memory used for the data before
      * saving the splits
-     * @throws ClassNotFoundException
-     * @throws FileNotFoundException
+     * @throws ClassNotFoundException when
+     * @throws FileNotFoundException when
      */
     public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws ClassNotFoundException, FileNotFoundException {
         System.out.println("Start splitting");
@@ -88,7 +88,7 @@ public class SplitterRunner {
      * @param model model to be saved
      * @param outfile file where the model will be saved
      * @param overwrite flag that indicates if the file should be overwritten
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException when
      */
     public static void saveDataModel(DataModel<Long, Long> model, String outfile, boolean overwrite) throws FileNotFoundException {
         if (new File(outfile).exists() && !overwrite) {

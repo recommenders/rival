@@ -69,7 +69,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
     }
 
     /**
-     * Method that transforms the user data from pairs of <item, score> into
+     * Method that transforms the user data from pairs of (item, score) into
      * lists of differences, by using groundtruth information.
      *
      * @return a map with the transformed data, one list per user
@@ -152,10 +152,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
+   @Override
     public double getValue() {
         return value;
     }

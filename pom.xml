@@ -43,7 +43,7 @@
         <connection>scm:git:http://github.com/recommenders/rival.git</connection>
         <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
         <url>scm:git:git@github.com:recommenders/rival.git</url>
-        <tag>${project.version}</tag>
+        <tag>rival-0.1</tag>
     </scm>
 
 

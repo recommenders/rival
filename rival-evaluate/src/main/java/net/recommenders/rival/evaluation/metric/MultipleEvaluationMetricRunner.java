@@ -65,13 +65,13 @@ public class MultipleEvaluationMetricRunner {
      *
      * @param properties The properties of the strategy.
      * @throws IOException if file not found.
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws ClassNotFoundException when
+     * @throws IllegalAccessException when
+     * @throws IllegalArgumentException when
+     * @throws InstantiationException when
+     * @throws InvocationTargetException when
+     * @throws NoSuchMethodException when
+     * @throws SecurityException when
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         EvaluationStrategy.OUTPUT_FORMAT recFormat = properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;

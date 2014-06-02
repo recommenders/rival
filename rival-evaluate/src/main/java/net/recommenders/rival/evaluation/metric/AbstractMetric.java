@@ -34,10 +34,7 @@ public abstract class AbstractMetric implements EvaluationMetric<Long> {
         this.metricPerUser = new HashMap<Long, Double>();
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
+   @Override
     public Map<Long, Double> getValuePerUser() {
         return metricPerUser;
     }
