@@ -1,0 +1,12 @@
+net.recommenders.rival.core
+net.recommenders.rival.evaluation.metric
+net.recommenders.rival.evaluation.metric.error
+net.recommenders.rival.evaluation.metric.ranking
+net.recommenders.rival.evaluation.parser
+net.recommenders.rival.evaluation.strategy
+net.recommenders.rival.recommend.frameworks
+net.recommenders.rival.recommend.frameworks.lenskit
+net.recommenders.rival.recommend.frameworks.mahout
+net.recommenders.rival.recommend.frameworks.mahout.exceptions
+net.recommenders.rival.split.parser
+net.recommenders.rival.split.splitter

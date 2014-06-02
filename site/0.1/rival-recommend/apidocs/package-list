@@ -1,0 +1,4 @@
+net.recommenders.rival.recommend.frameworks
+net.recommenders.rival.recommend.frameworks.lenskit
+net.recommenders.rival.recommend.frameworks.mahout
+net.recommenders.rival.recommend.frameworks.mahout.exceptions
