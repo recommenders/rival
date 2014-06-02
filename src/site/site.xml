@@ -14,7 +14,7 @@
     <bannerLeft>
         <name>RiVal</name>
         <src>logo.png</src>
-        <href>http://rival.recommenders.net</href>
+        <href>http://rival.recommenders.net/</href>
     </bannerLeft>
     <custom>
         <fluidoSkin>
@@ -28,12 +28,12 @@
     <body>
         <breadcrumbs>
             <item name="recommenders.net"
-                  href="http://www.recommenders.net"/>
+                  href="http://www.recommenders.net/"/>
             <item name="RiVal"
                   href="index.html"/>
         </breadcrumbs>
         <menu name="RiVal" inherit="top">
-            <item name="Project Home" href="http://rival.recommenders.net"/>
+            <item name="Project Home" href="http://rival.recommenders.net/"/>
             <item name="GitHub" href="http://github.com/recommenders/rival"/>
         </menu>
         <menu name="Documentation">

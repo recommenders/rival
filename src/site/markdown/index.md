@@ -11,7 +11,7 @@ RiVal Recommender System Evaluation Toolkit
 
   - [RiVal source on GitHub](http://github.com/recommenders/rival)
 
-  - [RiVal Wiki](http://github.com/recommenders/rival/wiki
+  - [RiVal Wiki](http://github.com/recommenders/rival/wiki)
 
   - [JavaDoc](./apidocs)
 
