@@ -73,6 +73,7 @@ public class MultipleEvaluationMetricRunner {
      * @throws NoSuchMethodException when
      * @throws SecurityException when
      */
+    @SuppressWarnings("unchecked")
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         EvaluationStrategy.OUTPUT_FORMAT recFormat = properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
 
@@ -91,13 +92,13 @@ public class MultipleEvaluationMetricRunner {
         Boolean doAppend = Boolean.parseBoolean(properties.getProperty(OUTPUT_APPEND, "true"));
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(METRIC_PER_USER, "false"));
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
-        int[] rankingCutoffs = null;
+        int[] rankingCutoffs;// = null;
         // process info for each result file
         File resultsFolder = new File(properties.getProperty(OUTPUT_FOLDER));
         for (String file : predictionFiles) {
             File predictionFile = new File(predictionsPrefix + file);
             System.out.println("Parsing started: recommendation file");
-            DataModel<Long, Long> predictions = null;
+            DataModel<Long, Long> predictions;// = null;
             switch (recFormat) {
                 case SIMPLE:
                     predictions = new SimpleParser().parseData(predictionFile);
@@ -116,7 +117,7 @@ public class MultipleEvaluationMetricRunner {
             for (String metricClassName : metricClassNames) {
                 // get metric
                 Class<?> metricClass = Class.forName(metricClassName);
-                EvaluationMetric<Long> metric = null;
+                EvaluationMetric<Long> metric;// = null;
                 if (metricClassName.contains(".ranking.")) {
                     String[] cutoffs = properties.getProperty(RANKING_CUTOFFS).split(",");
                     rankingCutoffs = new int[cutoffs.length];

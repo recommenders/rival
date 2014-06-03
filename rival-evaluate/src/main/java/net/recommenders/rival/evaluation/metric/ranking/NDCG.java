@@ -7,8 +7,7 @@ import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
- * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
- * target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
+ * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain" target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
  * items.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.

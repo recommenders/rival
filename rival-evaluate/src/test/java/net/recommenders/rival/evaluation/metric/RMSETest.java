@@ -3,7 +3,6 @@ package net.recommenders.rival.evaluation.metric;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.runners.JUnit4;
 import org.junit.runner.RunWith;
 
@@ -19,8 +18,8 @@ public class RMSETest<U, I> {
 
     @Test
     public void testSameGroundtruthAsPredictions() {
-        DataModel predictions = new DataModel();
-        DataModel test = new DataModel();
+        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
+        DataModel<Long, Long> test = new DataModel<Long, Long>();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 10; j++) {
                 test.addPreference((long) i, (long) j, (double) i * j);
@@ -35,7 +34,6 @@ public class RMSETest<U, I> {
 
         Map<Long, Double> rmsePerUser = rmse.getValuePerUser();
         for (Map.Entry<Long, Double> e : rmsePerUser.entrySet()) {
-            long user = e.getKey();
             double value = e.getValue();
             assertEquals(0.0, value, 0.0);
         }

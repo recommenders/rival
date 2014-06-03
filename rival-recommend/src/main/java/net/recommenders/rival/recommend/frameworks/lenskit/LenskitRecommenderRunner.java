@@ -49,6 +49,7 @@ public class LenskitRecommenderRunner extends AbstractRunner {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void run() throws IOException {
         if (alreadyRecommended) {
             return;
@@ -104,7 +105,9 @@ public class LenskitRecommenderRunner extends AbstractRunner {
             System.out.println("RecommenderBuildException thrown");
             e.printStackTrace();
         }
-        ItemRecommender irec = rec.getItemRecommender();
+        ItemRecommender irec = null;
+        if (rec != null)
+            irec = rec.getItemRecommender();
         assert irec != null;
 
         for (long user : test.getUserIds()) {

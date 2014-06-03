@@ -68,10 +68,11 @@ public class EvaluationMetricRunner {
      * @throws NoSuchMethodException when
      * @throws SecurityException when
      */
+    @SuppressWarnings("unchecked")
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         System.out.println("Parsing started: recommendation file");
         File recommendationFile = new File(properties.getProperty(PREDICTION_FILE));
-        DataModel<Long, Long> predictions = null;
+        DataModel<Long, Long> predictions;// = null;
         EvaluationStrategy.OUTPUT_FORMAT recFormat = properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
         switch (recFormat) {
             case SIMPLE:
@@ -94,11 +95,11 @@ public class EvaluationMetricRunner {
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(METRIC_PER_USER, "false"));
         File resultsFile = new File(properties.getProperty(OUTPUT_FILE));
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
-        int[] rankingCutoffs = null;
+        int[] rankingCutoffs;// = null;
         // get metric
         String metricClassName = properties.getProperty(METRIC);
         Class<?> metricClass = Class.forName(metricClassName);
-        EvaluationMetric<Long> metric = null;
+        EvaluationMetric<Long> metric;// = null;
         if (metricClassName.contains(".ranking.")) {
             String[] cutoffs = properties.getProperty(RANKING_CUTOFFS).split(",");
             rankingCutoffs = new int[cutoffs.length];
