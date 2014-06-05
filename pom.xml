@@ -55,6 +55,7 @@
         <module>rival-recommend</module>
         <module>rival-evaluate</module>
         <module>rival-package</module>
+        <module>rival-examples</module>
     </modules>
 
     <distributionManagement>
