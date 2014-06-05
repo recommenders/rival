@@ -3,6 +3,7 @@ package net.recommenders.rival.examples.movielens100k;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
+import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
 import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
@@ -17,6 +18,7 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -31,24 +33,81 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         int nFolds = 5;
         prepareSplits(url, nFolds);
         recommend(nFolds);
-        prepareStrategy();
+        prepareStrategy(nFolds);
+//        evaluate();
     }
 
-    public static void prepareStrategy() {
-        File trainingFile = new File("data/model/train.0.csv");
-        File testFile = new File("data/model/test.0.csv");
-        DataModel<Long, Long> trainingModel;
-        DataModel<Long, Long> testModel;
+    public static void prepareStrategy(int nFolds) {
+        for (int i = 0; i < nFolds; i++) {
+            File trainingFile = new File("data/model/train." + i + ".csv");
+            File testFile = new File("data/model/test." + i + ".csv");
+            File recFile = new File("data/recommendations/recs." + i + ".csv");
+            DataModel<Long, Long> trainingModel = null;
+            DataModel<Long, Long> testModel = null;
+            DataModel<Long, Long> recModel = null;
+            try {
+                trainingModel = new SimpleParser().parseData(trainingFile);
+                testModel = new SimpleParser().parseData(testFile);
+                recModel = new SimpleParser().parseData(recFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        try {
-            trainingModel= new SimpleParser().parseData(trainingFile);
-            trainingModel= new SimpleParser().parseData(trainingFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            EvaluationStrategy.OUTPUT_FORMAT format = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+            Double threshold = 2.0;
+            String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
+            EvaluationStrategy<Long, Long> strategy = null;
+            try {
+                strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
+            DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
+
+            //System.out.println("recusers: " + recModel.getNumUsers());
+            // no matches...
+            for (Long user : recModel.getUsers())
+                for (Long item : strategy.getCandidateItemsToRank(user))
+                    if (recModel.getUserItemPreferences().get(user).containsValue(item))
+                        modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
+            try {
+                modelToEval.saveDataModel("data/model/strategymodel." + i + ".csv", true);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
-
-
+        /**
+         final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<EvaluationStrategy.Pair<Long, Double>>>();
+         BufferedReader in = null;
+         try {
+         in = new BufferedReader(new FileReader(recFile));
+         } catch (FileNotFoundException e) {
+         e.printStackTrace();
+         }
+         String line = null;
+         try {
+         while ((line = in.readLine()) != null) {
+         StrategyIO.readLine(line, mapUserRecommendations);
+         }
+         in.close();
+         } catch (IOException e) {
+         e.printStackTrace();
+         }
+         */
     }
+
+
     public static void recommend(int nFolds) {
         for (int i = 0; i < nFolds; i++) {
             org.apache.mahout.cf.taste.model.DataModel trainModel = null;
