@@ -35,6 +35,7 @@
         <scmPublish.checkoutDirectory>${project.build.directory}/${project.version}</scmPublish.checkoutDirectory>
         <repository.domain>github.com</repository.domain>
         -->
+        <mahout.version>0.8</mahout.version>
     </properties>
 
     <issueManagement>

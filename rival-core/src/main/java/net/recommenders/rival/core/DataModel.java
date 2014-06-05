@@ -1,5 +1,8 @@
 package net.recommenders.rival.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -168,4 +171,40 @@ public class DataModel<U, I> {
         userItemTimestamps.clear();
         itemUserPreferences.clear();
     }
+
+
+
+    /**
+     * Method that saves a data model to a file.
+     *
+     *
+     * @param outfile file where the model will be saved
+     * @param overwrite flag that indicates if the file should be overwritten
+     * @throws java.io.FileNotFoundException when
+     */
+    public void saveDataModel(String outfile, boolean overwrite) throws FileNotFoundException {
+        if (new File(outfile).exists() && !overwrite) {
+            System.out.println("Ignoring " + outfile);
+        } else {
+            PrintStream out = new PrintStream(outfile);
+            for (U user : getUsers()) {
+                Map<I, Double> userPrefModel = getUserItemPreferences().get((Long)user);
+                Map<I, Set<Long>> userTimeModel = getUserItemTimestamps().get((Long)user);
+                for (I item : userPrefModel.keySet()) {
+                    Double pref = userPrefModel.get((Long)item);
+                    Set<Long> time = userTimeModel != null ? userTimeModel.get((Long)item) : null;
+                    if (time == null) {
+                        out.println(user + "\t" + item + "\t" + pref + "\t-1");
+                    } else {
+                        for (Long t : time) {
+                            out.println(user + "\t" + item + "\t" + pref + "\t" + t);
+                        }
+                    }
+                }
+            }
+            out.close();
+        }
+    }
+
+
 }

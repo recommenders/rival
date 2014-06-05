@@ -12,7 +12,6 @@
     <name>RiVal Recommendation</name>
 
     <properties>
-        <mahout.version>0.8</mahout.version>
         <lenskit.version>2.0.4</lenskit.version>
     </properties>
 

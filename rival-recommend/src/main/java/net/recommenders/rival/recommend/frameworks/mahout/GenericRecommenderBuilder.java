@@ -9,8 +9,8 @@ import org.apache.mahout.cf.taste.impl.recommender.svd.Factorizer;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.Recommender;
-import org.grouplens.lenskit.knn.item.ItemSimilarity;
-import org.grouplens.lenskit.knn.user.UserSimilarity;
+import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
+import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 /**
  *

@@ -57,12 +57,15 @@ public abstract class AbstractRunner {
         path = properties.getProperty(RecommendationRunner.output);
     }
 
+
     /**
      * Write recommendations to file.
+     * This method has been moved to net.recommenders.rival.recommend.RecommendIO
      * @param user  the user
      * @param recommendations   the recommendations
      * @param <T> list
      */
+    @Deprecated
     public <T> void writeData(long user, List<T> recommendations) {
         try {
             File dir = new File(path);
