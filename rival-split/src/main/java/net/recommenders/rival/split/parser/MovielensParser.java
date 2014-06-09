@@ -2,10 +2,10 @@ package net.recommenders.rival.split.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
+import net.recommenders.rival.core.SimpleParser;
 
 /**
  * A parser based on the format of Movielens files
@@ -35,7 +35,7 @@ public class MovielensParser implements Parser {
     public DataModel<Long, Long> parseData(File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
-        BufferedReader br = new BufferedReader(new FileReader(f));
+        BufferedReader br = SimpleParser.getBufferedReader(f);
         String line = null;
         while ((line = br.readLine()) != null) {
             parseLine(line, dataset);

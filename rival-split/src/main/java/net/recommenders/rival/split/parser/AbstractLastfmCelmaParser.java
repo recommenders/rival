@@ -2,9 +2,9 @@ package net.recommenders.rival.split.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import net.recommenders.rival.core.SimpleParser;
 
 /**
  * Parser for the Last.fm dataset by O. Celma.
@@ -41,7 +41,7 @@ public class AbstractLastfmCelmaParser {
     public static long getIndexMap(File in, Map<String, Long> map) throws IOException {
         long id = 0;
         if (in.exists()) {
-            BufferedReader br = new BufferedReader(new FileReader(in));
+            BufferedReader br = SimpleParser.getBufferedReader(in);
             String line = null;
             while ((line = br.readLine()) != null) {
                 String[] toks = line.split("\t");

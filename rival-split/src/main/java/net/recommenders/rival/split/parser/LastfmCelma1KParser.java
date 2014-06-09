@@ -1,6 +1,9 @@
 package net.recommenders.rival.split.parser;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -8,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.ParserWithIdMapping;
+import net.recommenders.rival.core.SimpleParser;
 
 /**
  *
@@ -48,7 +52,7 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
         long curUser = getIndexMap(new File(mapIdsPrefix + "_userId.txt"), mapUserIds);
         long curItem = getIndexMap(new File(mapIdsPrefix + "_itemId.txt"), mapItemIds);
 
-        BufferedReader br = new BufferedReader(new FileReader(f));
+        BufferedReader br = SimpleParser.getBufferedReader(f);
         String line = null;
         while ((line = br.readLine()) != null) {
             String[] toks = line.split("\t");

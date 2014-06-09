@@ -1,9 +1,7 @@
 package net.recommenders.rival.core;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Data parser for tab-separated data files.
@@ -37,7 +35,7 @@ public class SimpleParser implements Parser {
     public DataModel<Long, Long> parseData(File f, String token) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
-        BufferedReader br = new BufferedReader(new FileReader(f));
+        BufferedReader br = SimpleParser.getBufferedReader(f);
         String line = br.readLine();
         if (!line.matches(".*[a-zA-Z].*")) {
             parseLine(line, dataset, token);
@@ -48,6 +46,19 @@ public class SimpleParser implements Parser {
         br.close();
 
         return dataset;
+    }
+
+    public static BufferedReader getBufferedReader(File f) throws FileNotFoundException, IOException {
+        BufferedReader br = null;
+        if ((f == null) || (!f.isFile())) {
+            return br;
+        }
+        if (f.getName().endsWith(".gz") || f.getName().endsWith(".zip") || f.getName().endsWith(".tgz")) {
+            br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(f))));
+        } else {
+            br = new BufferedReader(new FileReader(f));
+        }
+        return br;
     }
 
     /**
