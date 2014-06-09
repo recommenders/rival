@@ -27,11 +27,22 @@ public class SimpleParser implements Parser {
      */
     public static final int TIME_TOK = 3;
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
         return parseData(f, "\t");
     }
 
+    /**
+     * Parse a data file with a specific separator between fields.
+     *
+     * @param f The file to be parsed.
+     * @param token The separator to be used.
+     * @return A dataset created from the file.
+     * @throws IOException if the file cannot be read.
+     */
     public DataModel<Long, Long> parseData(File f, String token) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
@@ -48,6 +59,17 @@ public class SimpleParser implements Parser {
         return dataset;
     }
 
+    /**
+     * Obtains an instance of BufferedReader depending on the file extension: if
+     * it ends with gz, zip, or tgz then a compressed reader is used instead of
+     * the standard one.
+     *
+     * @param f The file to be opened.
+     * @return An instance of BufferedReader or null if there is a problem
+     * @throws FileNotFoundException when the file does not exist.
+     * @throws IOException when the file cannot be read.
+     * @see BufferedReader
+     */
     public static BufferedReader getBufferedReader(File f) throws FileNotFoundException, IOException {
         BufferedReader br = null;
         if ((f == null) || (!f.isFile())) {
