@@ -1,5 +1,11 @@
 package net.recommenders.rival.examples.movielens100k;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
@@ -14,12 +20,6 @@ import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 /**
  *
@@ -59,7 +59,12 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
             EvaluationStrategy<Long, Long> strategy = null;
             try {
-                strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+                Object strategyObj = (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+                if (strategyObj instanceof EvaluationStrategy) {
+                    @SuppressWarnings("unchecked")
+                    EvaluationStrategy<Long, Long> strategyTemp = (EvaluationStrategy<Long, Long>) strategyObj;
+                    strategy = strategyTemp;
+                }
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -77,10 +82,13 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
             //System.out.println("recusers: " + recModel.getNumUsers());
             // no matches...
-            for (Long user : recModel.getUsers())
-                for (Long item : strategy.getCandidateItemsToRank(user))
-                    if (recModel.getUserItemPreferences().get(user).containsValue(item))
+            for (Long user : recModel.getUsers()) {
+                for (Long item : strategy.getCandidateItemsToRank(user)) {
+                    if (recModel.getUserItemPreferences().get(user).containsValue(item)) {
                         modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
+                    }
+                }
+            }
             try {
                 modelToEval.saveDataModel("data/model/strategymodel." + i + ".csv", true);
             } catch (FileNotFoundException e) {
@@ -88,25 +96,16 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             }
         }
         /**
-         final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<EvaluationStrategy.Pair<Long, Double>>>();
-         BufferedReader in = null;
-         try {
-         in = new BufferedReader(new FileReader(recFile));
-         } catch (FileNotFoundException e) {
-         e.printStackTrace();
-         }
-         String line = null;
-         try {
-         while ((line = in.readLine()) != null) {
-         StrategyIO.readLine(line, mapUserRecommendations);
-         }
-         in.close();
-         } catch (IOException e) {
-         e.printStackTrace();
-         }
+         * final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>>
+         * mapUserRecommendations = new HashMap<Long,
+         * List<EvaluationStrategy.Pair<Long, Double>>>(); BufferedReader in =
+         * null; try { in = new BufferedReader(new FileReader(recFile)); } catch
+         * (FileNotFoundException e) { e.printStackTrace(); } String line =
+         * null; try { while ((line = in.readLine()) != null) {
+         * StrategyIO.readLine(line, mapUserRecommendations); } in.close(); }
+         * catch (IOException e) { e.printStackTrace(); }
          */
     }
-
 
     public static void recommend(int nFolds) {
         for (int i = 0; i < nFolds; i++) {
@@ -168,8 +167,9 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         DataModel<Long, Long>[] splits = new CrossValidationSplitter(nFolds, perUser, seed).split(data);
         String path = "data/model/";
         File dir = new File(path);
-        if (!dir.exists())
+        if (!dir.exists()) {
             dir.mkdir();
+        }
         for (int i = 0; i < splits.length / 2; i++) {
             DataModel<Long, Long> training = splits[2 * i];
             DataModel<Long, Long> test = splits[2 * i + 1];
@@ -186,6 +186,4 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             }
         }
     }
-
-
 }

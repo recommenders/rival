@@ -94,7 +94,12 @@ public class StrategyRunner {
             Long seed = Long.parseLong(properties.getProperty(RELPLUSN_SEED));
             strategy = new RelPlusN(trainingModel, testModel, N, threshold, seed);
         } else {
-            strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+            Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+            if (strategyObj instanceof EvaluationStrategy) {
+                @SuppressWarnings("unchecked")
+                EvaluationStrategy<Long, Long> strategyTemp = (EvaluationStrategy<Long, Long>) strategyObj;
+                strategy = strategyTemp;
+            }
         }
         // read recommendations: user \t item \t score
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();

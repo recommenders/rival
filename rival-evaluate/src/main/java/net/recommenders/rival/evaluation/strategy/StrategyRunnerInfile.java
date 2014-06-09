@@ -96,7 +96,12 @@ public class StrategyRunnerInfile {
             Long seed = Long.parseLong(properties.getProperty(RELPLUSN_SEED));
             strategy = new RelPlusN(trainingModel, testModel, N, threshold, seed);
         } else {
-            strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+            Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+            if (strategyObj instanceof EvaluationStrategy) {
+                @SuppressWarnings("unchecked")
+                EvaluationStrategy<Long, Long> strategyTemp = (EvaluationStrategy<Long, Long>) strategyObj;
+                strategy = strategyTemp;
+            }
         }
         // generate output
         generateOutput(testModel, inputFile, strategy, format, rankingFile, groundtruthFile, overwrite);

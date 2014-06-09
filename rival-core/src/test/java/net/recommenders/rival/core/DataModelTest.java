@@ -18,7 +18,7 @@ public class DataModelTest<U, I> {
     /**
      * The data model.
      */
-    private DataModel dm = new DataModel();
+    private DataModel<Long, Long> dm = new DataModel<Long, Long>();
     /**
      * The number of users in the data model.
      */
@@ -31,20 +31,20 @@ public class DataModelTest<U, I> {
     @Before
     public void initialize() {
 
-        for (int u = 1; u <= USERS; u++) {
-            for (int i = 1; i <= ITEMS; i++) {
-                dm.addPreference((double) u, (double) i, (double) u * i);
+        for (long u = 1L; u <= USERS; u++) {
+            for (long i = 1L; i <= ITEMS; i++) {
+                dm.addPreference(u, i, 1.0 * u * i);
             }
         }
     }
 
     @Test
     public void testGetUserPreferences() {
-        Map<Double, Map<Double, Double>> storedPrefs = dm.getUserItemPreferences();
-        for (int u = 1; u <= USERS; u++) {
-            Map<Double, Double> iprefs = storedPrefs.get((double) u);
-            for (int i = 1; i <= ITEMS; i++) {
-                assertEquals((double) u * i, iprefs.get((double) i), 0.0);
+        Map<Long, Map<Long, Double>> storedPrefs = dm.getUserItemPreferences();
+        for (long u = 1L; u <= USERS; u++) {
+            Map<Long, Double> iprefs = storedPrefs.get(u);
+            for (long i = 1L; i <= ITEMS; i++) {
+                assertEquals(1.0 * u * i, iprefs.get(i), 0.0);
             }
         }
     }

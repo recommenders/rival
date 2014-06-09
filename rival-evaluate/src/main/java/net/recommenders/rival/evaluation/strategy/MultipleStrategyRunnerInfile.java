@@ -122,8 +122,12 @@ public class MultipleStrategyRunnerInfile {
                                 }
                             }
                         } else {
-                            EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
-                            generateOutput(testModel, inputFile, strategy, format, rankingFolder, groundtruthFolder, inputFileName, strategyClass.getSimpleName(), threshold, "", overwrite);
+                            Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
+                            if (strategyObj instanceof EvaluationStrategy) {
+                                @SuppressWarnings("unchecked")
+                                EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyObj;
+                                generateOutput(testModel, inputFile, strategy, format, rankingFolder, groundtruthFolder, inputFileName, strategyClass.getSimpleName(), threshold, "", overwrite);
+                            }
                         }
                     }
                 }

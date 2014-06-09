@@ -54,8 +54,9 @@ public class RandomSplitter implements Splitter<Long, Long> {
     /**
      * @inheritDoc
      */
-   @Override
+    @Override
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
+        @SuppressWarnings("unchecked")
         final DataModel<Long, Long>[] splits = new DataModel[2];
         splits[0] = new DataModel<Long, Long>(); // training
         splits[1] = new DataModel<Long, Long>(); // test

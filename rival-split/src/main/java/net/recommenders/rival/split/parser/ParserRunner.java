@@ -46,7 +46,12 @@ public class ParserRunner {
             String mapIdsPrefix = properties.getProperty(LASTFM_IDS_PREFIX);
             Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
             Object parser = parserClass.getConstructor(boolean.class).newInstance(useArtists);
-            model = (DataModel<Long, Long>) parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
+            Object modelObj = parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
+            if (modelObj instanceof DataModel) {
+                @SuppressWarnings("unchecked")
+                DataModel<Long, Long> modelTemp = (DataModel<Long, Long>) modelObj;
+                model = modelTemp;
+            }
         } else {
             Parser parser = (Parser) parserClass.getConstructor().newInstance();
             model = parser.parseData(file);

@@ -128,8 +128,12 @@ public class MultipleStrategyRunner {
                                 }
                             }
                         } else {
-                            EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
-                            generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFolder, groundtruthFolder, inputFileName, strategyClass.getSimpleName(), threshold, "", overwrite);
+                            Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
+                            if (strategyObj instanceof EvaluationStrategy) {
+                                @SuppressWarnings("unchecked")
+                                EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyObj;
+                                generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFolder, groundtruthFolder, inputFileName, strategyClass.getSimpleName(), threshold, "", overwrite);
+                            }
                         }
                     }
                 }
@@ -138,7 +142,8 @@ public class MultipleStrategyRunner {
     }
 
     /**
-     * Runs a particular strategy on some data and outputs the result into a file.
+     * Runs a particular strategy on some data and outputs the result into a
+     * file.
      *
      * @param testModel The test datamodel.
      * @param mapUserRecommendations A map with the recommendations for the
