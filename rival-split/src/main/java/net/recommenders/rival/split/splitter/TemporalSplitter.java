@@ -46,6 +46,9 @@ public class TemporalSplitter implements Splitter<Long, Long> {
         this.doSplitPerItems = doSplitPerItems;
     }
 
+    /**
+     * @inheritDoc
+     */
    @Override
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
         final DataModel<Long, Long>[] splits = new DataModel[2];

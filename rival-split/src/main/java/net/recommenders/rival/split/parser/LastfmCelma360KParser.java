@@ -12,7 +12,8 @@ import net.recommenders.rival.core.ParserWithIdMapping;
 import net.recommenders.rival.core.SimpleParser;
 
 /**
- *
+ * Parser for the 360K Last.fm dataset by O. Celma. More information here
+ * http://www.dtic.upf.edu/~ocelma/MusicRecommendationDataset/lastfm-360K.html
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -35,11 +36,19 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
      */
     public static final int PREF_TOK = 3;
 
+    /**
+     * Constructor
+     *
+     * @param useArtists Flag to consider artists as the items (instead of
+     * tracks).
+     */
     public LastfmCelma360KParser(boolean useArtists) {
         super(useArtists);
     }
 
-
+    /**
+     * @inheritDoc
+     */
     @Override
     public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();

@@ -43,6 +43,9 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
     }
 
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
         final DataModel<Long, Long>[] splits = new DataModel[2 * nFolds];
