@@ -64,7 +64,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
-     * @param relThreshold the relecance threshold
+     * @param relThreshold the relevance threshold
      * @param ats cutoffs
      * @param type type of NDCG computation
      */

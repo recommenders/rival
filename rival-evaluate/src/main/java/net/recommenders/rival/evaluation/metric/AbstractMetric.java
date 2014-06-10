@@ -23,7 +23,7 @@ public abstract class AbstractMetric implements EvaluationMetric<Long> {
 
     /**
      * Default constructor with predictions and groundtruth information
-     * 
+     *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
@@ -34,11 +34,17 @@ public abstract class AbstractMetric implements EvaluationMetric<Long> {
         this.metricPerUser = new HashMap<Long, Double>();
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public Map<Long, Double> getValuePerUser() {
         return metricPerUser;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public double getValue(Long u) {
         if (metricPerUser.containsKey(u)) {

@@ -10,12 +10,17 @@ import net.recommenders.rival.core.DataModel;
  */
 public class AllItems extends AbstractStrategy {
 
-
+    /**
+     * @inheritDoc
+     */
     public AllItems(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
         super(training, test, threshold);
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         final Set<Long> items = getModelTrainingDifference(training, user);
         items.addAll(getModelTrainingDifference(test, user));

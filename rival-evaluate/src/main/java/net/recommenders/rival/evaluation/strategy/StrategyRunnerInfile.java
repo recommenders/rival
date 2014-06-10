@@ -40,7 +40,7 @@ public class StrategyRunnerInfile {
      * ('propertyFile')
      *
      * @param args (not used)
-     * @throws Exception when
+     * @throws Exception when something goes wrong
      */
     public static void main(String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
@@ -61,14 +61,15 @@ public class StrategyRunnerInfile {
      * Process the property file and runs the specified strategies on some data.
      *
      * @param properties The property file
-     * @throws IOException when
-     * @throws ClassNotFoundException when
-     * @throws IllegalAccessException when
-     * @throws IllegalArgumentException when
-     * @throws InstantiationException when
-     * @throws InvocationTargetException when
-     * @throws NoSuchMethodException when
-     * @throws SecurityException when
+     * @throws IOException when a file cannot be parsed
+     * @throws ClassNotFoundException when the name of the class does not exist
+     * @throws IllegalAccessException when the strategy cannot be instantiated
+     * @throws IllegalArgumentException when some property cannot be parsed
+     * @throws InstantiationException when the strategy cannot be instantiated
+     * @throws InvocationTargetException when the strategy cannot be
+     * instantiated
+     * @throws NoSuchMethodException when the strategy cannot be instantiated
+     * @throws SecurityException when the strategy cannot be instantiated
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // read splits
@@ -119,8 +120,8 @@ public class StrategyRunnerInfile {
      * @param groundtruthFile The file where the ground truth will be printed
      * @param overwrite The flag that specifies what to do if rankingFile or
      * groundtruthFile already exists
-     * @throws FileNotFoundException when
-     * @throws IOException when
+     * @throws FileNotFoundException when the file cannot be opened
+     * @throws IOException when the file cannot be opened
      */
     public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, IOException {
         PrintStream outRanking = null;
@@ -169,7 +170,7 @@ public class StrategyRunnerInfile {
      * @param userRecommendationFile The file with the recommendation scores
      * @param user The user
      * @return the pairs (item, score) contained in the file for that user
-     * @throws IOException when
+     * @throws IOException when the file cannot be opened
      * @see StrategyRunnerInfile#readLine(java.lang.String, java.util.Map)
      */
     public static List<EvaluationStrategy.Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {

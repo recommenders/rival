@@ -126,7 +126,10 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
         return prec;
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public double getValue() {
         return value;
     }

@@ -13,7 +13,7 @@ import net.recommenders.rival.core.Parser;
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class TrecEvalParser implements Parser {
-    
+
     /**
      * The column index for the user id in the file.
      */
@@ -27,7 +27,10 @@ public class TrecEvalParser implements Parser {
      */
     public static final int RATING_TOK = 4;
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 

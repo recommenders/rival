@@ -46,7 +46,10 @@ public class RelPlusN extends AbstractStrategy {
         rnd = new Random(seed);
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public Set<Long> getCandidateItemsToRank(Long user) {
         final Set<Long> allItems = getModelTrainingDifference(training, user);
         allItems.addAll(getModelTrainingDifference(test, user));
@@ -64,7 +67,10 @@ public class RelPlusN extends AbstractStrategy {
         return items;
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void printRanking(Long user, List<Pair<Long, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
         final Set<Long> relItems = new HashSet<Long>();
         for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
@@ -88,7 +94,10 @@ public class RelPlusN extends AbstractStrategy {
         }
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void printGroundtruth(Long user, PrintStream out, OUTPUT_FORMAT format) {
         for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
             if (e.getValue() >= threshold) {

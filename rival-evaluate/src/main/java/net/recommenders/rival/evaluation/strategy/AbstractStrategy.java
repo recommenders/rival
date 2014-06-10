@@ -58,7 +58,10 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
         return items;
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void printRanking(Long user, List<Pair<Long, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Long, Double> scores = new HashMap<Long, Double>();
         for (Pair<Long, Double> p : scoredItems) {
@@ -110,7 +113,10 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
         }
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void printGroundtruth(Long user, PrintStream out, OUTPUT_FORMAT format) {
         final Map<Long, Double> relItems = new HashMap<Long, Double>();
         for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {

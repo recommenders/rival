@@ -152,7 +152,10 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
         }
     }
 
-   @Override
+    /**
+     * @inheritDoc
+     */
+    @Override
     public double getValue() {
         return value;
     }

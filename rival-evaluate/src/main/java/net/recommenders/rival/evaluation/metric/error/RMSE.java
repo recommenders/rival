@@ -42,6 +42,10 @@ public class RMSE extends AbstractErrorMetric implements EvaluationMetric<Long> 
      */
     @Override
     public void compute() {
+        if (!Double.isNaN(value)) {
+            // since the data cannot change, avoid re-doing the calculations
+            return;
+        }
         Map<Long, List<Double>> data = processDataAsPredictedDifferencesToTest();
         value = 0.0;
         int testItems = 0;
