@@ -3,10 +3,7 @@ package net.recommenders.rival.examples.movielens100k;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
-import net.recommenders.rival.evaluation.metric.error.RMSE;
-import net.recommenders.rival.evaluation.metric.ranking.MAP;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
-import net.recommenders.rival.evaluation.metric.ranking.Precision;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
@@ -24,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import net.recommenders.rival.evaluation.metric.error.RMSE;
 
 /**
  *
@@ -35,13 +33,13 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
     public static void main(String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
         int nFolds = 5;
-        prepareSplits(url, nFolds);
-        recommend(nFolds);
-        prepareStrategy(nFolds);
-        evaluate(nFolds);
+        prepareSplits(url, nFolds, "data/ml-100k/u.data", "data/model/");
+        recommend(nFolds, "data/model/", "data/recommendations/");
+        prepareStrategy(nFolds, "data/model/", "data/recommendations/", "data/model/");
+        evaluate(nFolds, "data/model/", "data/recommendations/");
     }
 
-    public static void prepareSplits(String url, int nFolds) {
+    public static void prepareSplits(String url, int nFolds, String inFile, String outPath) {
         DataDownloader dd = new DataDownloader(url);
         dd.downloadAndUnzip();
 
@@ -51,21 +49,21 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
         DataModel<Long, Long> data = null;
         try {
-            data = parser.parseData(new File("data/ml-100k/u.data"));
+            data = parser.parseData(new File(inFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         DataModel<Long, Long>[] splits = new CrossValidationSplitter(nFolds, perUser, seed).split(data);
-        String path = "data/model/";
-        File dir = new File(path);
-        if (!dir.exists())
+        File dir = new File(outPath);
+        if (!dir.exists()) {
             dir.mkdir();
+        }
         for (int i = 0; i < splits.length / 2; i++) {
             DataModel<Long, Long> training = splits[2 * i];
             DataModel<Long, Long> test = splits[2 * i + 1];
-            String trainingFile = path + "train." + i + ".csv";
-            String testFile = path + "test." + i + ".csv";
+            String trainingFile = outPath + "train." + i + ".csv";
+            String testFile = outPath + "test." + i + ".csv";
             System.out.println("train: " + trainingFile);
             System.out.println("test: " + testFile);
             boolean overwrite = true;
@@ -78,13 +76,13 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         }
     }
 
-    public static void recommend(int nFolds) {
+    public static void recommend(int nFolds, String inPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
             org.apache.mahout.cf.taste.model.DataModel trainModel = null;
             org.apache.mahout.cf.taste.model.DataModel testModel = null;
             try {
-                trainModel = new FileDataModel(new File("data/model/train." + i + ".csv"));
-                testModel = new FileDataModel(new File("data/model/test." + i + ".csv"));
+                trainModel = new FileDataModel(new File(inPath + "train." + i + ".csv"));
+                testModel = new FileDataModel(new File(inPath + "test." + i + ".csv"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -102,7 +100,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 e.printStackTrace();
             }
 
-            String path = "data/recommendations";
             String fileName = "recs." + i + ".csv";
 
             LongPrimitiveIterator users = null;
@@ -111,7 +108,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 while (users.hasNext()) {
                     long u = users.nextLong();
                     List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                    RecommenderIO.writeData(u, items, path, fileName);
+                    RecommenderIO.writeData(u, items, outPath, fileName);
                 }
             } catch (TasteException e) {
                 e.printStackTrace();
@@ -119,11 +116,11 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         }
     }
 
-    public static void prepareStrategy(int nFolds) {
+    public static void prepareStrategy(int nFolds, String splitPath, String recPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
-            File trainingFile = new File("data/model/train." + i + ".csv");
-            File testFile = new File("data/model/test." + i + ".csv");
-            File recFile = new File("data/recommendations/recs." + i + ".csv");
+            File trainingFile = new File(splitPath + "train." + i + ".csv");
+            File testFile = new File(splitPath + "test." + i + ".csv");
+            File recFile = new File(recPath + "recs." + i + ".csv");
             DataModel<Long, Long> trainingModel = null;
             DataModel<Long, Long> testModel = null;
             DataModel<Long, Long> recModel = null;
@@ -157,25 +154,27 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
             DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
 
-            for (Long user : recModel.getUsers())
-                for (Long item : strategy.getCandidateItemsToRank(user))
+            for (Long user : recModel.getUsers()) {
+                for (Long item : strategy.getCandidateItemsToRank(user)) {
                     if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
                         modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
                     }
+                }
+            }
             try {
-                modelToEval.saveDataModel("data/model/strategymodel." + i + ".csv", true);
+                modelToEval.saveDataModel(outPath + "strategymodel." + i + ".csv", true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static void evaluate(int nFolds){
+    public static void evaluate(int nFolds, String splitPath, String recPath) {
         double ndcgRes = 0.0;
         double precisionRes = 0.0;
         for (int i = 0; i < nFolds; i++) {
-            File testFile = new File("data/model/test." + i + ".csv");
-            File recFile = new File("data/recommendations/recs." + i + ".csv");
+            File testFile = new File(splitPath + "test." + i + ".csv");
+            File recFile = new File(recPath + "recs." + i + ".csv");
             DataModel<Long, Long> testModel = null;
             DataModel<Long, Long> recModel = null;
             try {
@@ -187,12 +186,12 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             NDCG ndcg = new NDCG(recModel, testModel, new int[]{10});
             ndcg.compute();
             ndcgRes += ndcg.getValueAt(10);
-//            System.out.println("NDCG@10: " + ndcg.getValueAt(10));
+            System.out.println("NDCG@10: " + ndcg.getValueAt(10));
 
-//            RMSE rmse = new RMSE(recModel, testModel);
-//            rmse.compute();
-//            System.out.println(rmse.getValue());
+            RMSE rmse = new RMSE(recModel, testModel);
+            rmse.compute();
+            System.out.println(rmse.getValue());
         }
-        System.out.println("NDCG@10: " + ndcgRes/nFolds);
+        System.out.println("NDCG@10: " + ndcgRes / nFolds);
     }
 }
