@@ -33,11 +33,13 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
     public static void main(String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
+        String modelPath = "data/model/";
+        String recPath = "data/recommendations/";
         int nFolds = 5;
-        prepareSplits(url, nFolds, "data/ml-100k/u.data", "data/model/");
-        recommend(nFolds, "data/model/", "data/recommendations/");
-        prepareStrategy(nFolds, "data/model/", "data/recommendations/", "data/model/");
-        evaluate(nFolds, "data/model/", "data/recommendations/");
+        prepareSplits(url, nFolds, "data/ml-100k/u.data", modelPath);
+        recommend(nFolds, modelPath, recPath);
+        prepareStrategy(nFolds, modelPath, recPath, modelPath);
+        evaluate(nFolds, modelPath, recPath);
     }
 
     public static void prepareSplits(String url, int nFolds, String inFile, String outPath) {
