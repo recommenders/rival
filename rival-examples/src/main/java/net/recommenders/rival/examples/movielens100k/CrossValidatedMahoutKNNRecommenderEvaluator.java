@@ -25,7 +25,7 @@ import java.util.List;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 
 /**
- *
+ * RiVal Movielens100k Mahout Example
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
