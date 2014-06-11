@@ -4,6 +4,7 @@ import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
+import net.recommenders.rival.evaluation.metric.ranking.Precision;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
@@ -132,8 +133,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 e.printStackTrace();
             }
 
-
-            EvaluationStrategy.OUTPUT_FORMAT format = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+//            EvaluationStrategy.OUTPUT_FORMAT format = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
             Double threshold = 2.0;
             String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
             EvaluationStrategy<Long, Long> strategy = null;
@@ -151,7 +151,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 e.printStackTrace();
             }
 
-
             DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
 
             for (Long user : recModel.getUsers()) {
@@ -162,7 +161,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 }
             }
             try {
-                System.out.println("strategy: " + i);
                 modelToEval.saveDataModel(outPath + "strategymodel_" + i + ".csv", true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -173,6 +171,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
     public static void evaluate(int nFolds, String splitPath, String recPath) {
         double ndcgRes = 0.0;
         double precisionRes = 0.0;
+        double rmseRes = 0.0;
         for (int i = 0; i < nFolds; i++) {
             File testFile = new File(splitPath + "test_" + i + ".csv");
             File recFile = new File(recPath + "recs_" + i + ".csv");
@@ -187,12 +186,18 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             NDCG ndcg = new NDCG(recModel, testModel, new int[]{10});
             ndcg.compute();
             ndcgRes += ndcg.getValueAt(10);
-            System.out.println("NDCG@10: " + ndcg.getValueAt(10));
 
             RMSE rmse = new RMSE(recModel, testModel);
             rmse.compute();
-            System.out.println(rmse.getValue());
+            rmseRes += rmse.getValue();
+
+            Precision precision = new Precision(recModel, testModel, 3.0, new int[]{10});
+            precision.compute();
+            precisionRes += precision.getValueAt(10);
         }
         System.out.println("NDCG@10: " + ndcgRes / nFolds);
+        System.out.println("RMSE: " + rmseRes / nFolds);
+        System.out.println("P@10: " + precisionRes / nFolds);
+
     }
 }
