@@ -65,14 +65,15 @@ public class MultipleStrategyRunnerInfile {
      * the information is not completely stored in memory.
      *
      * @param properties The properties of the strategies to run.
-     * @throws IOException If files cannot be read.
-     * @throws ClassNotFoundException If class does not exist.
-     * @throws IllegalAccessException when
-     * @throws IllegalArgumentException when
-     * @throws InstantiationException when
-     * @throws InvocationTargetException when
-     * @throws NoSuchMethodException when
-     * @throws SecurityException when
+     * @throws IOException when a file cannot be parsed
+     * @throws ClassNotFoundException when the name of the class does not exist
+     * @throws IllegalAccessException when the strategy cannot be instantiated
+     * @throws IllegalArgumentException when some property cannot be parsed
+     * @throws InstantiationException when the strategy cannot be instantiated
+     * @throws InvocationTargetException when the strategy cannot be
+     * instantiated
+     * @throws NoSuchMethodException when the strategy cannot be instantiated
+     * @throws SecurityException when the strategy cannot be instantiated
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // get splits
@@ -152,7 +153,7 @@ public class MultipleStrategyRunnerInfile {
      * @param suffix The file suffix.
      * @param overwrite Whether or not to overwrite the results file.
      * @throws FileNotFoundException if file does not exist.
-     * @throws IOException when
+     * @throws IOException when a file cannot be parsed.
      */
     public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException, IOException {
         File outRanking = new File(rankingFolder, "out" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
