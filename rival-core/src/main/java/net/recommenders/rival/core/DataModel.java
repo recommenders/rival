@@ -186,11 +186,11 @@ public class DataModel<U, I> {
         } else {
             PrintStream out = new PrintStream(outfile);
             for (U user : getUsers()) {
-                Map<I, Double> userPrefModel = getUserItemPreferences().get((Long) user);
-                Map<I, Set<Long>> userTimeModel = getUserItemTimestamps().get((Long) user);
+                Map<I, Double> userPrefModel = getUserItemPreferences().get(user);
+                Map<I, Set<Long>> userTimeModel = getUserItemTimestamps().get(user);
                 for (I item : userPrefModel.keySet()) {
-                    Double pref = userPrefModel.get((Long) item);
-                    Set<Long> time = userTimeModel != null ? userTimeModel.get((Long) item) : null;
+                    Double pref = userPrefModel.get(item);
+                    Set<Long> time = userTimeModel != null ? userTimeModel.get(item) : null;
                     if (time == null) {
                         out.println(user + "\t" + item + "\t" + pref + "\t-1");
                     } else {

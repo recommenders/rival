@@ -62,8 +62,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         for (int i = 0; i < splits.length / 2; i++) {
             DataModel<Long, Long> training = splits[2 * i];
             DataModel<Long, Long> test = splits[2 * i + 1];
-            String trainingFile = outPath + "train." + i + ".csv";
-            String testFile = outPath + "test." + i + ".csv";
+            String trainingFile = outPath + "train_" + i + ".csv";
+            String testFile = outPath + "test_" + i + ".csv";
             System.out.println("train: " + trainingFile);
             System.out.println("test: " + testFile);
             boolean overwrite = true;
@@ -81,8 +81,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             org.apache.mahout.cf.taste.model.DataModel trainModel = null;
             org.apache.mahout.cf.taste.model.DataModel testModel = null;
             try {
-                trainModel = new FileDataModel(new File(inPath + "train." + i + ".csv"));
-                testModel = new FileDataModel(new File(inPath + "test." + i + ".csv"));
+                trainModel = new FileDataModel(new File(inPath + "train_" + i + ".csv"));
+                testModel = new FileDataModel(new File(inPath + "test_" + i + ".csv"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -100,7 +100,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 e.printStackTrace();
             }
 
-            String fileName = "recs." + i + ".csv";
+            String fileName = "recs_" + i + ".csv";
 
             LongPrimitiveIterator users = null;
             try {
@@ -118,9 +118,9 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
     public static void prepareStrategy(int nFolds, String splitPath, String recPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
-            File trainingFile = new File(splitPath + "train." + i + ".csv");
-            File testFile = new File(splitPath + "test." + i + ".csv");
-            File recFile = new File(recPath + "recs." + i + ".csv");
+            File trainingFile = new File(splitPath + "train_" + i + ".csv");
+            File testFile = new File(splitPath + "test_" + i + ".csv");
+            File recFile = new File(recPath + "recs_" + i + ".csv");
             DataModel<Long, Long> trainingModel = null;
             DataModel<Long, Long> testModel = null;
             DataModel<Long, Long> recModel = null;
@@ -162,7 +162,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 }
             }
             try {
-                modelToEval.saveDataModel(outPath + "strategymodel." + i + ".csv", true);
+                System.out.println("strategy: " + i);
+                modelToEval.saveDataModel(outPath + "strategymodel_" + i + ".csv", true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -173,8 +174,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         double ndcgRes = 0.0;
         double precisionRes = 0.0;
         for (int i = 0; i < nFolds; i++) {
-            File testFile = new File(splitPath + "test." + i + ".csv");
-            File recFile = new File(recPath + "recs." + i + ".csv");
+            File testFile = new File(splitPath + "test_" + i + ".csv");
+            File recFile = new File(recPath + "recs_" + i + ".csv");
             DataModel<Long, Long> testModel = null;
             DataModel<Long, Long> recModel = null;
             try {

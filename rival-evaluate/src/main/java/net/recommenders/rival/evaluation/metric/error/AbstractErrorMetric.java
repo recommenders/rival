@@ -92,8 +92,8 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
             for (long testItem : ratings.keySet()) {
                 double realRating = ratings.get(testItem);
                 double predictedRating = Double.NaN; // NaN as default value
-                if (actualRatings.containsKey(testUser)) {
-                    if (actualRatings.get(testUser).containsKey(testItem)) {
+                if (predictedRatings.containsKey(testUser)) {
+                    if (predictedRatings.get(testUser).containsKey(testItem)) {
                         predictedRating = predictedRatings.get(testUser).get(testItem);
                     } else {
                         emptyItems++;
