@@ -28,7 +28,7 @@ and dependencies.  The five sub-modules are as follows:
 
 * `rival-core` -- the common data structures and similar object used throughout RiVal.
 * `rival-evaluate` -- the evaluation module, contains metrics and strategies used for evaluation.
-* `rival-examples` -- a module containing examples on how to use RiVal programmatically
+* `rival-examples` -- a module containing examples on how to use RiVal programmatically.
 * `rival-recommend` -- the recommendation modeule, contains hooks to Apache Mahout and LensKit.
 * `rival-split` -- the data splitting module, contains different data splitting strategies.
 * `rival-package` -- a configuration module for bulding rival distributions.
