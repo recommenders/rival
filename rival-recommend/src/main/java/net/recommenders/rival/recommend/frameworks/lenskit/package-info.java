@@ -1,4 +1,4 @@
 /**
- * RiVal evaluation strategies.
+ * RiVal Lenskit recommender interface.
  */
 package net.recommenders.rival.recommend.frameworks.lenskit;

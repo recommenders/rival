@@ -1,4 +1,4 @@
 /**
- * Core API classes for RiVal.
+ * RiVal evaluation strategies.
  */
 package net.recommenders.rival.evaluation.strategy;

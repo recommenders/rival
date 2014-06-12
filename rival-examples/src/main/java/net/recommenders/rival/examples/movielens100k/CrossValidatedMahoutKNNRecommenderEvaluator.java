@@ -135,7 +135,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 e.printStackTrace();
             }
 
-//            EvaluationStrategy.OUTPUT_FORMAT format = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
             Double threshold = 2.0;
             String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
             EvaluationStrategy<Long, Long> strategy = null;
