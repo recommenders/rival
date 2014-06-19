@@ -44,3 +44,7 @@ If you want to contribute, to it in the form of GitHub pull requests. To do this
 3. Submit a pull request via the GitHub Web interface
 
 Note that all your contributions will be licensed under RiVal's copyright licences (LGPL).
+
+## Mailing list
+
+To subscribe to the rival mailing list, send an email to rival-requests@recommenders.net with the subject "subscribe".

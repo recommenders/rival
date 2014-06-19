@@ -13,6 +13,15 @@
         <name>recommenders.net</name>
         <url>http://www.recommenders.net</url>
     </organization>
+    <mailingLists>
+        <mailingList>
+            <name>User list</name>
+            <subscribe>rival-requests@recommenders.net?subject=subscribe</subscribe>
+            <unsubscribe>rival-requests@recommenders.net?subject=unsubscribe</unsubscribe>
+            <post>rival@recommenders.net</post>
+            <archive>http://www.freelists.org/archive/rival/</archive>
+        </mailingList>
+    </mailingLists>
     <licenses>
         <license>
             <name>LGPLv2+</name>
