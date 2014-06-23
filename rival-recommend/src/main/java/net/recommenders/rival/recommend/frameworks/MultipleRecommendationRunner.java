@@ -8,11 +8,14 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- *
+ * Runner of multiple recommenders.
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
 public class MultipleRecommendationRunner {
 
+    /**
+     * Property keys.
+     */
     public static final String INPUT = "input";
     public static final String MAHOUT_ITEMBASED_RECS = "mahout.rec.ib";
     public static final String MAHOUT_USERBASED_RECS = "mahout.rec.ub";
@@ -27,6 +30,10 @@ public class MultipleRecommendationRunner {
     public static final String SVD_ITER = "svd.iterations";
     public static final String OUTPUT = "output";
 
+    /**
+     * Instantiates the runners based on input (property) files.
+     * @param args  not used.
+     */
     public static void main(String[] args) {
         final Set<String> paths = new HashSet<String>();
         final String propertyFile = System.getProperty("file");
@@ -49,6 +56,13 @@ public class MultipleRecommendationRunner {
         runMahoutRecommenders(paths, properties, neighborhoods, svdIterations);
     }
 
+    /**
+     * Runs the Lenskit recommenders created in @main.
+     * @param paths the input and output paths.
+     * @param properties    the properties.
+     * @param neighborhoods the different neihborhood types to instantiate.
+     * @param svdIterations the number of iterations that should be performed in SVD-based recommenders.
+     */
     public static void runLenskitRecommenders(Set<String> paths, Properties properties, String[] neighborhoods, String[] svdIterations) {
         try {
             String[] ibRecs = properties.getProperty(LENSKIT_ITEMBASED_RECS).split(",");
@@ -97,6 +111,13 @@ public class MultipleRecommendationRunner {
         }
     }
 
+    /**
+     * Runs Mahout-based recommender created in @main.
+     * @param paths the input and output paths.
+     * @param properties the properties.
+     * @param neighborhoods the different neihborhood types to instantiate.
+     * @param svdIterations the number of iterations that should be performed in SVD-based recommenders.
+     */
     public static void runMahoutRecommenders(Set<String> paths, Properties properties, String[] neighborhoods, String[] svdIterations) {
         try {
             String[] ibRecs = properties.getProperty(MAHOUT_ITEMBASED_RECS).split(",");
@@ -152,12 +173,17 @@ public class MultipleRecommendationRunner {
         }
     }
 
-    public static void listAllFiles(Set<String> paths, String path) {
-        for (File file : new File(path).listFiles()) {
+    /**
+     * List all files at a certain path.
+     * @param setOfPaths    the set of files at a certain path
+     * @param inputPath the path to check
+     */
+    public static void listAllFiles(Set<String> setOfPaths, String inputPath) {
+        for (File file : new File(inputPath).listFiles()) {
             if (file.isDirectory()) {
-                listAllFiles(paths, file.getAbsolutePath());
+                listAllFiles(setOfPaths, file.getAbsolutePath());
             } else if (file.getName().contains("_train.dat")) {
-                paths.add(file.getAbsolutePath().replaceAll("_train.dat", ""));
+                setOfPaths.add(file.getAbsolutePath().replaceAll("_train.dat", ""));
             }
         }
     }

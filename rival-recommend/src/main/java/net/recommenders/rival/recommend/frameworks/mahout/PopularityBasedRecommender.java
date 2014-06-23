@@ -12,6 +12,7 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 
 /**
+ * Basic popularity-based recommender.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -34,6 +35,13 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
         super(dataModel);
     }
 
+    /**
+     * Estimate the preference of @u of @i.
+     * @param u the user
+     * @param i the item
+     * @return  the preference
+     * @throws TasteException   when the recommender cannot estimate the preference.
+     */
     @Override
     public float estimatePreference(long u, long i) throws TasteException {
         return new Float(getDataModel().getPreferencesForItem(i).length());
@@ -51,6 +59,10 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Refresh the recommender.
+     * @param clctn the data.
+     */
     @Override
     public void refresh(Collection<Refreshable> clctn) {
     }

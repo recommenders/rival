@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * An abstract recommender runner.
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
 public abstract class AbstractRunner {
@@ -145,5 +145,9 @@ public abstract class AbstractRunner {
         return alreadyRecommended;
     }
 
+    /**
+     * Runs the recommender
+     * @throws Exception    when the recommender cannot be run. See implementations for more information on possible exceptions.
+     */
     public abstract void run() throws Exception;
 }

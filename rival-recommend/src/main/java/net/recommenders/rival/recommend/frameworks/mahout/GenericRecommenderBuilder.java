@@ -13,7 +13,7 @@ import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 /**
- *
+ * A generic recommender builder for Mahout recommenders in order to avoid generating separate builders for each recommender type.
  * @author <a href="http://github.com/alansaid">Alan</a>
  * @param <T> generic parameter
  */
@@ -37,6 +37,12 @@ public final class GenericRecommenderBuilder<T>
      */
     public static final int NOFACTORS = 0;
 
+    /**
+     * Builds a random recommender which will recommend items from the data model passed as a parameter.
+     * @param dataModel the data model
+     * @return the recommender
+     * @throws TasteException when the recommender is instantiated incorrectly.
+     */
     @Override
     public Recommender buildRecommender(DataModel dataModel)
             throws TasteException {

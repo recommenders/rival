@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
+ * A runner for Mahout-based recommenders.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>, <a href="http://github.com/alansaid">Alan</a>
  */
@@ -38,6 +39,11 @@ public class MahoutRecommenderRunner extends AbstractRunner {
         super(_properties);
     }
 
+    /**
+     * Runs the recommender.
+     * @throws IOException when paths in property object are incorrect..
+     * @throws TasteException when the recommender is instantiated incorrectly or breaks otherwise.
+     */
     @Override
     public void run() throws IOException, TasteException {
         if (alreadyRecommended) {
@@ -81,6 +87,10 @@ public class MahoutRecommenderRunner extends AbstractRunner {
         }
     }
 
+    /**
+     * Set the properties object.
+     * @param parameters    the properties.
+     */
     public void setProperties(Properties parameters) {
         this.properties = parameters;
     }

@@ -10,17 +10,18 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * Recommender-related IO operations.
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class RecommenderIO {
 
 
-        /**
-         * Write recommendations to file.
-         * @param user  the user
-         * @param recommendations   the recommendations
-         * @param <T> list
-         */
+    /**
+     * Write recommendations to file.
+     * @param user  the user
+     * @param recommendations   the recommendations
+     * @param <T> list
+     */
     public static <T> void writeData(long user, List<T> recommendations, String path, String fileName) {
         try {
             File dir = new File(path);

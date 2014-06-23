@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A runner for LensKit-based recommenders.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
@@ -48,6 +49,10 @@ public class LenskitRecommenderRunner extends AbstractRunner {
         super(_properties);
     }
 
+    /**
+     * Runs the recommender.
+     * @throws IOException when the recommender is instantiated incorrectly or breaks otherwise.
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void run() throws IOException {
@@ -82,11 +87,7 @@ public class LenskitRecommenderRunner extends AbstractRunner {
             }
         }
         if (properties.containsKey(RecommendationRunner.factors)) {
-//            config.bind(PreferenceSnapshot.class).to(PackedPreferenceSnapshot.class);
-//            config.bind(ItemScorer.class).to(FunkSVDItemScorer.class);
-            // not possible to do FunkSVD without baseline (see Funk's paper)
             config.bind(BaselineScorer.class, ItemScorer.class).to(UserMeanItemScorer.class);
-//            config.bind(UserMeanBaseline.class, ItemScorer.class).to(ItemMeanRatingItemScorer.class);
             config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
             config.set(IterationCount.class).to(DEFAULT_ITERATIONS);
             if (properties.getProperty(RecommendationRunner.factors).equals("-1")) {
