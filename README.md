@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/recommenders/rival.png?branch=master)](https://travis-ci.org/recommenders/rival)
 
-RiVal is an implementation of strategies for data splitting and evaluation of recommender systems. This file contains information on how to work with the RiVal code and how to compile RiVal.
+RiVal is a toolkit for data splitting and evaluation of recommender systems. This file contains information on how to work with the RiVal code and how to compile RiVal.
 For more information about RiVal and the documentation, visit the RiVal [website](http://rival.recommenders.net) or [wiki][].
 If you have not used RiVal before, do check out the [Getting Started][] guide.
 
@@ -39,7 +39,7 @@ We'll be very happy if you want to contribute to RiVal. If you are not sure on w
 
 If you want to contribute, to it in the form of GitHub pull requests. To do this:
 
-1. Fork RiVal (`recommenders/rival`) on GitHub
+1. Fork RiVal [rival](/../../) on GitHub
 2. Push your changes to your fork
 3. Submit a pull request via the GitHub Web interface
 
