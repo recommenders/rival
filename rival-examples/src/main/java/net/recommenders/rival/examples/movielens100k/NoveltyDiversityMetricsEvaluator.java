@@ -10,10 +10,12 @@ import java.util.Map;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
+import net.recommenders.rival.evaluation.metric.divnov.AggrDiv;
 import net.recommenders.rival.evaluation.metric.divnov.EFD;
 import net.recommenders.rival.evaluation.metric.divnov.EILD;
 import net.recommenders.rival.evaluation.metric.divnov.EPC;
 import net.recommenders.rival.evaluation.metric.divnov.EPD;
+import net.recommenders.rival.evaluation.metric.divnov.GiniIndex;
 import net.recommenders.rival.evaluation.metric.divnov.dist.ItemDistance;
 import net.recommenders.rival.evaluation.metric.divnov.dist.JaccardGenreItemDistance;
 import net.recommenders.rival.evaluation.metric.divnov.dist.StoredItemDistance;
@@ -29,7 +31,7 @@ public class NoveltyDiversityMetricsEvaluator {
         String modelPath = "data/model/";
         String recPath = "data/recommendations/";
         int nFolds = 5;
-        CrossValidatedMahoutKNNRecommenderEvaluator.main(args);
+//        CrossValidatedMahoutKNNRecommenderEvaluator.main(args);
         evaluate(nFolds, dataPath, modelPath, recPath);
     }
 
@@ -58,6 +60,8 @@ public class NoveltyDiversityMetricsEvaluator {
         double efdRes = 0.0;
         double epdRes = 0.0;
         double eildRes = 0.0;
+        double aggrdivRes = 0.0;
+        double giniRes = 0.0;
 
         Map<Long, Set<Long>> itemGenresMap = readGenres(dataPath + "u.item");
         ItemDistance<Long> dist = new JaccardGenreItemDistance<Long, Long>(itemGenresMap);
@@ -94,12 +98,22 @@ public class NoveltyDiversityMetricsEvaluator {
             EILD eild = new EILD(recModel, testModel, new int[]{10}, sdist);
             eild.compute();
             eildRes += eild.getValueAt(10);
+            
+            AggrDiv aggrDiv = new AggrDiv(recModel, testModel, new int[]{10}, trainingModel.getNumItems());
+            aggrDiv.compute();
+            aggrdivRes += aggrDiv.getValueAt(10);
+            
+            GiniIndex giniIndex = new GiniIndex(recModel, testModel, new int[]{10}, trainingModel.getNumItems());
+            giniIndex.compute();
+            giniRes += giniIndex.getValueAt(10);
 
         }
         System.out.println("EPC@10: " + epcRes / nFolds);
         System.out.println("EFD@10: " + efdRes / nFolds);
         System.out.println("EPD@10: " + epdRes / nFolds);
         System.out.println("EILD@10: " + eildRes / nFolds);
+        System.out.println("AggrDiv@10: " + aggrdivRes / nFolds);
+        System.out.println("GiniIndex@10: " + giniRes / nFolds);
 
     }
 }
