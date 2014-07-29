@@ -1,13 +1,10 @@
 package net.recommenders.rival.evaluation.metric.divnov;
 
 import java.util.ArrayList;
-import static java.util.Arrays.sort;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 import net.recommenders.rival.evaluation.metric.ranking.AbstractRankingMetric;
@@ -103,7 +100,7 @@ public class GiniIndex extends AbstractRankingMetric implements EvaluationMetric
         for (int k = 0; k < cs.size(); k++) {
             gi += (2 * (k + (nItems - cs.size()) + 1) - nItems - 1) * (cs.get(k) / (double) N);
         }
-        gi /= nItems;
+        gi /= (nItems - 1);
         gi = 1 - gi;
 
         return gi;
