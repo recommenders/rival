@@ -74,16 +74,16 @@ public class NDCGTest {
         test.addPreference(1L, 2L, 0.0);
         test.addPreference(1L, 3L, 1.0);
         test.addPreference(1L, 4L, 1.0);
-        predictions.addPreference(1L, 2L, 1.0);
-        predictions.addPreference(1L, 3L, 1.0);
         predictions.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 3L, 1.0);
+        predictions.addPreference(1L, 2L, 1.0);
         predictions.addPreference(1L, 1L, 0.0);
 
         ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
 
         ndcg.compute();
 
-        assertEquals(0.693, ndcg.getValue(), 0.001);
+        assertEquals(1.0, ndcg.getValue(), 0.001);
         // groundtruth: 0 1 1 0
         // predictions: 0 1 1 1
         test = new DataModel<Long, Long>();
@@ -92,16 +92,16 @@ public class NDCGTest {
         test.addPreference(1L, 20L, 0.0);
         test.addPreference(1L, 3L, 1.0);
         test.addPreference(1L, 4L, 1.0);
-        predictions.addPreference(1L, 3L, 1.0);
-        predictions.addPreference(1L, 4L, 1.0);
         predictions.addPreference(1L, 20L, 1.0);
+        predictions.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 3L, 1.0);
         predictions.addPreference(1L, 1L, 0.0);
 
         ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
 
         ndcg.compute();
 
-        assertEquals(1.0, ndcg.getValue(), 0.001);
+        assertEquals(0.693, ndcg.getValue(), 0.001);
     }
 
     @Test
