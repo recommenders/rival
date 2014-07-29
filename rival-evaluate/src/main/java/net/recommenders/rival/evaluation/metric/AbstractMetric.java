@@ -82,7 +82,10 @@ public abstract class AbstractMetric implements EvaluationMetric<Long> {
         List<Double> sortedScores = new ArrayList<Double>(itemsByRank.keySet());
         Collections.sort(sortedScores, Collections.reverseOrder());
         for (double pref : sortedScores) {
-            for (long itemID : itemsByRank.get(pref)) {
+            List<Long> sortedPrefItems = new ArrayList<Long>(itemsByRank.get(pref));
+            // deterministic output when ties in preferences: sort by item id
+            Collections.sort(sortedPrefItems);
+            for (long itemID : sortedPrefItems) {
                 sortedItems.add(itemID);
             }
         }

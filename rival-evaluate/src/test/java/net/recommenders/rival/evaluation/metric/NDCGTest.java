@@ -1,5 +1,6 @@
 package net.recommenders.rival.evaluation.metric;
 
+import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runners.JUnit4;
@@ -9,6 +10,7 @@ import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
@@ -40,6 +42,66 @@ public class NDCGTest {
             double value = e.getValue();
             assertEquals(1.0, value, 0.0);
         }
+    }
+
+    @Test
+    public void testOrderOneUserTrecevalStrategy() {
+        // groundtruth: 0 1 1 1
+        // predictions: 0 1 1 1
+        DataModel<Long, Long> test = new DataModel<Long, Long>();
+        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
+        test.addPreference(1L, 1L, 0.0);
+        test.addPreference(1L, 2L, 1.0);
+        test.addPreference(1L, 3L, 1.0);
+        test.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 3L, 1.0);
+        predictions.addPreference(1L, 2L, 1.0);
+        predictions.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 1L, 0.0);
+
+        NDCG ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+
+        ndcg.compute();
+
+        assertEquals(1.0, ndcg.getValue(), 0.001);
+        
+        // change the order of the predictions:
+        // groundtruth: 0 0 1 1
+        // predictions: 0 1 1 1
+        test = new DataModel<Long, Long>();
+        predictions = new DataModel<Long, Long>();
+        test.addPreference(1L, 1L, 0.0);
+        test.addPreference(1L, 2L, 0.0);
+        test.addPreference(1L, 3L, 1.0);
+        test.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 2L, 1.0);
+        predictions.addPreference(1L, 3L, 1.0);
+        predictions.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 1L, 0.0);
+
+        ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+
+        ndcg.compute();
+
+        assertEquals(0.693, ndcg.getValue(), 0.001);
+        // groundtruth: 0 1 1 0
+        // predictions: 0 1 1 1
+        test = new DataModel<Long, Long>();
+        predictions = new DataModel<Long, Long>();
+        test.addPreference(1L, 1L, 0.0);
+        test.addPreference(1L, 20L, 0.0);
+        test.addPreference(1L, 3L, 1.0);
+        test.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 3L, 1.0);
+        predictions.addPreference(1L, 4L, 1.0);
+        predictions.addPreference(1L, 20L, 1.0);
+        predictions.addPreference(1L, 1L, 0.0);
+
+        ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+
+        ndcg.compute();
+
+        assertEquals(1.0, ndcg.getValue(), 0.001);
     }
 
     @Test
