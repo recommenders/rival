@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
+import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import org.grouplens.lenskit.ItemRecommender;
 import org.grouplens.lenskit.ItemScorer;
 import org.grouplens.lenskit.Recommender;
@@ -113,7 +114,8 @@ public class LenskitRecommenderRunner extends AbstractRunner {
 
         for (long user : test.getUserIds()) {
             List<ScoredId> recs = irec.recommend(user);
-            writeData(user, recs);
+            //writeData(u, items);
+            RecommenderIO.writeData(user, recs, path, fileName);
         }
     }
 }

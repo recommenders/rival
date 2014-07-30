@@ -1,11 +1,13 @@
 package net.recommenders.rival.examples.movielens100k;
 
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelUtils;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 import net.recommenders.rival.evaluation.metric.ranking.Precision;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
+import net.recommenders.rival.evaluation.strategy.UserTest;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
 import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
@@ -71,8 +73,10 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             System.out.println("test: " + testFile);
             boolean overwrite = true;
             try {
-                training.saveDataModel(trainingFile, overwrite);
-                test.saveDataModel(testFile, overwrite);
+//                training.saveDataModel(trainingFile, overwrite);
+//                test.saveDataModel(testFile, overwrite);
+                DataModelUtils.saveDataModel(training, trainingFile, overwrite);
+                DataModelUtils.saveDataModel(test, testFile, overwrite);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -140,6 +144,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             EvaluationStrategy<Long, Long> strategy = null;
             try {
                 strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+                // Alternatively
+                // strategy = new UserTest(trainingModel,testModel,threshold);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -162,7 +168,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 }
             }
             try {
-                modelToEval.saveDataModel(outPath + "strategymodel_" + i + ".csv", true);
+//                modelToEval.saveDataModel(outPath + "strategymodel_" + i + ".csv", true);
+                DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

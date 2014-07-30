@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelUtils;
 
 /**
  * Class that splits a dataset according to some properties.
@@ -77,8 +78,10 @@ public class SplitterRunner {
             DataModel<Long, Long> test = splits[2 * i + 1];
             String trainingFile = outputFolder + splitTrainingPrefix + i + splitTrainingSuffix;
             String testFile = outputFolder + splitTestPrefix + i + splitTestSuffix;
-            saveDataModel(training, trainingFile, overwrite);
-            saveDataModel(test, testFile, overwrite);
+            DataModelUtils.saveDataModel(training, trainingFile, overwrite);
+            DataModelUtils.saveDataModel(test, testFile, overwrite);
+//            saveDataModel(training, trainingFile, overwrite);
+//            saveDataModel(test, testFile, overwrite);
         }
     }
 
@@ -90,6 +93,7 @@ public class SplitterRunner {
      * @param overwrite flag that indicates if the file should be overwritten
      * @throws FileNotFoundException when
      */
+    /**
     public static void saveDataModel(DataModel<Long, Long> model, String outfile, boolean overwrite) throws FileNotFoundException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);
@@ -113,4 +117,5 @@ public class SplitterRunner {
             out.close();
         }
     }
+     */
 }

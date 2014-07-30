@@ -175,11 +175,13 @@ public class DataModel<U, I> {
 
     /**
      * Method that saves a data model to a file.
+     * Moved to @DataModelUtils
      *
      * @param outfile file where the model will be saved
      * @param overwrite flag that indicates if the file should be overwritten
      * @throws java.io.FileNotFoundException when
      */
+    /**
     public void saveDataModel(String outfile, boolean overwrite) throws FileNotFoundException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);
@@ -203,4 +205,5 @@ public class DataModel<U, I> {
             out.close();
         }
     }
+     */
 }

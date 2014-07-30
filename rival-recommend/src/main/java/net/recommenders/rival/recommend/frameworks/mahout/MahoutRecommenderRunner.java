@@ -2,6 +2,7 @@ package net.recommenders.rival.recommend.frameworks.mahout;
 
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
+import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
@@ -80,7 +81,8 @@ public class MahoutRecommenderRunner extends AbstractRunner {
             long u = users.nextLong();
             try {
                 List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                writeData(u, items);
+                //writeData(u, items);
+                RecommenderIO.writeData(u, items, path, fileName);
             } catch (TasteException e) {
                 e.printStackTrace();
             }

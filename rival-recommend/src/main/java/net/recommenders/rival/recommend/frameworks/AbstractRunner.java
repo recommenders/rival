@@ -32,11 +32,11 @@ public abstract class AbstractRunner {
     /**
      * The file name where the properties live.
      */
-    private String fileName;
+    public String fileName;
     /**
      * The path where output is written to.
      */
-    private String path;
+    public String path;
     /**
      * True if this recommender has already been issued and output files exist.
      */
@@ -65,6 +65,7 @@ public abstract class AbstractRunner {
      * @param recommendations   the recommendations
      * @param <T> list
      */
+    /**
     @Deprecated
     public <T> void writeData(long user, List<T> recommendations) {
         try {
@@ -88,7 +89,7 @@ public abstract class AbstractRunner {
             logger.error(e.getMessage());
         }
     }
-
+*/
     /**
      * Create the file name of the output file.
      */
