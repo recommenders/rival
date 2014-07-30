@@ -35,7 +35,7 @@ and dependencies.  The five sub-modules are as follows:
 
 ## Contributing to RiVal
   
-We'll be very happy if you want to contribute to RiVal. If you are not sure on what to work on, have a look a the current tickets [Trac](/../../issues/).
+We'll be very happy if you want to contribute to RiVal. If you are not sure on what to work on, have a look a the current [issues](/../../issues/).
 
 If you want to contribute, to it in the form of GitHub pull requests. To do this:
 
