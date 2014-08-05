@@ -48,3 +48,8 @@ Note that all your contributions will be licensed under RiVal's copyright licenc
 ## Mailing list
 
 To subscribe to the rival mailing list, send an email to rival-requests@recommenders.net with the subject "subscribe".
+
+## More information
+* [RiVal website](http://rival.recommenders.net)
+* RiVal in [research](../../wiki/Research)
+* * RiVal on [Maven central](http://search.maven.org/#artifactdetails|net.recommenders.rival|rival|0.1|jar)
