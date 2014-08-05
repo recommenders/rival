@@ -52,4 +52,4 @@ To subscribe to the rival mailing list, send an email to rival-requests@recommen
 ## More information
 * [RiVal website](http://rival.recommenders.net)
 * RiVal in [research](../../wiki/Research)
-* * RiVal on [Maven central](http://search.maven.org/#artifactdetails|net.recommenders.rival|rival|0.1|jar)
+* RiVal on [Maven central](http://search.maven.org/#artifactdetails|net.recommenders.rival|rival|0.1|jar)
