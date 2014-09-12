@@ -72,7 +72,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>net.recommenders.rival.examples.movielens100k.CrossValidatedMahoutKNNRecommenderEvaluator</mainClass>
+                    <mainClass>net.recommenders.rival.examples.movietweetings.RandomMahoutIBRecommenderEvaluator</mainClass>
                 </configuration>
             </plugin>
         </plugins>

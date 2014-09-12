@@ -1,4 +1,4 @@
-package net.recommenders.rival.examples.movielens100k;
+package net.recommenders.rival.examples;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -16,19 +16,35 @@ import java.util.List;
 public class DataDownloader {
     public static final File dataFolder = new File("data");
     public static String url;
-    public DataDownloader(String url){
+    public static String folder;
+    public DataDownloader(String url, String folder){
         this.url = url;
+        this.folder = folder;
     }
 
     public static void main(String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
-        DataDownloader dd = new DataDownloader(url);
+        String folder = "data/ml-10k";
+        DataDownloader dd = new DataDownloader(url, folder);
         dd.downloadAndUnzip();
+    }
+
+    public void download(){
+        URL dataURL = null;
+        String fileName = folder + "/" + url.substring(url.lastIndexOf("/")+1);
+        System.out.println(fileName);
+        if (new File(fileName).exists())
+            return;
+        try {
+            dataURL = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void downloadAndUnzip(){
         URL dataURL = null;
-        String fileName = dataFolder + "/" + url.substring(url.lastIndexOf("/")+1);
+        String fileName = folder + "/" + url.substring(url.lastIndexOf("/")+1);
         if (new File(fileName).exists())
             return;
         try {

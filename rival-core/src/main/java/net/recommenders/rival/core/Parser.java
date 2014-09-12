@@ -10,6 +10,7 @@ import java.io.IOException;
  */
 public interface Parser {
 
+
     /**
      * Parse data file.
      *
@@ -18,4 +19,6 @@ public interface Parser {
      * @throws IOException if the file cannot be read.
      */
     public DataModel<Long, Long> parseData(File f) throws IOException;
+
+    public void setDelimiter(String del);
 }

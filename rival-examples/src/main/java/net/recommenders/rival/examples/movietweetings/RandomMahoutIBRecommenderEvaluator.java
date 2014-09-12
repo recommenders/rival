@@ -1,9 +1,7 @@
-package net.recommenders.rival.examples.movielens100k;
+package net.recommenders.rival.examples.movietweetings;
 
-import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.core.DataModelUtils;
-import net.recommenders.rival.core.Parser;
-import net.recommenders.rival.core.SimpleParser;
+import net.recommenders.rival.core.*;
+import net.recommenders.rival.evaluation.metric.error.RMSE;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 import net.recommenders.rival.evaluation.metric.ranking.Precision;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
@@ -11,8 +9,7 @@ import net.recommenders.rival.examples.DataDownloader;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
 import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
-import net.recommenders.rival.split.parser.MovielensParser;
-import net.recommenders.rival.split.splitter.CrossValidationSplitter;
+import net.recommenders.rival.split.splitter.RandomSplitter;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
@@ -24,35 +21,34 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import net.recommenders.rival.evaluation.metric.error.RMSE;
 
 /**
- * RiVal Movielens100k Mahout Example
- *
- * @author <a href="http://github.com/alansaid">Alan</a>
+ * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public class CrossValidatedMahoutKNNRecommenderEvaluator {
+public class RandomMahoutIBRecommenderEvaluator {
 
+   /**
     public static void main(String[] args) {
-        String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
-        String folder = "ml-100k";
+        String url = "https://github.com/sidooms/MovieTweetings/blob/master/snapshots/10K/ratings.dat";
         String modelPath = "data/model/";
         String recPath = "data/recommendations/";
+        String folder = "movietweeting";
         int nFolds = 5;
-        prepareSplits(url, nFolds, "data/ml-100k/u.data", folder, modelPath);
+        prepareSplits(url, nFolds, "data/movietweeting/ratings.dat", folder, modelPath);
         recommend(nFolds, modelPath, recPath);
         prepareStrategy(nFolds, modelPath, recPath, modelPath);
         evaluate(nFolds, modelPath, recPath);
     }
-
+    */
+/**
     public static void prepareSplits(String url, int nFolds, String inFile, String folder, String outPath) {
         DataDownloader dd = new DataDownloader(url, folder);
-        dd.downloadAndUnzip();
+        dd.download();
 
-        boolean perUser = true;
+        boolean perUser = false;
         long seed = 2048;
-        Parser parser = new MovielensParser();
-
+        Parser parser = new UIPParser();
+        parser.setDelimiter("::");
         DataModel<Long, Long> data = null;
         try {
             data = parser.parseData(new File(inFile));
@@ -60,7 +56,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             e.printStackTrace();
         }
 
-        DataModel<Long, Long>[] splits = new CrossValidationSplitter(nFolds, perUser, seed).split(data);
+        DataModel<Long, Long>[] splits = new RandomSplitter(0.2f, perUser, seed, false).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             dir.mkdir();
@@ -96,12 +92,11 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             }
 
             GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
-            String recommenderClass = "org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender";
-            String similarityClass = "org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity";
-            int neighborhoodSize = 50;
+            String recommenderClass = "org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender";
+            String similarityClass = "org.apache.mahout.cf.taste.impl.similarity.JaccardCorrelationSimilarity";
             Recommender recommender = null;
             try {
-                recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass, neighborhoodSize);
+                recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass);
             } catch (TasteException e) {
                 e.printStackTrace();
             } catch (RecommenderException e) {
@@ -209,4 +204,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         System.out.println("P@10: " + precisionRes / nFolds);
 
     }
+*/
 }
+
+

@@ -6,6 +6,7 @@ import java.io.IOException;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * A parser based on the format of Movielens files
@@ -70,5 +71,9 @@ public class MovielensParser implements Parser {
         //////
         dataset.addPreference(userId, itemId, preference);
         dataset.addTimestamp(userId, itemId, timestamp);
+    }
+    @Override
+    public void setDelimiter(String del) {
+        throw new NotImplementedException();
     }
 }
