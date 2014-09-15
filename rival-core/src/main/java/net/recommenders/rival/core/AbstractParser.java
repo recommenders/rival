@@ -3,7 +3,31 @@ package net.recommenders.rival.core;
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public abstract class AbstractParser {
+public abstract class AbstractParser implements Parser {
+    public static void setUSER_TOK(int USER_TOK) {
+        AbstractParser.USER_TOK = USER_TOK;
+    }
+
+    public static void setITEM_TOK(int ITEM_TOK) {
+        AbstractParser.ITEM_TOK = ITEM_TOK;
+    }
+
+    public static void setPREFERENCE_TOK(int PREFERENCE_TOK) {
+        AbstractParser.PREFERENCE_TOK = PREFERENCE_TOK;
+    }
+
+    public static void setTIME_TOK(int TIME_TOK) {
+        AbstractParser.TIME_TOK = TIME_TOK;
+    }
+
+    public static void setHAS_HEADER(boolean HAS_HEADER) {
+        AbstractParser.HAS_HEADER = HAS_HEADER;
+    }
+
+    public static void setDELIMITER(char DELIMITER) {
+        AbstractParser.DELIMITER = DELIMITER;
+    }
+
     /**
      * The column index for the user id in the file.
      */
@@ -28,5 +52,9 @@ public abstract class AbstractParser {
     /**
      * The column delimiter.
      */
-    public static String DELIMITER = ",";
+    public static char DELIMITER = ',';
+
+
+
+
 }

@@ -8,7 +8,7 @@ import java.io.IOException;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public interface Parser {
+public interface Parser{
 
 
     /**
@@ -20,5 +20,5 @@ public interface Parser {
      */
     public DataModel<Long, Long> parseData(File f) throws IOException;
 
-    public void setDelimiter(String del);
+
 }

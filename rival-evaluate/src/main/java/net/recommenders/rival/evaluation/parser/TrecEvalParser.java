@@ -66,8 +66,4 @@ public class TrecEvalParser implements Parser {
         dataset.addPreference(userId, itemId, preference);
         // no timestamp info
     }
-    @Override
-    public void setDelimiter(String del) {
-        throw new NotImplementedException();
-    }
 }

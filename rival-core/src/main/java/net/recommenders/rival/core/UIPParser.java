@@ -15,6 +15,9 @@ import java.io.IOException;
  */
 public class UIPParser extends AbstractParser implements Parser{
 
+    public UIPParser(){
+        super();
+    }
 
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
@@ -22,10 +25,12 @@ public class UIPParser extends AbstractParser implements Parser{
         Reader in = new FileReader(f);
 
         Iterable<CSVRecord> records;
-        if(HAS_HEADER)
-            records = CSVFormat.EXCEL.withHeader().parse(in);
-        else
-            records = CSVFormat.EXCEL.parse(in);
+        if(HAS_HEADER) {
+            records = CSVFormat.EXCEL.withDelimiter(DELIMITER).withHeader().parse(in);
+        }
+        else {
+            records = CSVFormat.EXCEL.withDelimiter(DELIMITER).parse(in);
+        }
         for (CSVRecord record : records) {
             long userID = Long.parseLong(record.get(USER_TOK));
             long itemID = Long.parseLong(record.get(ITEM_TOK));
@@ -38,16 +43,4 @@ public class UIPParser extends AbstractParser implements Parser{
     }
 
 
-    /**
-     * Set to true if the input file has a header line.
-     * @param hasHeader the header.
-     */
-    public void setHasHeader(boolean hasHeader) {
-        HAS_HEADER = hasHeader;
-    }
-
-    @Override
-    public void setDelimiter(String del) {
-        DELIMITER = del;
-    }
 }

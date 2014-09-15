@@ -114,8 +114,4 @@ public class SimpleParser implements Parser {
         }
     }
 
-    @Override
-    public void setDelimiter(String del) {
-        throw new NotImplementedException();
-    }
 }

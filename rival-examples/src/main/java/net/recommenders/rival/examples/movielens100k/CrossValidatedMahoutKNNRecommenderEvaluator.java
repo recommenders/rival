@@ -35,9 +35,9 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
     public static void main(String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
-        String folder = "ml-100k";
-        String modelPath = "data/model/";
-        String recPath = "data/recommendations/";
+        String folder = "data/ml-100k";
+        String modelPath = "data/ml-100k/model/";
+        String recPath = "data/ml-100k/recommendations/";
         int nFolds = 5;
         prepareSplits(url, nFolds, "data/ml-100k/u.data", folder, modelPath);
         recommend(nFolds, modelPath, recPath);

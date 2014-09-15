@@ -32,12 +32,18 @@ public class DataDownloader {
     public void download(){
         URL dataURL = null;
         String fileName = folder + "/" + url.substring(url.lastIndexOf("/")+1);
-        System.out.println(fileName);
         if (new File(fileName).exists())
             return;
         try {
             dataURL = new URL(url);
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        File downloadedData = new File(fileName);
+        try {
+            FileUtils.copyURLToFile(dataURL, downloadedData);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

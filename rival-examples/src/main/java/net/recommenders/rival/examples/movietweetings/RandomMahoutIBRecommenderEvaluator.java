@@ -27,28 +27,31 @@ import java.util.List;
  */
 public class RandomMahoutIBRecommenderEvaluator {
 
-   /**
     public static void main(String[] args) {
-        String url = "https://github.com/sidooms/MovieTweetings/blob/master/snapshots/10K/ratings.dat";
-        String modelPath = "data/model/";
-        String recPath = "data/recommendations/";
-        String folder = "movietweeting";
-        int nFolds = 5;
+        String url = "https://raw.githubusercontent.com/sidooms/MovieTweetings/master/snapshots/10K/ratings.dat";
+        String modelPath = "data/movietweeting/model/";
+        String recPath = "data/movietweeting/recommendations/";
+        String folder = "data/movietweeting";
+        int nFolds = 1;
         prepareSplits(url, nFolds, "data/movietweeting/ratings.dat", folder, modelPath);
         recommend(nFolds, modelPath, recPath);
         prepareStrategy(nFolds, modelPath, recPath, modelPath);
         evaluate(nFolds, modelPath, recPath);
     }
-    */
-/**
     public static void prepareSplits(String url, int nFolds, String inFile, String folder, String outPath) {
         DataDownloader dd = new DataDownloader(url, folder);
         dd.download();
 
-        boolean perUser = false;
-        long seed = 2048;
-        Parser parser = new UIPParser();
-        parser.setDelimiter("::");
+        boolean perUser = true;
+        long seed = 20;
+        AbstractParser parser = new UIPParser();
+
+        parser.setDELIMITER(':');
+        parser.setUSER_TOK(0);
+        parser.setITEM_TOK(2);
+        parser.setPREFERENCE_TOK(4);
+        parser.setTIME_TOK(6);
+
         DataModel<Long, Long> data = null;
         try {
             data = parser.parseData(new File(inFile));
@@ -93,7 +96,7 @@ public class RandomMahoutIBRecommenderEvaluator {
 
             GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
             String recommenderClass = "org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender";
-            String similarityClass = "org.apache.mahout.cf.taste.impl.similarity.JaccardCorrelationSimilarity";
+            String similarityClass = "org.apache.mahout.cf.taste.impl.similarity.TanimotoCoefficientSimilarity";
             Recommender recommender = null;
             try {
                 recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass);
@@ -204,7 +207,6 @@ public class RandomMahoutIBRecommenderEvaluator {
         System.out.println("P@10: " + precisionRes / nFolds);
 
     }
-*/
 }
 
 

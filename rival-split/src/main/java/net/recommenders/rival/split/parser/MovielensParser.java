@@ -72,8 +72,4 @@ public class MovielensParser implements Parser {
         dataset.addPreference(userId, itemId, preference);
         dataset.addTimestamp(userId, itemId, timestamp);
     }
-    @Override
-    public void setDelimiter(String del) {
-        throw new NotImplementedException();
-    }
-}
+ }
