@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+			<meta charset="utf-8">
+			<title>rival</title>
+			<meta http-equiv="x-ua-compatible" content="ie=edge" />
+			<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+			<meta name="keywords" content="rival recommenders recommender systems evaluation">
+			<meta name="description" content="Rival is an open source toolkit for evalaution of recommender systems." />
+			<meta property="og:image" content="http://rival.recommenders.net/img/logo.png" />
+			<meta property="og:type" content="blog"/>
+			<meta property="og:title" content="RiVal -- A toolkit for recommender system evaluation" />
+			<meta property="og:description" content="RiVal is an open source toolkit for evaluation of recommender systems" />
+			<link rel="shortcut icon" href="img/favicon.ico"/>
+			<link rel="bookmark" href="img/favicon.ico"/>
+			<!-- Loading Bootstrap -->
+			<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+			<link href="css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+			<link href="css/frame-templete.css" rel="stylesheet" type='text/css'>
+			<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,800,700,400italic,600italic,700italic,800italic,300italic" rel="stylesheet" type="text/css">
+
+			<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+			<!--[if lt IE 9]>
+			<script src="bootflat/js/html5shiv.js"></script>
+			<script src="bootflat/js/respond.min.js"></script>
+			<![endif]-->
+		</head>
+
+<body class="bf-docs-home">
+
+			<header class="navbar navbar-inverse navbar-fixed-top bf-docs-nav" role="banner">
+			<div class="container">
+				<div class="navbar-header">
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bf-navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a href="index.html" class="navbar-brand">rival</a>
+				</div>
+				<nav class="collapse navbar-collapse bf-navbar-collapse" role="navigation">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#rival">rival</a></li></li>
+					<li><a href="#docs">documentation</a></li>
+					<li><a href="#involved">get involved</a></li>
+					<!--li><a href="#aboutus">about us</a></li-->
+				</ul>
+				</nav>
+			</div>
+			</header>
+
+
+<section class="bf-features" id="rival" style="text-align:left;">
+			
+
+			<div class="container">
+<h1>RiVal GSoC 2015 Ideas</h1>
+
+<p>This page contains ideas of RiVal contributions in the context of GSoC 2015. These ideas should not be seen as the only possible GSoC projects, if you want to expand on one of the provided ideas, or propose something else, do get in touch with us at rival@recommenders.net</p>
+
+<p>Below is an unordered list of possible GSoC RiVal projects:</p>
+
+<p>
+<ul>
+<li><a href="#restful">Web Interface/RESTful API</a></li>
+<li><a href="#stats">Statistical Significance+</a></li>
+<li><a href="#eval">Non-traditional evaluation metrics</a></li>
+<li><a href="#stream">Stream-based evaluation</a></li>
+</ul>
+
+
+<a name="restful">
+<p>&nbsp;</p>
+</a>
+<h3>Project: Web Interface/RESTful API</h3>
+
+<p>Brief explanation: RiVal currently runs as a CLI program or is used as a Maven module. This project will set RiVal up as a Web service allowing for testing and evaluation to be performed over a RESTful API.</p>
+
+<p>Expected Results: A RiVal webapp which will allow for RESTful interactions with RiVal.</p>
+
+<p>Knowledge Prerequisite: Java and web programming.</p>
+
+<p>Skill: Medium</p>
+
+<p>Mentor: Alan Said or Alejandro Bellog&iacute;n</p>
+
+
+
+<p>&nbsp;</p>
+
+
+
+<a name="stats">
+<p>&nbsp;</p>
+</a>
+<h3>Project: Statistical Significance+</h3>
+
+<p>Brief explanation: RiVal currently does not calculate statistical significance for the available metrics. This project will set up a statistics module allowing for various statistical tests (e.g. student&#39;s T-Test, etc.) to be performed on the generated values.</p>
+
+<p>Expected Results: A RiVal statistics module containing (at least) a set of basic stastistical measures to be calculated based on the data and resuts.</p>
+
+<p>Knowledge Prerequisite: Java, statistics, machine learning</p>
+
+<p>Skill: Medium to high</p>
+
+<p>Mentor: Alejandro Bellog&iacute;n or Alan Said</p>
+
+<p>&nbsp;</p>
+
+
+<a name="eval">
+<p>&nbsp;</p>
+</a>
+<h3>Project: Non-traditional evaluation metrics</h3>
+
+<p>Brief explanation: In order to evaluate subjective experience of recommendation algorithms, metrics such as serendipity and novelty are used. This project will create metrics based on current state-of-the-art research literature for evaluating recommender systems with these metrics.</p>
+
+<p>Expected Results: A RiVal module, or expansion of the current evaluaiton module to support non-traditional evaluation metrics.</p>
+
+<p>Knowledge Prerequisite: Java, recommender systems</p>
+
+<p>Skill: Medium to high</p>
+
+<p>Mentor: Alan Said or Alejandro Bellog&iacute;n</p>
+
+<p>&nbsp;</p>
+
+
+<a name="stream">
+<p>&nbsp;</p>
+</a>
+<h3>Project: Stream-based evaluation</h3>
+
+<p>Brief explanation: RiVal currently reads data from files on disk, this project will create an interface for RiVal to receive recommendations live - as they are created - and present results for certain timespans.</p>
+
+<p>Expected results: an evaluation architecture and module which allows for live, continuous, and burst-based evaluation of incoming recommendations.</p>
+
+<p>Knowledge Prerequisite: Java</p>
+
+<p>Skill: Medium</p>
+
+<p>Mentor: Alejandro Bellog&iacute;n or Alan Said</p>
+</div>
+</section>
+</body>
+</html>
