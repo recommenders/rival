@@ -38,6 +38,7 @@ public class RandomMahoutIBRecommenderEvaluator {
         prepareStrategy(nFolds, modelPath, recPath, modelPath);
         evaluate(nFolds, modelPath, recPath);
     }
+
     public static void prepareSplits(String url, int nFolds, String inFile, String folder, String outPath) {
         DataDownloader dd = new DataDownloader(url, folder);
         dd.download();
@@ -111,10 +112,12 @@ public class RandomMahoutIBRecommenderEvaluator {
             LongPrimitiveIterator users = null;
             try {
                 users = testModel.getUserIDs();
+                boolean createFile = true;
                 while (users.hasNext()) {
                     long u = users.nextLong();
                     List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                    RecommenderIO.writeData(u, items, outPath, fileName);
+                    RecommenderIO.writeData(u, items, outPath, fileName, !createFile);
+                    createFile = false;
                 }
             } catch (TasteException e) {
                 e.printStackTrace();
@@ -122,6 +125,7 @@ public class RandomMahoutIBRecommenderEvaluator {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void prepareStrategy(int nFolds, String splitPath, String recPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
             File trainingFile = new File(splitPath + "train_" + i + ".csv");
@@ -208,5 +212,3 @@ public class RandomMahoutIBRecommenderEvaluator {
 
     }
 }
-
-

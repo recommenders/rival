@@ -19,7 +19,8 @@ import java.util.Properties;
 /**
  * A runner for Mahout-based recommenders.
  *
- * @author <a href="http://github.com/abellogin">Alejandro</a>, <a href="http://github.com/alansaid">Alan</a>
+ * @author <a href="http://github.com/abellogin">Alejandro</a>, <a
+ * href="http://github.com/alansaid">Alan</a>
  */
 public class MahoutRecommenderRunner extends AbstractRunner {
 
@@ -34,7 +35,8 @@ public class MahoutRecommenderRunner extends AbstractRunner {
 
     /**
      * Default constructor.
-     * @param _properties   the properties.
+     *
+     * @param _properties the properties.
      */
     public MahoutRecommenderRunner(Properties _properties) {
         super(_properties);
@@ -42,8 +44,10 @@ public class MahoutRecommenderRunner extends AbstractRunner {
 
     /**
      * Runs the recommender.
+     *
      * @throws IOException when paths in property object are incorrect..
-     * @throws TasteException when the recommender is instantiated incorrectly or breaks otherwise.
+     * @throws TasteException when the recommender is instantiated incorrectly
+     * or breaks otherwise.
      */
     @Override
     public void run() throws IOException, TasteException {
@@ -77,12 +81,14 @@ public class MahoutRecommenderRunner extends AbstractRunner {
         }
 
         LongPrimitiveIterator users = testModel.getUserIDs();
+
+        boolean createFile = true;
         while (users.hasNext()) {
             long u = users.nextLong();
             try {
                 List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                //writeData(u, items);
-                RecommenderIO.writeData(u, items, path, fileName);
+                RecommenderIO.writeData(u, items, path, fileName, !createFile);
+                createFile = false;
             } catch (TasteException e) {
                 e.printStackTrace();
             }
@@ -91,7 +97,8 @@ public class MahoutRecommenderRunner extends AbstractRunner {
 
     /**
      * Set the properties object.
-     * @param parameters    the properties.
+     *
+     * @param parameters the properties.
      */
     public void setProperties(Properties parameters) {
         this.properties = parameters;

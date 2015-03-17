@@ -11,24 +11,25 @@ import java.util.List;
 
 /**
  * Recommender-related IO operations.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class RecommenderIO {
 
-
     /**
      * Write recommendations to file.
-     * @param user  the user
-     * @param recommendations   the recommendations
+     *
+     * @param user the user
+     * @param recommendations the recommendations
      * @param <T> list
      */
-    public static <T> void writeData(long user, List<T> recommendations, String path, String fileName) {
+    public static <T> void writeData(long user, List<T> recommendations, String path, String fileName, boolean append) {
         try {
             File dir = new File(path);
             if (!dir.isDirectory()) {
                 dir.mkdir();
             }
-            BufferedWriter out = new BufferedWriter(new FileWriter(path + "/" + fileName, true));
+            BufferedWriter out = new BufferedWriter(new FileWriter(path + "/" + fileName, append));
             for (Object ri : recommendations) {
                 if (ri instanceof RecommendedItem) {
                     out.write(user + "\t" + ((RecommendedItem) ri).getItemID() + "\t" + ((RecommendedItem) ri).getValue() + "\n");
@@ -44,7 +45,4 @@ public class RecommenderIO {
 //            logger.error(e.getMessage());
         }
     }
-
-
-
 }

@@ -44,6 +44,7 @@ public class LenskitRecommenderRunner extends AbstractRunner {
 
     /**
      * Default constructor
+     *
      * @param _properties properties
      */
     public LenskitRecommenderRunner(Properties _properties) {
@@ -52,7 +53,9 @@ public class LenskitRecommenderRunner extends AbstractRunner {
 
     /**
      * Runs the recommender.
-     * @throws IOException when the recommender is instantiated incorrectly or breaks otherwise.
+     *
+     * @throws IOException when the recommender is instantiated incorrectly or
+     * breaks otherwise.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -108,14 +111,16 @@ public class LenskitRecommenderRunner extends AbstractRunner {
             e.printStackTrace();
         }
         ItemRecommender irec = null;
-        if (rec != null)
+        if (rec != null) {
             irec = rec.getItemRecommender();
+        }
         assert irec != null;
 
+        boolean createFile = true;
         for (long user : test.getUserIds()) {
             List<ScoredId> recs = irec.recommend(user);
-            //writeData(u, items);
-            RecommenderIO.writeData(user, recs, path, fileName);
+            RecommenderIO.writeData(user, recs, path, fileName, !createFile);
+            createFile = false;
         }
     }
 }

@@ -41,6 +41,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         int nFolds = 5;
         prepareSplits(url, nFolds, "data/ml-100k/u.data", folder, modelPath);
         recommend(nFolds, modelPath, recPath);
+        // the strategy files are (currently) being ignored
         prepareStrategy(nFolds, modelPath, recPath, modelPath);
         evaluate(nFolds, modelPath, recPath);
     }
@@ -113,10 +114,12 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             LongPrimitiveIterator users = null;
             try {
                 users = testModel.getUserIDs();
+                boolean createFile = true;
                 while (users.hasNext()) {
                     long u = users.nextLong();
                     List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                    RecommenderIO.writeData(u, items, outPath, fileName);
+                    RecommenderIO.writeData(u, items, outPath, fileName, !createFile);
+                    createFile = false;
                 }
             } catch (TasteException e) {
                 e.printStackTrace();
@@ -124,6 +127,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void prepareStrategy(int nFolds, String splitPath, String recPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
             File trainingFile = new File(splitPath + "train_" + i + ".csv");
