@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * A parser based on the format of trec_eval output (no timestamp info).

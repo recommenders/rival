@@ -1,7 +1,5 @@
 package net.recommenders.rival.core;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 
@@ -113,5 +111,4 @@ public class SimpleParser implements Parser {
             dataset.addTimestamp(userId, itemId, timestamp);
         }
     }
-
 }
