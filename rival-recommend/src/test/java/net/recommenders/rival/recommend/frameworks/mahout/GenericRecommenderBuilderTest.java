@@ -44,7 +44,7 @@ public class GenericRecommenderBuilderTest {
     }
 
     @Test
-    public void testBuildKNNRecommender(){
+    public void testBuildKNNRecommender() {
         GenericRecommenderBuilder rb = new GenericRecommenderBuilder();
         FastByIDMap<PreferenceArray> userData = new FastByIDMap<PreferenceArray>();
         userData.put(1, new GenericUserPreferenceArray(Arrays.asList(new GenericPreference(1, 1, 1),
@@ -60,7 +60,7 @@ public class GenericRecommenderBuilderTest {
             rec = rb.buildRecommender(dm, recommenderType, similarityType);
         } catch (TasteException e) {
             e.printStackTrace();
-        } catch (RecommenderException e){
+        } catch (RecommenderException e) {
             e.printStackTrace();
         }
         assertTrue(rec instanceof GenericUserBasedRecommender);
