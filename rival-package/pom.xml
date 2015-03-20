@@ -12,6 +12,7 @@
     <description>
         This module prepares the packaging of the binary RiVal distribution.
     </description>
+    <packaging>pom</packaging>
 
     <properties>
         <jar.directory>${project.build.directory}/jars</jar.directory>
