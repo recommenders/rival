@@ -4,7 +4,7 @@
 
     <groupId>net.recommenders.rival</groupId>
     <artifactId>rival</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>pom</packaging>
     <name>RiVal</name>
     <description>Evaluation toolkit for recommender systems</description>
@@ -55,7 +55,7 @@
         <connection>scm:git:http://github.com/recommenders/rival.git</connection>
         <developerConnection>scm:git:git@github.com:recommenders/rival.git</developerConnection>
         <url>scm:git:git@github.com:recommenders/rival.git</url>
-        <tag>rival-${project.version}</tag>
+        <tag>rival-0.2</tag>
     </scm>
 
 
@@ -154,18 +154,18 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.4.2</version>
+                    <version>2.5</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <mavenExecutorId>forked-path</mavenExecutorId>
                         <useReleaseProfile>false</useReleaseProfile>
-                        <arguments>${arguments} -Psonatype-oss-release</arguments>
+                        <releaseProfiles>release</releaseProfiles>
+                        <goals>deploy</goals>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.4</version>
+                    <version>1.5</version>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
