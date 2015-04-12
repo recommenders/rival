@@ -28,7 +28,10 @@ public class SimpleParser implements Parser {
     public static final int TIME_TOK = 3;
 
     /**
-     * @inheritDoc
+     * Parse data file.
+     * @param f The file to be parsed.
+     * @return A dataset created from the file.
+     * @throws IOException if the file cannot be read.
      */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
@@ -88,6 +91,7 @@ public class SimpleParser implements Parser {
      *
      * @param line The line to be parsed.
      * @param dataset The dataset to add data from line to.
+     * @param token the token to split on
      */
     private void parseLine(String line, DataModel<Long, Long> dataset, String token) {
         String[] toks = line.split(token);

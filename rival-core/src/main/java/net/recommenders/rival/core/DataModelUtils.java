@@ -13,11 +13,13 @@ public class DataModelUtils {
 
     /**
      * Method that saves a data model to a file.
-     *
+     * @param dm the data model
      * @param outfile file where the model will be saved
      * @param overwrite flag that indicates if the file should be overwritten
-     * @throws java.io.FileNotFoundException when
-     **/
+     * @param <U> user
+     * @param <I> item
+     * @throws FileNotFoundException
+     */
     public static <U,I> void saveDataModel(DataModel<U,I> dm, String outfile, boolean overwrite) throws FileNotFoundException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);
