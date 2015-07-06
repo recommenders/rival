@@ -1,9 +1,10 @@
 package net.recommenders.rival.evaluation.metric.error;
 
-import java.util.List;
-import java.util.Map;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <a href="http://recsyswiki.com/wiki/RMSE" target="_blank">Mean absolute
@@ -11,7 +12,7 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
+public class MAE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMetric<U> {
 
     /**
      * Default constructor with predictions and groundtruth information
@@ -19,7 +20,7 @@ public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+    public MAE(DataModel<U, I> predictions, DataModel<U, I> test) {
         super(predictions, test);
     }
 
@@ -30,7 +31,7 @@ public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
      * @param test groundtruth information for users and items
      * @param errorStrategy the error strategy
      */
-    public MAE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy errorStrategy) {
+    public MAE(DataModel<U, I> predictions, DataModel<U, I> test, ErrorStrategy errorStrategy) {
         super(predictions, test, errorStrategy);
     }
 
@@ -45,10 +46,10 @@ public class MAE extends AbstractErrorMetric implements EvaluationMetric<Long> {
             // since the data cannot change, avoid re-doing the calculations
             return;
         }
-        Map<Long, List<Double>> data = processDataAsPredictedDifferencesToTest();
+        Map<U, List<Double>> data = processDataAsPredictedDifferencesToTest();
         value = 0.0;
         int testItems = 0;
-        for (long testUser : test.getUsers()) {
+        for (U testUser : test.getUsers()) {
             int userItems = 0;
             double ume = 0.0;
 

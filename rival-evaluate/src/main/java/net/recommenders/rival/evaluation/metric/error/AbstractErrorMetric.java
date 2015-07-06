@@ -1,18 +1,19 @@
 package net.recommenders.rival.evaluation.metric.error;
 
+import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.AbstractMetric;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import net.recommenders.rival.evaluation.metric.*;
-import net.recommenders.rival.core.DataModel;
-
 import java.util.Map;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public abstract class AbstractErrorMetric extends AbstractMetric implements EvaluationMetric<Long> {
+public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> implements EvaluationMetric<U> {
 
     /**
      * Type of error strategy: what to do when there is no predicted rating but
@@ -50,7 +51,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public AbstractErrorMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+    public AbstractErrorMetric(DataModel<U, I> predictions, DataModel<U, I> test) {
         this(predictions, test, ErrorStrategy.NOT_CONSIDER_NAN);
     }
 
@@ -61,7 +62,7 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
      * @param test groundtruth information for users and items
      * @param strategy the error strategy
      */
-    public AbstractErrorMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy strategy) {
+    public AbstractErrorMetric(DataModel<U, I> predictions, DataModel<U, I> test, ErrorStrategy strategy) {
         super(predictions, test);
 
         this.value = Double.NaN;
@@ -74,22 +75,22 @@ public abstract class AbstractErrorMetric extends AbstractMetric implements Eval
      *
      * @return a map with the transformed data, one list per user
      */
-    public Map<Long, List<Double>> processDataAsPredictedDifferencesToTest() {
-        Map<Long, List<Double>> data = new HashMap<Long, List<Double>>();
-        Map<Long, Map<Long, Double>> actualRatings = test.getUserItemPreferences();
-        Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
+    public Map<U, List<Double>> processDataAsPredictedDifferencesToTest() {
+        Map<U, List<Double>> data = new HashMap<U, List<Double>>();
+        Map<U, Map<I, Double>> actualRatings = test.getUserItemPreferences();
+        Map<U, Map<I, Double>> predictedRatings = predictions.getUserItemPreferences();
 
         emptyItems = 0;
         emptyUsers = 0;
 
-        for (long testUser : test.getUsers()) {
-            Map<Long, Double> ratings = actualRatings.get(testUser);
+        for (U testUser : test.getUsers()) {
+            Map<I, Double> ratings = actualRatings.get(testUser);
             List<Double> userData = data.get(testUser);
             if (userData == null) {
                 userData = new ArrayList<Double>();
                 data.put(testUser, userData);
             }
-            for (long testItem : ratings.keySet()) {
+            for (I testItem : ratings.keySet()) {
                 double realRating = ratings.get(testItem);
                 double predictedRating = Double.NaN; // NaN as default value
                 if (predictedRatings.containsKey(testUser)) {

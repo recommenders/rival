@@ -1,22 +1,23 @@
 package net.recommenders.rival.evaluation.metric.ranking;
 
+import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
  * Mean Average Precision of a ranked list of items.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long> {
+public class MAP<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
     /**
      * AP (average precision) values per user at each cutoff level
      */
-    private Map<Integer, Map<Long, Double>> userMAPAtCutoff;
+    private Map<Integer, Map<U, Double>> userMAPAtCutoff;
 
     /**
      * Default constructor with predictions and groundtruth information
@@ -24,7 +25,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public MAP(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+    public MAP(DataModel<U, I> predictions, DataModel<U, I> test) {
         this(predictions, test, 1.0);
     }
 
@@ -35,7 +36,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public MAP(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold) {
+    public MAP(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
@@ -47,7 +48,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
      * @param relThreshold the relevance threshold
      * @param ats cutoffs
      */
-    public MAP(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {
+    public MAP(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats) {
         super(predictions, test, relThreshold, ats);
     }
 
@@ -62,12 +63,12 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
             return;
         }
         value = 0.0;
-        Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
-        userMAPAtCutoff = new HashMap<Integer, Map<Long, Double>>();
-        metricPerUser = new HashMap<Long, Double>();
+        Map<U, List<Double>> data = processDataAsRankedTestRelevance();
+        userMAPAtCutoff = new HashMap<Integer, Map<U, Double>>();
+        metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (long user : data.keySet()) {
+        for (U user : data.keySet()) {
             List<Double> sortedList = data.get(user);
             // number of relevant items for this user
             double uRel = getNumberOfRelevantItems(user);
@@ -84,9 +85,9 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
-                        Map<Long, Double> m = userMAPAtCutoff.get(at);
+                        Map<U, Double> m = userMAPAtCutoff.get(at);
                         if (m == null) {
-                            m = new HashMap<Long, Double>();
+                            m = new HashMap<U, Double>();
                             userMAPAtCutoff.put(at, m);
                         }
                         m.put(user, uMAP / uRel);
@@ -98,9 +99,9 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
             // assign the MAP of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
                 if (rank <= at) {
-                    Map<Long, Double> m = userMAPAtCutoff.get(at);
+                    Map<U, Double> m = userMAPAtCutoff.get(at);
                     if (m == null) {
-                        m = new HashMap<Long, Double>();
+                        m = new HashMap<U, Double>();
                         userMAPAtCutoff.put(at, m);
                     }
                     m.put(user, uMAP);
@@ -126,7 +127,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
         if (userMAPAtCutoff.containsKey(at)) {
             int n = 0;
             double map = 0.0;
-            for (long u : userMAPAtCutoff.get(at).keySet()) {
+            for (U u : userMAPAtCutoff.get(at).keySet()) {
                 double uMAP = getValueAt(u, at);
                 if (!Double.isNaN(uMAP)) {
                     map += uMAP;
@@ -149,7 +150,7 @@ public class MAP extends AbstractRankingMetric implements EvaluationMetric<Long>
      * the cutoff level
      */
     @Override
-    public double getValueAt(long user, int at) {
+    public double getValueAt(U user, int at) {
         if (userMAPAtCutoff.containsKey(at) && userMAPAtCutoff.get(at).containsKey(user)) {
             double map = userMAPAtCutoff.get(at).get(user);
             return map;

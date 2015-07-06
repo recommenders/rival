@@ -1,22 +1,23 @@
 package net.recommenders.rival.evaluation.metric.ranking;
 
+import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
  * Recall of a ranked list of items.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public class Recall extends AbstractRankingMetric implements EvaluationMetric<Long> {
+public class Recall<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
     /**
      * Recall values per user at each cutoff level
      */
-    private Map<Integer, Map<Long, Double>> userRecallAtCutoff;
+    private Map<Integer, Map<U, Double>> userRecallAtCutoff;
 
     /**
      * Default constructor with predictions and groundtruth information
@@ -24,7 +25,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+    public Recall(DataModel<U, I> predictions, DataModel<U, I> test) {
         this(predictions, test, 1.0);
     }
 
@@ -35,7 +36,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold) {
+    public Recall(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
@@ -47,7 +48,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
      * @param relThreshold relevance threshold
      * @param ats cutoffs
      */
-    public Recall(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {
+    public Recall(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats) {
         super(predictions, test, relThreshold, ats);
     }
 
@@ -62,12 +63,12 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
             return;
         }
         value = 0.0;
-        Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
-        userRecallAtCutoff = new HashMap<Integer, Map<Long, Double>>();
-        metricPerUser = new HashMap<Long, Double>();
+        Map<U, List<Double>> data = processDataAsRankedTestRelevance();
+        userRecallAtCutoff = new HashMap<Integer, Map<U, Double>>();
+        metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (long user : data.keySet()) {
+        for (U user : data.keySet()) {
             List<Double> sortedList = data.get(user);
             // number of relevant items for this user
             double uRel = getNumberOfRelevantItems(user);
@@ -79,9 +80,9 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
-                        Map<Long, Double> m = userRecallAtCutoff.get(at);
+                        Map<U, Double> m = userRecallAtCutoff.get(at);
                         if (m == null) {
-                            m = new HashMap<Long, Double>();
+                            m = new HashMap<U, Double>();
                             userRecallAtCutoff.put(at, m);
                         }
                         m.put(user, urec / uRel);
@@ -93,9 +94,9 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
             // assign the recall of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
                 if (rank <= at) {
-                    Map<Long, Double> m = userRecallAtCutoff.get(at);
+                    Map<U, Double> m = userRecallAtCutoff.get(at);
                     if (m == null) {
-                        m = new HashMap<Long, Double>();
+                        m = new HashMap<U, Double>();
                         userRecallAtCutoff.put(at, m);
                     }
                     m.put(user, urec);
@@ -121,7 +122,7 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
         if (userRecallAtCutoff.containsKey(at)) {
             int n = 0;
             double rec = 0.0;
-            for (long u : userRecallAtCutoff.get(at).keySet()) {
+            for (U u : userRecallAtCutoff.get(at).keySet()) {
                 double urec = getValueAt(u, at);
                 if (!Double.isNaN(urec)) {
                     rec += urec;
@@ -144,10 +145,9 @@ public class Recall extends AbstractRankingMetric implements EvaluationMetric<Lo
      * level
      */
     @Override
-    public double getValueAt(long user, int at) {
+    public double getValueAt(U user, int at) {
         if (userRecallAtCutoff.containsKey(at) && userRecallAtCutoff.get(at).containsKey(user)) {
-            double rec = userRecallAtCutoff.get(at).get(user);
-            return rec;
+            return userRecallAtCutoff.get(at).get(user);
         }
         return Double.NaN;
     }

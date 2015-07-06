@@ -1,22 +1,23 @@
 package net.recommenders.rival.evaluation.metric.ranking;
 
+import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
  * Precision of a ranked list of items.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public class Precision extends AbstractRankingMetric implements EvaluationMetric<Long> {
+public class Precision<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
     /**
      * Precision values per user at each cutoff level
      */
-    private Map<Integer, Map<Long, Double>> userPrecAtCutoff;
+    private Map<Integer, Map<U, Double>> userPrecAtCutoff;
 
     /**
      * Default constructor with predictions and groundtruth information
@@ -24,7 +25,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public Precision(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+    public Precision(DataModel<U, I> predictions, DataModel<U, I> test) {
         this(predictions, test, 1.0);
     }
 
@@ -35,7 +36,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public Precision(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold) {
+    public Precision(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
@@ -47,7 +48,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
      * @param relThreshold relevance threshold
      * @param ats cutoffs
      */
-    public Precision(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {
+    public Precision(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats) {
         super(predictions, test, relThreshold, ats);
     }
 
@@ -62,12 +63,12 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
             return;
         }
         value = 0.0;
-        Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
-        userPrecAtCutoff = new HashMap<Integer, Map<Long, Double>>();
-        metricPerUser = new HashMap<Long, Double>();
+        Map<U, List<Double>> data = processDataAsRankedTestRelevance();
+        userPrecAtCutoff = new HashMap<Integer, Map<U, Double>>();
+        metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (long user : data.keySet()) {
+        for (U user : data.keySet()) {
             List<Double> sortedList = data.get(user);
             double uprec = 0.0;
             int rank = 0;
@@ -77,9 +78,9 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
-                        Map<Long, Double> m = userPrecAtCutoff.get(at);
+                        Map<U, Double> m = userPrecAtCutoff.get(at);
                         if (m == null) {
-                            m = new HashMap<Long, Double>();
+                            m = new HashMap<U, Double>();
                             userPrecAtCutoff.put(at, m);
                         }
                         m.put(user, uprec / rank);
@@ -90,9 +91,9 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
             // instead, we fill with not relevant items until such cutoff
             for (int at : ats) {
                 if (rank <= at) {
-                    Map<Long, Double> m = userPrecAtCutoff.get(at);
+                    Map<U, Double> m = userPrecAtCutoff.get(at);
                     if (m == null) {
-                        m = new HashMap<Long, Double>();
+                        m = new HashMap<U, Double>();
                         userPrecAtCutoff.put(at, m);
                     }
                     m.put(user, uprec / at);
@@ -120,7 +121,7 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
         if (userPrecAtCutoff.containsKey(at)) {
             int n = 0;
             double prec = 0.0;
-            for (long u : userPrecAtCutoff.get(at).keySet()) {
+            for (U u : userPrecAtCutoff.get(at).keySet()) {
                 double uprec = getValueAt(u, at);
                 if (!Double.isNaN(uprec)) {
                     prec += uprec;
@@ -143,10 +144,9 @@ public class Precision extends AbstractRankingMetric implements EvaluationMetric
      * level
      */
     @Override
-    public double getValueAt(long user, int at) {
+    public double getValueAt(U user, int at) {
         if (userPrecAtCutoff.containsKey(at) && userPrecAtCutoff.get(at).containsKey(user)) {
-            double prec = userPrecAtCutoff.get(at).get(user);
-            return prec;
+            return userPrecAtCutoff.get(at).get(user);
         }
         return Double.NaN;
     }
