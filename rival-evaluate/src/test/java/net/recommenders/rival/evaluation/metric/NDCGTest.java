@@ -1,16 +1,14 @@
 package net.recommenders.rival.evaluation.metric;
 
-import java.util.HashSet;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runners.JUnit4;
-import org.junit.runner.RunWith;
-
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Map;
-import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
@@ -28,7 +26,7 @@ public class NDCGTest {
                 predictions.addPreference(i, j, i * j % 5 + 1.0);
             }
         }
-        NDCG ndcg = new NDCG(predictions, test, new int[]{5, 10, 20});
+        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(predictions, test, new int[]{5, 10, 20});
 
         ndcg.compute();
 
@@ -59,7 +57,7 @@ public class NDCGTest {
         predictions.addPreference(1L, 4L, 1.0);
         predictions.addPreference(1L, 1L, 0.0);
 
-        NDCG ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
 
         ndcg.compute();
 
@@ -79,7 +77,7 @@ public class NDCGTest {
         predictions.addPreference(1L, 2L, 1.0);
         predictions.addPreference(1L, 1L, 0.0);
 
-        ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+        ndcg = new NDCG<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
 
         ndcg.compute();
 
@@ -97,7 +95,7 @@ public class NDCGTest {
         predictions.addPreference(1L, 3L, 1.0);
         predictions.addPreference(1L, 1L, 0.0);
 
-        ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+        ndcg = new NDCG<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
 
         ndcg.compute();
 
@@ -118,7 +116,7 @@ public class NDCGTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        NDCG ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
 
         ndcg.compute();
 
@@ -151,7 +149,7 @@ public class NDCGTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        NDCG ndcg = new NDCG(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
+        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5}, NDCG.TYPE.TREC_EVAL);
 
         ndcg.compute();
 

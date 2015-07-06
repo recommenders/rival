@@ -1,14 +1,14 @@
 package net.recommenders.rival.evaluation.metric;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runners.JUnit4;
-import org.junit.runner.RunWith;
-
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.ranking.MAP;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Map;
-import net.recommenders.rival.evaluation.metric.ranking.MAP;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
@@ -28,7 +28,7 @@ public class MAPTest {
                 predictions.addPreference(i, j, i * j % 5 + 1.0);
             }
         }
-        MAP map = new MAP(predictions, test, 1.0, new int[]{1, 5, 10, 20});
+        MAP<Long, Long> map = new MAP<Long, Long>(predictions, test, 1.0, new int[]{1, 5, 10, 20});
 
         map.compute();
 
@@ -59,7 +59,7 @@ public class MAPTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        MAP map = new MAP(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
+        MAP<Long, Long> map = new MAP<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
 
         map.compute();
 
@@ -92,7 +92,7 @@ public class MAPTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        MAP map = new MAP(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
+        MAP<Long, Long> map = new MAP<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
 
         map.compute();
 

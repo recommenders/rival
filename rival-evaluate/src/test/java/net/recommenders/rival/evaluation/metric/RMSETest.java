@@ -1,14 +1,14 @@
 package net.recommenders.rival.evaluation.metric;
 
-import net.recommenders.rival.evaluation.metric.error.RMSE;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runners.JUnit4;
-import org.junit.runner.RunWith;
-
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.error.RMSE;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
@@ -26,7 +26,7 @@ public class RMSETest<U, I> {
                 predictions.addPreference((long) i, (long) j, (double) i * j);
             }
         }
-        RMSE rmse = new RMSE(predictions, test);
+        RMSE<Long, Long> rmse = new RMSE<Long, Long>(predictions, test);
 
         rmse.compute();
 
