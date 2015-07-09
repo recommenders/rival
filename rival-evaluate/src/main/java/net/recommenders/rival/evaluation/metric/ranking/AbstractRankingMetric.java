@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
- * target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
- * items.
+ * Abstract class which represents all the basic elements of a
+ * ranking based metric.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  * @author <a href="http://github.com/abellogin">Alejandro</a>.

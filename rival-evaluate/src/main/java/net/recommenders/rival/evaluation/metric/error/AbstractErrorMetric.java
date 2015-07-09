@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */

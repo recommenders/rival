@@ -5,6 +5,8 @@ import net.recommenders.rival.core.DataModel;
 import java.util.*;
 
 /**
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
