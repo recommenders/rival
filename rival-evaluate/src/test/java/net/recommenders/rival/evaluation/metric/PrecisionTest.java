@@ -1,14 +1,14 @@
 package net.recommenders.rival.evaluation.metric;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runners.JUnit4;
-import org.junit.runner.RunWith;
-
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.ranking.Precision;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Map;
-import net.recommenders.rival.evaluation.metric.ranking.Precision;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
@@ -26,7 +26,7 @@ public class PrecisionTest {
                 predictions.addPreference(i, j, i * j % 5 + 1.0);
             }
         }
-        Precision  precision = new Precision(predictions, test, 1.0, new int[]{5, 10, 20});
+        Precision<Long, Long> precision = new Precision<Long, Long>(predictions, test, 1.0, new int[]{5, 10, 20});
 
         precision.compute();
 
@@ -37,6 +37,32 @@ public class PrecisionTest {
         Map<Long, Double> precisionPerUser = precision.getValuePerUser();
         for (Map.Entry<Long, Double> e : precisionPerUser.entrySet()) {
             long user = e.getKey();
+            double value = e.getValue();
+            assertEquals(1.0, value, 0.0);
+        }
+    }
+
+    @Test
+    public void testSameGroundtruthAsPredictionsStringIDs() {
+        DataModel<String, String> predictions = new DataModel<String, String>();
+        DataModel<String, String> test = new DataModel<String, String>();
+        for (long i = 1L; i < 20; i++) {
+            for (long j = 1L; j < 15; j++) {
+                test.addPreference(String.valueOf("u" + i), String.valueOf("i" + j), i * j % 5 + 1.0);
+                predictions.addPreference(String.valueOf("u" + i), String.valueOf("i" + j), i * j % 5 + 1.0);
+            }
+        }
+        Precision<String, String> precision = new Precision<String, String>(predictions, test, 1.0, new int[]{5, 10, 20});
+
+        precision.compute();
+
+        assertEquals(1.0, precision.getValue(), 0.0);
+        assertEquals(1.0, precision.getValueAt(5), 0.0);
+        assertEquals(1.0, precision.getValueAt(10), 0.0);
+
+        Map<String, Double> precisionPerUser = precision.getValuePerUser();
+        for (Map.Entry<String, Double> e : precisionPerUser.entrySet()) {
+            String user = e.getKey();
             double value = e.getValue();
             assertEquals(1.0, value, 0.0);
         }
@@ -56,7 +82,7 @@ public class PrecisionTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        Precision precision = new Precision(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
+        Precision<Long, Long> precision = new Precision<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
 
         precision.compute();
 
@@ -89,7 +115,7 @@ public class PrecisionTest {
         predictions.addPreference(1L, 3L, 5.0);
         predictions.addPreference(1L, 4L, 1.0);
 
-        Precision precision = new Precision(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
+        Precision<Long, Long> precision = new Precision<Long, Long>(predictions, test, 1.0, new int[]{1, 2, 3, 4, 5});
 
         precision.compute();
 

@@ -1,8 +1,5 @@
 package net.recommenders.rival.evaluation.metric;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.metric.error.AbstractErrorMetric;
@@ -10,6 +7,10 @@ import net.recommenders.rival.evaluation.metric.ranking.AbstractRankingMetric;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 import net.recommenders.rival.evaluation.parser.TrecEvalParser;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
+
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 
 /**
  * Runner for a single evaluation metric.
@@ -146,7 +147,7 @@ public class EvaluationMetricRunner {
      * @param append Whether or not to append results in an existing file.
      * @throws FileNotFoundException If file not found.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final int[] rankingCutoffs, EvaluationMetric<Long> metric, String metricName, Boolean perUser, File resultsFile, Boolean overwrite, Boolean append) throws FileNotFoundException {
+    public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs, EvaluationMetric<U> metric, String metricName, Boolean perUser, File resultsFile, Boolean overwrite, Boolean append) throws FileNotFoundException {
         PrintStream out = null;
         if (overwrite && append) {
             System.out.println("Incompatible arguments: overwrite && append!!!");
@@ -161,13 +162,13 @@ public class EvaluationMetricRunner {
         metric.compute();
         out.println(metricName + "\tall\t" + metric.getValue());
         for (int c : rankingCutoffs) {
-            out.println(metricName + "@" + c + "\tall\t" + ((AbstractRankingMetric) metric).getValueAt(c));
+            out.println(metricName + "@" + c + "\tall\t" + ((AbstractRankingMetric<U, I>) metric).getValueAt(c));
         }
         if (perUser) {
-            for (Long user : testModel.getUsers()) {
+            for (U user : testModel.getUsers()) {
                 out.println(metricName + "\t" + user + "\t" + metric.getValue(user));
                 for (int c : rankingCutoffs) {
-                    out.println(metricName + "@" + c + "\t" + user + "\t" + ((AbstractRankingMetric) metric).getValueAt(user, c));
+                    out.println(metricName + "@" + c + "\t" + user + "\t" + ((AbstractRankingMetric<U, I>) metric).getValueAt(user, c));
                 }
             }
         }

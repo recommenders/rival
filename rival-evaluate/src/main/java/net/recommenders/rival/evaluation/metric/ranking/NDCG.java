@@ -1,10 +1,11 @@
 package net.recommenders.rival.evaluation.metric.ranking;
 
+import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.metric.EvaluationMetric;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 /**
  * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain" target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
@@ -13,7 +14,7 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
  * @author <a href="http://github.com/alansaid">Alan</a>.
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long> {
+public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
     /**
      * Type of nDCG computation (linear or exponential)
@@ -31,11 +32,11 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
     /**
      * DCG values per user at each cutoff level
      */
-    private Map<Integer, Map<Long, Double>> userDcgAtCutoff;
+    private Map<Integer, Map<U, Double>> userDcgAtCutoff;
     /**
      * Ideal DCG values per user at each cutoff level
      */
-    private Map<Integer, Map<Long, Double>> userIdcgAtCutoff;
+    private Map<Integer, Map<U, Double>> userIdcgAtCutoff;
 
     /**
      * Default constructor with predictions and groundtruth information
@@ -43,7 +44,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+    public NDCG(DataModel<U, I> predictions, DataModel<U, I> test) {
         this(predictions, test, new int[]{});
     }
 
@@ -54,7 +55,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @param test groundtruth ratings
      * @param ats cutoffs
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, int[] ats) {
+    public NDCG(DataModel<U, I> predictions, DataModel<U, I> test, int[] ats) {
         this(predictions, test, 1.0, ats, TYPE.EXP);
     }
 
@@ -68,7 +69,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @param ats cutoffs
      * @param type type of NDCG computation
      */
-    public NDCG(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats, TYPE type) {
+    public NDCG(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats, TYPE type) {
         super(predictions, test, relThreshold, ats);
         this.type = type;
     }
@@ -84,13 +85,13 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
             return;
         }
         value = 0.0;
-        Map<Long, List<Double>> data = processDataAsRankedTestRelevance();
-        userDcgAtCutoff = new HashMap<Integer, Map<Long, Double>>();
-        userIdcgAtCutoff = new HashMap<Integer, Map<Long, Double>>();
-        metricPerUser = new HashMap<Long, Double>();
+        Map<U, List<Double>> data = processDataAsRankedTestRelevance();
+        userDcgAtCutoff = new HashMap<Integer, Map<U, Double>>();
+        userIdcgAtCutoff = new HashMap<Integer, Map<U, Double>>();
+        metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (long user : data.keySet()) {
+        for (U user : data.keySet()) {
             List<Double> sortedList = data.get(user);
             double dcg = 0.0;
             int rank = 0;
@@ -100,9 +101,9 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
                 // compute at a particular cutoff
                 for (int at : ats) {
                     if (rank == at) {
-                        Map<Long, Double> m = userDcgAtCutoff.get(at);
+                        Map<U, Double> m = userDcgAtCutoff.get(at);
                         if (m == null) {
-                            m = new HashMap<Long, Double>();
+                            m = new HashMap<U, Double>();
                             userDcgAtCutoff.put(at, m);
                         }
                         m.put(user, dcg);
@@ -112,9 +113,9 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
             // assign the ndcg of the whole list to those cutoffs larger than the list's size
             for (int at : ats) {
                 if (rank <= at) {
-                    Map<Long, Double> m = userDcgAtCutoff.get(at);
+                    Map<U, Double> m = userDcgAtCutoff.get(at);
                     if (m == null) {
-                        m = new HashMap<Long, Double>();
+                        m = new HashMap<U, Double>();
                         userDcgAtCutoff.put(at, m);
                     }
                     m.put(user, dcg);
@@ -173,7 +174,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @param userTestItems the groundtruth items of a user.
      * @return the IDCG
      */
-    private double computeIDCG(long user, Map<Long, Double> userTestItems) {
+    private double computeIDCG(U user, Map<I, Double> userTestItems) {
         double idcg = 0.0;
         // sort the items according to their relevance level
         List<Double> sortedList = rankScores(userTestItems);
@@ -183,9 +184,9 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
             // compute at a particular cutoff
             for (int at : ats) {
                 if (rank == at) {
-                    Map<Long, Double> m = userIdcgAtCutoff.get(at);
+                    Map<U, Double> m = userIdcgAtCutoff.get(at);
                     if (m == null) {
-                        m = new HashMap<Long, Double>();
+                        m = new HashMap<U, Double>();
                         userIdcgAtCutoff.put(at, m);
                     }
                     m.put(user, idcg);
@@ -196,9 +197,9 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
         // assign the ndcg of the whole list to those cutoffs larger than the list's size
         for (int at : ats) {
             if (rank <= at) {
-                Map<Long, Double> m = userIdcgAtCutoff.get(at);
+                Map<U, Double> m = userIdcgAtCutoff.get(at);
                 if (m == null) {
-                    m = new HashMap<Long, Double>();
+                    m = new HashMap<U, Double>();
                     userIdcgAtCutoff.put(at, m);
                 }
                 m.put(user, idcg);
@@ -218,7 +219,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
         if (userDcgAtCutoff.containsKey(at) && userIdcgAtCutoff.containsKey(at)) {
             int n = 0;
             double ndcg = 0.0;
-            for (long u : userIdcgAtCutoff.get(at).keySet()) {
+            for (U u : userIdcgAtCutoff.get(at).keySet()) {
                 double udcg = getValueAt(u, at);
                 if (!Double.isNaN(udcg)) {
                     ndcg += udcg;
@@ -240,7 +241,7 @@ public class NDCG extends AbstractRankingMetric implements EvaluationMetric<Long
      * @return the NDCG corresponding to the requested user at the cutoff level
      */
     @Override
-    public double getValueAt(long user, int at) {
+    public double getValueAt(U user, int at) {
         if (userDcgAtCutoff.containsKey(at) && userDcgAtCutoff.get(at).containsKey(user)
                 && userIdcgAtCutoff.containsKey(at) && userIdcgAtCutoff.get(at).containsKey(user)) {
             double idcg = userIdcgAtCutoff.get(at).get(user);

@@ -1,19 +1,25 @@
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import java.util.*;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.AbstractMetric;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
- * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
- * target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
- * items.
+ * Abstract class which represents all the basic elements of a
+ * ranking based metric.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
-public abstract class AbstractRankingMetric extends AbstractMetric implements EvaluationMetric<Long> {
+public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> implements EvaluationMetric<U> {
 
     /**
      * Global metric value
@@ -34,7 +40,7 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public AbstractRankingMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test) {
+    public AbstractRankingMetric(DataModel<U, I> predictions, DataModel<U, I> test) {
         this(predictions, test, 1.0);
     }
 
@@ -45,7 +51,7 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public AbstractRankingMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold) {
+    public AbstractRankingMetric(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
@@ -57,7 +63,7 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
      * @param ats cutoffs
      * @param relThreshold relevance threshold
      */
-    public AbstractRankingMetric(DataModel<Long, Long> predictions, DataModel<Long, Long> test, double relThreshold, int[] ats) {
+    public AbstractRankingMetric(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats) {
         super(predictions, test);
         this.value = Double.NaN;
         this.ats = ats;
@@ -70,16 +76,16 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
      *
      * @return a map with the transformed data, one list per user
      */
-    public Map<Long, List<Double>> processDataAsRankedTestRelevance() {
-        Map<Long, List<Double>> data = new HashMap<Long, List<Double>>();
+    public Map<U, List<Double>> processDataAsRankedTestRelevance() {
+        Map<U, List<Double>> data = new HashMap<U, List<Double>>();
 
-        Map<Long, Map<Long, Double>> predictedRatings = predictions.getUserItemPreferences();
-        for (long testUser : test.getUsers()) {
-            Map<Long, Double> userPredictedRatings = predictedRatings.get(testUser);
-            Map<Long, Double> userRelevance = test.getUserItemPreferences().get(testUser);
+        Map<U, Map<I, Double>> predictedRatings = predictions.getUserItemPreferences();
+        for (U testUser : test.getUsers()) {
+            Map<I, Double> userPredictedRatings = predictedRatings.get(testUser);
+            Map<I, Double> userRelevance = test.getUserItemPreferences().get(testUser);
             if (userPredictedRatings != null) {
                 List<Double> rankedTestRel = new ArrayList<Double>();
-                for (long item : rankItems(userPredictedRatings)) {
+                for (I item : rankItems(userPredictedRatings)) {
                     double rel = 0.0;
                     if (userRelevance.containsKey(item)) {
                         rel = userRelevance.get(item);
@@ -99,10 +105,10 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
      * @param user a user
      * @return the number of relevant items the user has in the test set
      */
-    protected double getNumberOfRelevantItems(long user) {
+    protected double getNumberOfRelevantItems(U user) {
         int n = 0;
         if (test.getUserItemPreferences().containsKey(user)) {
-            for (Map.Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
+            for (Map.Entry<I, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
                 if (e.getValue() >= relevanceThreshold) {
                     n++;
                 }
@@ -151,5 +157,5 @@ public abstract class AbstractRankingMetric extends AbstractMetric implements Ev
      * @return the metric corresponding to the requested user at the cutoff
      * level
      */
-    public abstract double getValueAt(long user, int at);
+    public abstract double getValueAt(U user, int at);
 }
