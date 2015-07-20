@@ -47,11 +47,11 @@ public class RandomMahoutIBRecommenderEvaluator {
         long seed = 20;
         AbstractParser parser = new UIPParser();
 
-        parser.setDELIMITER(':');
-        parser.setUSER_TOK(0);
-        parser.setITEM_TOK(2);
-        parser.setPREFERENCE_TOK(4);
-        parser.setTIME_TOK(6);
+        parser.setDelimiter(':');
+        parser.setUserTok(0);
+        parser.setItemTok(2);
+        parser.setPrefTok(4);
+        parser.setTimeTok(6);
 
         DataModel<Long, Long> data = null;
         try {
@@ -74,8 +74,6 @@ public class RandomMahoutIBRecommenderEvaluator {
             System.out.println("test: " + testFile);
             boolean overwrite = true;
             try {
-//                training.saveDataModel(trainingFile, overwrite);
-//                test.saveDataModel(testFile, overwrite);
                 DataModelUtils.saveDataModel(training, trainingFile, overwrite);
                 DataModelUtils.saveDataModel(test, testFile, overwrite);
             } catch (FileNotFoundException e) {
@@ -171,7 +169,6 @@ public class RandomMahoutIBRecommenderEvaluator {
                 }
             }
             try {
-//                modelToEval.saveDataModel(outPath + "strategymodel_" + i + ".csv", true);
                 DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -194,15 +191,15 @@ public class RandomMahoutIBRecommenderEvaluator {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            NDCG ndcg = new NDCG(recModel, testModel, new int[]{10});
+            NDCG<Long, Long> ndcg = new NDCG<Long, Long>(recModel, testModel, new int[]{10});
             ndcg.compute();
             ndcgRes += ndcg.getValueAt(10);
 
-            RMSE rmse = new RMSE(recModel, testModel);
+            RMSE<Long, Long> rmse = new RMSE<Long, Long>(recModel, testModel);
             rmse.compute();
             rmseRes += rmse.getValue();
 
-            Precision precision = new Precision(recModel, testModel, 3.0, new int[]{10});
+            Precision<Long, Long> precision = new Precision<Long, Long>(recModel, testModel, 3.0, new int[]{10});
             precision.compute();
             precisionRes += precision.getValueAt(10);
         }
