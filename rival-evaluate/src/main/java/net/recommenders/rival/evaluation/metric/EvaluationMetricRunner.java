@@ -147,6 +147,7 @@ public class EvaluationMetricRunner {
      * @param append Whether or not to append results in an existing file.
      * @throws FileNotFoundException If file not found.
      */
+    @SuppressWarnings("unchecked")
     public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs, EvaluationMetric<U> metric, String metricName, Boolean perUser, File resultsFile, Boolean overwrite, Boolean append) throws FileNotFoundException {
         PrintStream out = null;
         if (overwrite && append) {
@@ -161,14 +162,20 @@ public class EvaluationMetricRunner {
         }
         metric.compute();
         out.println(metricName + "\tall\t" + metric.getValue());
-        for (int c : rankingCutoffs) {
-            out.println(metricName + "@" + c + "\tall\t" + ((AbstractRankingMetric<U, I>) metric).getValueAt(c));
+        if (metric instanceof AbstractRankingMetric) {
+            AbstractRankingMetric<U, I> rankingMetric = (AbstractRankingMetric<U, I>) metric;
+            for (int c : rankingCutoffs) {
+                out.println(metricName + "@" + c + "\tall\t" + rankingMetric.getValueAt(c));
+            }
         }
         if (perUser) {
             for (U user : testModel.getUsers()) {
                 out.println(metricName + "\t" + user + "\t" + metric.getValue(user));
-                for (int c : rankingCutoffs) {
-                    out.println(metricName + "@" + c + "\t" + user + "\t" + ((AbstractRankingMetric<U, I>) metric).getValueAt(user, c));
+                if (metric instanceof AbstractRankingMetric) {
+                    AbstractRankingMetric<U, I> rankingMetric = (AbstractRankingMetric<U, I>) metric;
+                    for (int c : rankingCutoffs) {
+                        out.println(metricName + "@" + c + "\t" + user + "\t" + rankingMetric.getValueAt(user, c));
+                    }
                 }
             }
         }
