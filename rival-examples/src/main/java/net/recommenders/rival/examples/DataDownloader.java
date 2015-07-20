@@ -7,8 +7,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
