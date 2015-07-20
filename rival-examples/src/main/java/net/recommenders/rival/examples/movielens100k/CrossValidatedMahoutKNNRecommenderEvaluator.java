@@ -196,15 +196,15 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            NDCG ndcg = new NDCG(recModel, testModel, new int[]{10});
+            NDCG<Long, Long> ndcg = new NDCG<Long, Long>(recModel, testModel, new int[]{10});
             ndcg.compute();
             ndcgRes += ndcg.getValueAt(10);
 
-            RMSE rmse = new RMSE(recModel, testModel);
+            RMSE<Long, Long> rmse = new RMSE<Long, Long>(recModel, testModel);
             rmse.compute();
             rmseRes += rmse.getValue();
 
-            Precision precision = new Precision(recModel, testModel, 3.0, new int[]{10});
+            Precision<Long, Long> precision = new Precision<Long, Long>(recModel, testModel, 3.0, new int[]{10});
             precision.compute();
             precisionRes += precision.getValueAt(10);
         }
