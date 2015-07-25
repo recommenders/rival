@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +30,10 @@ import java.util.Set;
 
 /**
  *
- * @author Alejandro
+ * Runner of methods to compute whether the evaluation measures ar statistically
+ * significant
+ *
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class StatisticsRunner {
 
@@ -69,26 +71,19 @@ public class StatisticsRunner {
     }
 
     /**
-     * Run a single evaluation strategy.
+     * Run all the statistic functions included in the property file.
      *
-     * @param properties The properties of the strategy.
+     * @param properties The properties to be executed.
      * @throws IOException when a file cannot be parsed
-     * @throws ClassNotFoundException when the name of the class does not exist
-     * @throws IllegalAccessException when the strategy cannot be instantiated
      * @throws IllegalArgumentException when some property cannot be parsed
-     * @throws InstantiationException when the strategy cannot be instantiated
-     * @throws InvocationTargetException when the strategy cannot be
-     * instantiated
-     * @throws NoSuchMethodException when the strategy cannot be instantiated
-     * @throws SecurityException when the strategy cannot be instantiated
      */
-    public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static void run(Properties properties) throws IOException, IllegalArgumentException {
         // read parameters for output (do this at the beginning to avoid unnecessary reading)
         File outputFile = new File(properties.getProperty(OUTPUT_FILE));
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "false"));
         PrintStream outStatistics = null;
         if (outputFile.exists() && !overwrite) {
-            System.out.println("Cannot generate statistics because " + outputFile + " exists and overwrite is " + overwrite);
+            throw new IllegalArgumentException("Cannot generate statistics because " + outputFile + " exists and overwrite is " + overwrite);
         } else {
             outStatistics = new PrintStream(outputFile);
         }
@@ -173,6 +168,16 @@ public class StatisticsRunner {
         outStatistics.close();
     }
 
+    /**
+     *
+     * @param input The metric file.
+     * @param format The format of the file.
+     * @param usersToAvoid User ids to be avoided in the subsequent significance
+     * testing (e.g., 'all')
+     * @return A map where for each metric, each user has been assigned her
+     * corresponding metric value.
+     * @throws IOException
+     */
     private static Map<String, Map<String, Double>> readMetricFile(File input, String format, Set<String> usersToAvoid) throws IOException {
         Map<String, Map<String, Double>> mapMetricUserValue = new HashMap<String, Map<String, Double>>();
         BufferedReader br = new BufferedReader(new FileReader(input));
@@ -185,10 +190,14 @@ public class StatisticsRunner {
     }
 
     /**
-     * Read a file from the recommended items file.
+     * Read a line from the metric file.
      *
+     * @param format The format of the file.
      * @param line The line.
-     * @param mapUserRecommendations The recommendations for the users.
+     * @param mapMetricUserValue Map where metric values for each user will be
+     * stored.
+     * @param usersToAvoid User ids to be avoided in the subsequent significance
+     * testing (e.g., 'all')
      */
     public static void readLine(String format, String line, Map<String, Map<String, Double>> mapMetricUserValue, Set<String> usersToAvoid) {
         String[] toks = line.split("\t");

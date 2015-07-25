@@ -22,20 +22,35 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
  *
- * @author Alejandro
+ * Class used to compute the effect size of an algorithm with respect to the
+ * baseline.
+ *
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class EffectSize<V> {
 
     private Map<V, Double> baselineMetricPerDimension;
     private Map<V, Double> testMetricPerDimension;
 
+    /**
+     * Default constructor
+     *
+     * @param baselineMetricPerDimension map for the baseline method, one value
+     * for each user (dimension)
+     * @param testMetricPerDimension map for the test method, one value for each
+     * user (dimension)
+     */
     public EffectSize(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension) {
         this.baselineMetricPerDimension = baselineMetricPerDimension;
         this.testMetricPerDimension = testMetricPerDimension;
     }
 
     /**
-     * @param method one of "d", "pairedT"
+     * Computes the effect size according to different methods: d and dLS are
+     * adequate for not paired samples, whereas pairedT is better for paired
+     * samples.
+     *
+     * @param method one of "d", "dLS", "pairedT"
      */
     public double getEffectSize(String method) {
         if ("d".equals(method)) {
@@ -48,6 +63,21 @@ public class EffectSize<V> {
         return Double.NaN;
     }
 
+    /**
+     * Computes Cohen's d, either the classical formulation (dividing the pooled
+     * standard deviation by the sum of the number of samples) or using the
+     * least squares estimation (substracting 2 to the sum of the number of
+     * samples when normalizing the pooled standard deviation).
+     *
+     * @param <V> type of the keys of each map.
+     * @param baselineMetricPerDimension map for the baseline method, one value
+     * for each user (dimension)
+     * @param testMetricPerDimension map for the test method, one value for each
+     * user (dimension)
+     * @param doLeastSquares flag to use one formulation or the other (see
+     * description above)
+     * @return the computed Cohen's d as estimation of the effect size..
+     */
     public static <V> double getCohenD(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension, boolean doLeastSquares) {
         SummaryStatistics statsBaseline = new SummaryStatistics();
         for (double d : baselineMetricPerDimension.values()) {
@@ -67,14 +97,13 @@ public class EffectSize<V> {
      * Original Cohen's d formulation, as in Cohen (1988), Statistical power
      * analysis for the behavioral sciences.
      *
-     * @param <V>
-     * @param baselineN
-     * @param baselineMean
-     * @param baselineStd
-     * @param testN
-     * @param testMean
-     * @param testStd
-     * @return
+     * @param baselineN number of samples of baseline method.
+     * @param baselineMean mean of baseline method.
+     * @param baselineStd standard deviation of baseline method.
+     * @param testN number of samples of test method.
+     * @param testMean mean of test method.
+     * @param testStd standard deviation of test method.
+     * @return Cohen's d without least squares estimation.
      */
     public static <V> double getCohenD(int baselineN, double baselineMean, double baselineStd, int testN, double testMean, double testStd) {
         double pooledStd = Math.sqrt(((testN - 1) * Math.pow(testStd, 2) + (baselineN - 1) * Math.pow(baselineStd, 2)) / (baselineN + testN));
@@ -89,14 +118,13 @@ public class EffectSize<V> {
      * When effect sizes disagree: the case of r and d. 2006. Psychological
      * Methods, 11 (4)
      *
-     * @param <V>
-     * @param baselineN
-     * @param baselineMean
-     * @param baselineStd
-     * @param testN
-     * @param testMean
-     * @param testStd
-     * @return
+     * @param baselineN number of samples of baseline method.
+     * @param baselineMean mean of baseline method.
+     * @param baselineStd standard deviation of baseline method.
+     * @param testN number of samples of test method.
+     * @param testMean mean of test method.
+     * @param testStd standard deviation of test method.
+     * @return Cohen's d with least squares estimation.
      */
     public static <V> double getCohenDLeastSquares(int baselineN, double baselineMean, double baselineStd, int testN, double testMean, double testStd) {
         double pooledStd = Math.sqrt(((testN - 1) * Math.pow(testStd, 2) + (baselineN - 1) * Math.pow(baselineStd, 2)) / (baselineN + testN - 2));
@@ -105,6 +133,18 @@ public class EffectSize<V> {
         return d;
     }
 
+    /**
+     *
+     * Estimation of effect size based on the distribution of score differences
+     * (from paired samples).
+     *
+     * @param <V> type of the keys of each map.
+     * @param baselineMetricPerDimension map for the baseline method, one value
+     * for each user (dimension)
+     * @param testMetricPerDimension map for the test method, one value for each
+     * user (dimension)
+     * @return the effect size.
+     */
     public static <V> double getEffectSizePairedT(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension) {
         Set<V> overlap = new HashSet<V>(baselineMetricPerDimension.keySet());
         overlap.retainAll(testMetricPerDimension.keySet());
@@ -118,7 +158,17 @@ public class EffectSize<V> {
         return getEffectSizePairedT(differences.getMean(), Math.sqrt(differences.getVariance()));
     }
 
-    public static <V> double getEffectSizePairedT(double meanOfDifferences, double stdOfDifferences) {
+    /**
+     *
+     * Returns the ratio between the mean and the standard deviation, assuming
+     * these values come from a distribution of differences of scores.
+     *
+     * @param meanOfDifferences the mean of the distribution.
+     * @param stdOfDifferences the standard deviation of the distribution.
+     * @return the ratio between these values (absolute value of the mean is
+     * considered).
+     */
+    public static double getEffectSizePairedT(double meanOfDifferences, double stdOfDifferences) {
         double e = Math.abs(meanOfDifferences) / stdOfDifferences;
         return e;
     }

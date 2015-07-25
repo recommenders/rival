@@ -30,7 +30,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * retrieval?. SIGIR Forum 48, 1 (June 2014), 3-12. DOI=10.1145/2641383.2641385
  * http://doi.acm.org/10.1145/2641383.2641385
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class ConfidenceInterval {
 

@@ -22,13 +22,24 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
  *
- * @author Alejandro
+ * Class used to compute the standard error of an algorithm with respect to the
+ * baseline.
+ *
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class StandardError<V> {
 
     private Map<V, Double> baselineMetricPerDimension;
     private Map<V, Double> testMetricPerDimension;
 
+    /**
+     * Default constructor
+     *
+     * @param baselineMetricPerDimension map for the baseline method, one value
+     * for each user (dimension)
+     * @param testMetricPerDimension map for the test method, one value for each
+     * user (dimension)
+     */
     public StandardError(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension) {
         this.baselineMetricPerDimension = baselineMetricPerDimension;
         this.testMetricPerDimension = testMetricPerDimension;
@@ -38,7 +49,8 @@ public class StandardError<V> {
      * Implements equation (8.13) from "Elementary Statistics: A Problem Solving
      * Approach 4th Edition", Andrew L. Comrey, Howard B. Lee
      *
-     * @return
+     * @return the standard error as the ratio of the standard deviation divided
+     * by the sqrt(number of users) of the distribution of difference scores.
      */
     public double getStandardError() {
         Set<V> overlap = new HashSet<V>(baselineMetricPerDimension.keySet());

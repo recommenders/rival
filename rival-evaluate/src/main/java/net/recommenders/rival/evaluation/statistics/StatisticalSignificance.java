@@ -21,13 +21,24 @@ import org.apache.commons.math3.stat.inference.WilcoxonSignedRankTest;
 
 /**
  *
- * @author Alejandro
+ * Class used to compute statistical significance methods, such as t's Student
+ * (paired or not) and Wilcoxon.
+ *
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class StatisticalSignificance {
 
     private Map<?, Double> baselineMetricPerDimension;
     private Map<?, Double> testMetricPerDimension;
 
+    /**
+     * Default constructor
+     *
+     * @param baselineMetricPerDimension map for the baseline method, one value
+     * for each user (dimension)
+     * @param testMetricPerDimension map for the test method, one value for each
+     * user (dimension)
+     */
     public StatisticalSignificance(Map<?, Double> baselineMetricPerDimension, Map<?, Double> testMetricPerDimension) {
         this.baselineMetricPerDimension = baselineMetricPerDimension;
         this.testMetricPerDimension = testMetricPerDimension;

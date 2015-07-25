@@ -15,7 +15,6 @@
  */
 package net.recommenders.rival.evaluation.statistics;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.runner.RunWith;
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertEquals;
  * retrieval?. SIGIR Forum 48, 1 (June 2014), 3-12. DOI=10.1145/2641383.2641385
  * http://doi.acm.org/10.1145/2641383.2641385
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 @RunWith(JUnit4.class)
 public class StatisticsTest {
