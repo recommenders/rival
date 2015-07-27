@@ -1,13 +1,7 @@
 package net.recommenders.rival.recommend.frameworks;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
-import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.grouplens.lenskit.scored.ScoredId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,39 +51,6 @@ public abstract class AbstractRunner {
         path = properties.getProperty(RecommendationRunner.output);
     }
 
-
-    /**
-     * Write recommendations to file.
-     * This method has been moved to net.recommenders.rival.recommend.RecommendIO
-     * @param user  the user
-     * @param recommendations   the recommendations
-     * @param <T> list
-     */
-    /**
-    @Deprecated
-    public <T> void writeData(long user, List<T> recommendations) {
-        try {
-            File dir = new File(path);
-            if (!dir.isDirectory()) {
-                dir.mkdir();
-            }
-            BufferedWriter out = new BufferedWriter(new FileWriter(path + "/" + fileName, true));
-            for (Object ri : recommendations) {
-                if (ri instanceof RecommendedItem) {
-                    out.write(user + "\t" + ((RecommendedItem) ri).getItemID() + "\t" + ((RecommendedItem) ri).getValue() + "\n");
-                }
-                if (ri instanceof ScoredId) {
-                    out.write(user + "\t" + ((ScoredId) ri).getId() + "\t" + ((ScoredId) ri).getScore() + "\n");
-                }
-            }
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            logger.error(e.getMessage());
-        }
-    }
-*/
     /**
      * Create the file name of the output file.
      */
