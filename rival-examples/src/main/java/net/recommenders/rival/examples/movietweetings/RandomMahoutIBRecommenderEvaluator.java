@@ -114,7 +114,7 @@ public class RandomMahoutIBRecommenderEvaluator {
                 while (users.hasNext()) {
                     long u = users.nextLong();
                     List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                    RecommenderIO.writeData(u, items, outPath, fileName, !createFile);
+                    RecommenderIO.writeData(u, items, outPath, fileName, !createFile, null);
                     createFile = false;
                 }
             } catch (TasteException e) {

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import net.recommenders.rival.core.DataModel;
 
 /**
  * Recommender-related IO operations.
@@ -23,23 +24,43 @@ public class RecommenderIO {
      * @param recommendations the recommendations
      * @param <T> list
      */
-    public static <T> void writeData(long user, List<T> recommendations, String path, String fileName, boolean append) {
+    public static <T> void writeData(long user, List<T> recommendations, String path, String fileName, boolean append, DataModel<Long, Long> model) {
         try {
-            File dir = new File(path);
-            if (!dir.isDirectory()) {
-                dir.mkdir();
+            File dir = null;
+            if (path != null) {
+                dir = new File(path);
+                if (!dir.isDirectory()) {
+                    dir.mkdir();
+                }
             }
-            BufferedWriter out = new BufferedWriter(new FileWriter(path + "/" + fileName, append));
+            BufferedWriter out = null;
+            if ((path != null) && (fileName != null)) {
+                out = new BufferedWriter(new FileWriter(path + "/" + fileName, append));
+            }
             for (Object ri : recommendations) {
                 if (ri instanceof RecommendedItem) {
-                    out.write(user + "\t" + ((RecommendedItem) ri).getItemID() + "\t" + ((RecommendedItem) ri).getValue() + "\n");
+                    RecommendedItem recItem = (RecommendedItem) ri;
+                    if (out != null) {
+                        out.write(user + "\t" + recItem.getItemID() + "\t" + recItem.getValue() + "\n");
+                    }
+                    if (model != null) {
+                        model.addPreference(user, recItem.getItemID(), 1.0 * recItem.getValue());
+                    }
                 }
                 if (ri instanceof ScoredId) {
-                    out.write(user + "\t" + ((ScoredId) ri).getId() + "\t" + ((ScoredId) ri).getScore() + "\n");
+                    ScoredId recItem = (ScoredId) ri;
+                    if (out != null) {
+                        out.write(user + "\t" + recItem.getId() + "\t" + recItem.getScore() + "\n");
+                    }
+                    if (model != null) {
+                        model.addPreference(user, recItem.getId(), recItem.getScore());
+                    }
                 }
             }
-            out.flush();
-            out.close();
+            if (out != null) {
+                out.flush();
+                out.close();
+            }
         } catch (IOException e) {
             System.out.println(e.getMessage());
 //            logger.error(e.getMessage());
