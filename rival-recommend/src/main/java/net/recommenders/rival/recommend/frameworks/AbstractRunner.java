@@ -2,15 +2,23 @@ package net.recommenders.rival.recommend.frameworks;
 
 import java.io.File;
 import java.util.Properties;
+import net.recommenders.rival.core.DataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * An abstract recommender runner.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
-public abstract class AbstractRunner {
+public abstract class AbstractRunner<U, I> {
 
+    public enum RUN_OPTIONS {
+
+        RETURN_RECS,
+        OUTPUT_RECS,
+        RETURN_AND_OUTPUT_RECS;
+    }
     /**
      * Logger.
      */
@@ -38,17 +46,18 @@ public abstract class AbstractRunner {
 
     /**
      * Default constructor.
-     * @param properties    The properties.
+     *
+     * @param properties The properties.
      */
     public AbstractRunner(Properties properties) {
         this.properties = properties;
         this.setFileName();
-        String filePath = properties.getProperty(RecommendationRunner.output) + "/" + fileName;
+        String filePath = properties.getProperty(RecommendationRunner.output, "") + "/" + fileName;
         alreadyRecommended = new File(filePath).exists();
         if (alreadyRecommended) {
             System.out.println("File exists: " + filePath);
         }
-        path = properties.getProperty(RecommendationRunner.output);
+        path = properties.getProperty(RecommendationRunner.output, "");
     }
 
     /**
@@ -85,6 +94,7 @@ public abstract class AbstractRunner {
 
     /**
      * Get file name with canonical path.
+     *
      * @return the file name and path.
      */
     public String getCanonicalFileName() {
@@ -93,7 +103,8 @@ public abstract class AbstractRunner {
 
     /**
      * Sets the properties.
-     * @param properties    the properties
+     *
+     * @param properties the properties
      */
     public void setProperties(Properties properties) {
         this.properties = properties;
@@ -101,15 +112,32 @@ public abstract class AbstractRunner {
 
     /**
      * Check if there already exist recommendations for this recommender.
-     * @return  true if recommendations exist.
+     *
+     * @return true if recommendations exist.
      */
     public boolean getAlreadyRecommended() {
         return alreadyRecommended;
     }
 
     /**
-     * Runs the recommender
-     * @throws Exception    when the recommender cannot be run. See implementations for more information on possible exceptions.
+     * Runs the recommender. Training and test models will be read from file.
+     *
+     * @param opts options to run this recommender. See {@link RUN_OPTIONS}
+     * enum.
+     * @throws Exception when the recommender cannot be run. See implementations
+     * for more information on possible exceptions.
      */
-    public abstract void run() throws Exception;
+    public abstract DataModel<U, I> run(RUN_OPTIONS opts) throws Exception;
+
+    /**
+     * Runs the recommender using the provided training and test models.
+     *
+     * @param opts options to run this recommender. See {@link RUN_OPTIONS}
+     * enum.
+     * @param  trainingModel Model to train the recommender.
+     * @param testModel Model from where users to generate recommendations to will be considered.
+     * @throws Exception when the recommender cannot be run. See implementations
+     * for more information on possible exceptions.
+     */
+    public abstract DataModel<U, I> run(RUN_OPTIONS opts, DataModel<U, I> trainingModel, DataModel<U, I> testModel) throws Exception;
 }

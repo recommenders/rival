@@ -75,7 +75,8 @@ public class RecommendationRunner {
 
     /**
      * Main method for running a recommendation.
-     * @param args  CLI arguments
+     *
+     * @param args CLI arguments
      */
     public static void main(String[] args) {
         String propertyFile = System.getProperty("file");
@@ -96,34 +97,21 @@ public class RecommendationRunner {
 
     /**
      * Run recommendations based on properties
-     * @param properties    the properties
+     *
+     * @param properties the properties
      */
     public static void recommend(Properties properties) {
-        if (properties.getProperty(recommender) == null) {
-            System.out.println("No recommenderClass specified, exiting.");
-            return;
-        }
-        if (properties.getProperty(trainingSet) == null) {
-            System.out.println("No training set specified, exiting.");
-            return;
-        }
-        if (properties.getProperty(testSet) == null) {
-            System.out.println("No training set specified, exiting.");
-            return;
-        }
-        time = System.currentTimeMillis();
+        AbstractRunner rr = instantiateRecommender(properties);
+        run(rr);
+    }
 
-        AbstractRunner rr = null;
+    public static void run(AbstractRunner rr) {
+        time = System.currentTimeMillis();
         boolean statsExist = false;
-        if (properties.getProperty(framework).equals(MAHOUT)) {
-            rr = new MahoutRecommenderRunner(properties);
-        } else if (properties.getProperty(framework).equals(LENSKIT)) {
-            rr = new LenskitRecommenderRunner(properties);
-        }
         statPath = rr.getCanonicalFileName();
         statsExist = rr.getAlreadyRecommended();
         try {
-            rr.run();
+            rr.run(AbstractRunner.RUN_OPTIONS.OUTPUT_RECS);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,11 +121,35 @@ public class RecommendationRunner {
         }
     }
 
+    public static AbstractRunner<Long, Long> instantiateRecommender(Properties properties) {
+        if (properties.getProperty(recommender) == null) {
+            System.out.println("No recommenderClass specified, exiting.");
+            return null;
+        }
+        if (properties.getProperty(trainingSet) == null) {
+            System.out.println("No training set specified, exiting.");
+            return null;
+        }
+        if (properties.getProperty(testSet) == null) {
+            System.out.println("No training set specified, exiting.");
+            return null;
+        }
+
+        AbstractRunner<Long, Long> rr = null;
+        if (properties.getProperty(framework).equals(MAHOUT)) {
+            rr = new MahoutRecommenderRunner(properties);
+        } else if (properties.getProperty(framework).equals(LENSKIT)) {
+            rr = new LenskitRecommenderRunner(properties);
+        }
+        return rr;
+    }
+
     /**
      * Write the system stats to file
-     * @param path  the path to write to
+     *
+     * @param path the path to write to
      * @param statLabel what statistics is being written
-     * @param stat  the value
+     * @param stat the value
      */
     public static void writeStats(String path, String statLabel, long stat) {
         try {

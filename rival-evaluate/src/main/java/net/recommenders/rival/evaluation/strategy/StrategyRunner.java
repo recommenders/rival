@@ -85,6 +85,23 @@ public class StrategyRunner {
         File rankingFile = new File(properties.getProperty(OUTPUT_FILE));
         File groundtruthFile = new File(properties.getProperty(GROUNDTRUTH_FILE));
         EvaluationStrategy.OUTPUT_FORMAT format = properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+
+        // get strategy
+        EvaluationStrategy<Long, Long> strategy = instantiateStrategy(properties, trainingModel, testModel);
+
+        // read recommendations: user \t item \t score
+        final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
+        BufferedReader in = new BufferedReader(new FileReader(inputFile));
+        String line = null;
+        while ((line = in.readLine()) != null) {
+            readLine(line, mapUserRecommendations);
+        }
+        in.close();
+        // generate output
+        generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFile, groundtruthFile, overwrite);
+    }
+
+    public static EvaluationStrategy<Long, Long> instantiateStrategy(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         String strategyClassName = properties.getProperty(STRATEGY);
         Class<?> strategyClass = Class.forName(strategyClassName);
@@ -102,16 +119,7 @@ public class StrategyRunner {
                 strategy = strategyTemp;
             }
         }
-        // read recommendations: user \t item \t score
-        final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
-        BufferedReader in = new BufferedReader(new FileReader(inputFile));
-        String line = null;
-        while ((line = in.readLine()) != null) {
-            readLine(line, mapUserRecommendations);
-        }
-        in.close();
-        // generate output
-        generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFile, groundtruthFile, overwrite);
+        return strategy;
     }
 
     /**

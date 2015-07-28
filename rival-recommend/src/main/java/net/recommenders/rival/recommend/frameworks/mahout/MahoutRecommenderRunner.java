@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author <a href="http://github.com/abellogin">Alejandro</a>, <a
  * href="http://github.com/alansaid">Alan</a>
  */
-public class MahoutRecommenderRunner extends AbstractRunner {
+public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
 
     /**
      * Default neighborhood size.
@@ -50,30 +50,51 @@ public class MahoutRecommenderRunner extends AbstractRunner {
      * or breaks otherwise.
      */
     @Override
-    public void run() throws IOException, TasteException {
+    public net.recommenders.rival.core.DataModel<Long, Long> run(RUN_OPTIONS opts) throws IOException, TasteException {
         if (alreadyRecommended) {
-            return;
+            return null;
         }
-        DataModel trainModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.trainingSet)));
+        DataModel trainingModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.trainingSet)));
         DataModel testModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.testSet)));
+        return runMahoutRecommender(opts, trainingModel, testModel);
+    }
+
+    @Override
+    public net.recommenders.rival.core.DataModel<Long, Long> run(RUN_OPTIONS opts, net.recommenders.rival.core.DataModel<Long, Long> trainingModel, net.recommenders.rival.core.DataModel<Long, Long> testModel) throws IOException, TasteException {
+        if (alreadyRecommended) {
+            return null;
+        }
+        // transform from core's DataModels to Mahout's DataModels
+        // TODO
+        DataModel trainingModelMahout = new DataModelWrapper(trainingModel);
+        DataModel testModelMahout = new DataModelWrapper(testModel);
+
+        return runMahoutRecommender(opts, trainingModelMahout, testModelMahout);
+    }
+
+    public net.recommenders.rival.core.DataModel<Long, Long> runMahoutRecommender(RUN_OPTIONS opts, DataModel trainingModel, DataModel testModel) throws IOException, TasteException {
+        if (alreadyRecommended) {
+            return null;
+        }
+
         GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
 
         if (properties.containsKey(RecommendationRunner.neighborhood) && properties.getProperty(RecommendationRunner.neighborhood).equals("-1")) {
-            properties.setProperty(RecommendationRunner.neighborhood, Math.round(Math.sqrt(trainModel.getNumItems())) + "");
+            properties.setProperty(RecommendationRunner.neighborhood, Math.round(Math.sqrt(trainingModel.getNumItems())) + "");
         }
         if (properties.containsKey(RecommendationRunner.factors) && properties.getProperty(RecommendationRunner.factors).equals("-1")) {
-            properties.setProperty(RecommendationRunner.factors, Math.round(Math.sqrt(trainModel.getNumItems())) + "");
+            properties.setProperty(RecommendationRunner.factors, Math.round(Math.sqrt(trainingModel.getNumItems())) + "");
         }
 
 
         Recommender recommender = null;
         try {
             if (properties.getProperty(RecommendationRunner.factors) == null) {
-                recommender = grb.buildRecommender(trainModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.similarity), Integer.parseInt(properties.getProperty(RecommendationRunner.neighborhood)));
+                recommender = grb.buildRecommender(trainingModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.similarity), Integer.parseInt(properties.getProperty(RecommendationRunner.neighborhood)));
             }
             if (properties.getProperty(RecommendationRunner.factors) != null) //                recommender = grb.buildRecommender(trainModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.factorizer), Integer.parseInt(properties.getProperty(RecommendationRunner.iterations)), Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
             {
-                recommender = grb.buildRecommender(trainModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.factorizer), DEFAULT_ITERATIONS, Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
+                recommender = grb.buildRecommender(trainingModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.factorizer), DEFAULT_ITERATIONS, Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
             }
             //(dataModel, recommender, factorizer, default iterations, factors)
         } catch (RecommenderException e) {
@@ -82,17 +103,30 @@ public class MahoutRecommenderRunner extends AbstractRunner {
 
         LongPrimitiveIterator users = testModel.getUserIDs();
 
+        net.recommenders.rival.core.DataModel<Long, Long> model = null;
+        switch (opts) {
+            case RETURN_AND_OUTPUT_RECS:
+            case RETURN_RECS:
+                model = new net.recommenders.rival.core.DataModel();
+        }
+        String name = null;
+        switch (opts) {
+            case RETURN_AND_OUTPUT_RECS:
+            case OUTPUT_RECS:
+                name = fileName;
+        }
         boolean createFile = true;
         while (users.hasNext()) {
             long u = users.nextLong();
             try {
-                List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                RecommenderIO.writeData(u, items, path, fileName, !createFile);
+                List<RecommendedItem> items = recommender.recommend(u, trainingModel.getNumItems());
+                RecommenderIO.writeData(u, items, path, name, !createFile, model);
                 createFile = false;
             } catch (TasteException e) {
                 e.printStackTrace();
             }
         }
+        return model;
     }
 
     /**

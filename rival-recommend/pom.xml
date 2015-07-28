@@ -22,6 +22,12 @@
         <scope>test</scope>
     </dependency>
         <dependency>
+            <groupId>net.recommenders.rival</groupId>
+            <artifactId>rival-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-core</artifactId>
             <version>${mahout.version}</version>

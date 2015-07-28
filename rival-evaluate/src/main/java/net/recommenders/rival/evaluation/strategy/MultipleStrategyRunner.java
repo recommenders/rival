@@ -2,6 +2,7 @@ package net.recommenders.rival.evaluation.strategy;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -114,6 +115,7 @@ public class MultipleStrategyRunner {
                 }
                 in.close();
                 // generate output for each strategy
+                // improvement: call to instantiateStrategies instead of having duplicated code. Current problem: how to obtain nice suffix text and threshold information in a generic way
                 for (String strategyClassName : strategyClassNames) {
                     Class<?> strategyClass = Class.forName(strategyClassName);
                     for (String threshold : thresholds) {
@@ -140,6 +142,38 @@ public class MultipleStrategyRunner {
                 }
             }
         }
+    }
+
+    public static EvaluationStrategy<Long, Long>[] instantiateStrategies(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+        List<EvaluationStrategy<Long, Long>> stratList = new ArrayList();
+
+        String[] thresholds = properties.getProperty(RELEVANCE_THRESHOLDS).split(",");
+        String[] strategyClassNames = properties.getProperty(STRATEGIES).split(",");
+        for (String strategyClassName : strategyClassNames) {
+            Class<?> strategyClass = Class.forName(strategyClassName);
+            for (String threshold : thresholds) {
+                // get strategy and generate output
+                if (strategyClassName.contains("RelPlusN")) {
+                    String[] Ns = properties.getProperty(RELPLUSN_N).split(",");
+                    String[] seeds = properties.getProperty(RELPLUSN_SEED).split(",");
+                    for (String N : Ns) {
+                        for (String seed : seeds) {
+                            EvaluationStrategy<Long, Long> strategy = new RelPlusN(trainingModel, testModel, Integer.parseInt(N), Double.parseDouble(threshold), Long.parseLong(seed));
+                            stratList.add(strategy);
+                        }
+                    }
+                } else {
+                    Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
+                    if (strategyObj instanceof EvaluationStrategy) {
+                        @SuppressWarnings("unchecked")
+                        EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyObj;
+                        stratList.add(strategy);
+                    }
+                }
+            }
+        }
+        EvaluationStrategy<Long, Long>[] strats = stratList.toArray(new EvaluationStrategy[0]);
+        return strats;
     }
 
     /**

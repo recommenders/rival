@@ -42,10 +42,9 @@ public class ParserRunner {
         File file = new File(properties.getProperty(DATASET_FILE));
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
+        Parser parser = instantiateParser(properties);
         if (parserClassName.contains("LastfmCelma")) {
             String mapIdsPrefix = properties.getProperty(LASTFM_IDS_PREFIX);
-            Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
-            Object parser = parserClass.getConstructor(boolean.class).newInstance(useArtists);
             Object modelObj = parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
             if (modelObj instanceof DataModel) {
                 @SuppressWarnings("unchecked")
@@ -53,10 +52,22 @@ public class ParserRunner {
                 model = modelTemp;
             }
         } else {
-            Parser parser = (Parser) parserClass.getConstructor().newInstance();
             model = parser.parseData(file);
         }
         System.out.println("Parsing finished");
         return model;
+    }
+
+    public static Parser instantiateParser(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+        String parserClassName = properties.getProperty(DATASET_PARSER);
+        Class<?> parserClass = Class.forName(parserClassName);
+        Parser parser = null;
+        if (parserClassName.contains("LastfmCelma")) {
+            Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
+            parser = (Parser) parserClass.getConstructor(boolean.class).newInstance(useArtists);
+        } else {
+            parser = (Parser) parserClass.getConstructor().newInstance();
+        }
+        return parser;
     }
 }

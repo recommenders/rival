@@ -1,11 +1,7 @@
 package net.recommenders.rival.split.splitter;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelUtils;
 
@@ -46,9 +42,6 @@ public class SplitterRunner {
         System.out.println("Start splitting");
         DataModel<Long, Long>[] splits = null;
         // read parameters
-        String splitterClassName = properties.getProperty(DATASET_SPLITTER);
-        Boolean perUser = Boolean.parseBoolean(properties.getProperty(SPLIT_PERUSER));
-        Boolean doSplitPerItems = Boolean.parseBoolean(properties.getProperty(SPLIT_PERITEMS, "true"));
         String outputFolder = properties.getProperty(SPLIT_OUTPUT_FOLDER);
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(SPLIT_OUTPUT_OVERWRITE, "false"));
         String splitTrainingPrefix = properties.getProperty(SPLIT_TRAINING_PREFIX);
@@ -56,18 +49,8 @@ public class SplitterRunner {
         String splitTestPrefix = properties.getProperty(SPLIT_TEST_PREFIX);
         String splitTestSuffix = properties.getProperty(SPLIT_TEST_SUFFIX);
         // generate splits
-        if (splitterClassName.contains("CrossValidation")) {
-            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
-            Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
-            splits = new CrossValidationSplitter(nFolds, perUser, seed).split(data);
-        } else if (splitterClassName.contains("Random")) {
-            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
-            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
-            splits = new RandomSplitter(percentage, perUser, seed, doSplitPerItems).split(data);
-        } else if (splitterClassName.contains("Temporal")) {
-            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
-            splits = new TemporalSplitter(percentage, perUser, doSplitPerItems).split(data);
-        }
+        Splitter<Long, Long> splitter = instantiateSplitter(properties);
+        splits = splitter.split(data);
         if (doDataClear) {
             data.clear();
         }
@@ -85,37 +68,25 @@ public class SplitterRunner {
         }
     }
 
-    /**
-     * Method that saves a data model to a file.
-     * 
-     * @param model model to be saved
-     * @param outfile file where the model will be saved
-     * @param overwrite flag that indicates if the file should be overwritten
-     * @throws FileNotFoundException when
-     */
-    /**
-    public static void saveDataModel(DataModel<Long, Long> model, String outfile, boolean overwrite) throws FileNotFoundException {
-        if (new File(outfile).exists() && !overwrite) {
-            System.out.println("Ignoring " + outfile);
-        } else {
-            PrintStream out = new PrintStream(outfile);
-            for (Long user : model.getUsers()) {
-                Map<Long, Double> userPrefModel = model.getUserItemPreferences().get(user);
-                Map<Long, Set<Long>> userTimeModel = model.getUserItemTimestamps().get(user);
-                for (Long item : userPrefModel.keySet()) {
-                    Double pref = userPrefModel.get(item);
-                    Set<Long> time = userTimeModel != null ? userTimeModel.get(item) : null;
-                    if (time == null) {
-                        out.println(user + "\t" + item + "\t" + pref + "\t-1");
-                    } else {
-                        for (Long t : time) {
-                            out.println(user + "\t" + item + "\t" + pref + "\t" + t);
-                        }
-                    }
-                }
-            }
-            out.close();
+    public static Splitter<Long, Long> instantiateSplitter(Properties properties) throws ClassNotFoundException {
+        // read parameters
+        String splitterClassName = properties.getProperty(DATASET_SPLITTER);
+        Boolean perUser = Boolean.parseBoolean(properties.getProperty(SPLIT_PERUSER));
+        Boolean doSplitPerItems = Boolean.parseBoolean(properties.getProperty(SPLIT_PERITEMS, "true"));
+        // generate splitter
+        Splitter<Long, Long> splitter = null;
+        if (splitterClassName.contains("CrossValidation")) {
+            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
+            Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
+            splitter = new CrossValidationSplitter(nFolds, perUser, seed);
+        } else if (splitterClassName.contains("Random")) {
+            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
+            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
+            splitter = new RandomSplitter(percentage, perUser, seed, doSplitPerItems);
+        } else if (splitterClassName.contains("Temporal")) {
+            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
+            splitter = new TemporalSplitter(percentage, perUser, doSplitPerItems);
         }
+        return splitter;
     }
-     */
 }

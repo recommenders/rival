@@ -5,13 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
-import net.recommenders.rival.evaluation.metric.error.AbstractErrorMetric;
-import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 import net.recommenders.rival.evaluation.parser.TrecEvalParser;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
 
@@ -91,8 +91,7 @@ public class MultipleEvaluationMetricRunner {
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "false"));
         Boolean doAppend = Boolean.parseBoolean(properties.getProperty(OUTPUT_APPEND, "true"));
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(METRIC_PER_USER, "false"));
-        Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
-        int[] rankingCutoffs;// = null;
+        int[] rankingCutoffs = EvaluationMetricRunner.getRankingCutoffs(properties);
         // process info for each result file
         File resultsFolder = new File(properties.getProperty(OUTPUT_FOLDER));
         for (String file : predictionFiles) {
@@ -113,44 +112,26 @@ public class MultipleEvaluationMetricRunner {
             File resultsFile = new File(resultsFolder, "eval" + "__" + predictionFile.getName());
 
             // get metrics
-            String[] metricClassNames = properties.getProperty(METRICS).split(",");
-            for (String metricClassName : metricClassNames) {
-                // get metric
-                Class<?> metricClass = Class.forName(metricClassName);
-                EvaluationMetric<Long> metric;// = null;
-                if (metricClassName.contains(".ranking.")) {
-                    String[] cutoffs = properties.getProperty(RANKING_CUTOFFS).split(",");
-                    rankingCutoffs = new int[cutoffs.length];
-                    for (int i = 0; i < rankingCutoffs.length; i++) {
-                        rankingCutoffs[i] = Integer.parseInt(cutoffs[i]);
-                    }
-                    if (metricClassName.endsWith("NDCG")) {
-                        String ndcgType = properties.getProperty(NDCG_TYPE, "exp");
-                        NDCG.TYPE nt = ndcgType.equalsIgnoreCase(NDCG.TYPE.EXP.toString()) ? NDCG.TYPE.EXP : NDCG.TYPE.LIN;
-                        metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class, NDCG.TYPE.class).newInstance(predictions, testModel, threshold.doubleValue(), rankingCutoffs, nt);
-                    } else {
-                        metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class).newInstance(predictions, testModel, threshold.doubleValue(), rankingCutoffs);
-                    }
-                } else {
-                    rankingCutoffs = new int[0];
-                    String strategy = properties.getProperty(ERROR_STRATEGY);
-                    AbstractErrorMetric.ErrorStrategy es = null;
-                    for (AbstractErrorMetric.ErrorStrategy s : AbstractErrorMetric.ErrorStrategy.values()) {
-                        if (strategy.equalsIgnoreCase(s.toString())) {
-                            es = s;
-                            break;
-                        }
-                    }
-                    if (es == null) {
-                        System.out.println("Invalid error strategy: " + strategy);
-                        return;
-                    }
-                    metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, AbstractErrorMetric.ErrorStrategy.class).newInstance(predictions, testModel, es);
-                }
+            for (EvaluationMetric<Long> metric : instantiateEvaluationMetrics(properties, predictions, testModel)) {
                 // generate output
-                EvaluationMetricRunner.generateOutput(testModel, rankingCutoffs, metric, metricClass.getSimpleName(), perUser, resultsFile, overwrite, doAppend);
+                EvaluationMetricRunner.generateOutput(testModel, rankingCutoffs, metric, metric.getClass().getSimpleName(), perUser, resultsFile, overwrite, doAppend);
             }
         }
+    }
+
+    public static EvaluationMetric<Long>[] instantiateEvaluationMetrics(Properties properties, DataModel<Long, Long> predictions, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+        List<EvaluationMetric<Long>> metricList = new ArrayList();
+        String[] metricClassNames = properties.getProperty(METRICS).split(",");
+        for (String metricClassName : metricClassNames) {
+            // get metric
+            properties.put(EvaluationMetricRunner.METRIC, metricClassName);
+            EvaluationMetric<Long> metric = EvaluationMetricRunner.instantiateEvaluationMetric(properties, predictions, testModel);
+            metricList.add(metric);
+            properties.remove(EvaluationMetricRunner.METRIC);
+        }
+
+        EvaluationMetric<Long>[] metrics = metricList.toArray(new EvaluationMetric[0]);
+        return metrics;
     }
 
     /**
