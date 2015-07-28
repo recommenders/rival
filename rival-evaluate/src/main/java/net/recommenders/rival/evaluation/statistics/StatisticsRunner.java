@@ -89,8 +89,6 @@ public class StatisticsRunner {
         }
         // read format
         String format = properties.getProperty(INPUT_FORMAT);
-        // read alpha
-        Double alpha = Double.parseDouble(properties.getProperty(ALPHA));
         // read users to avoid
         String[] usersToAvoidArray = properties.getProperty(AVOID_USERS, "").split(",");
         Set<String> usersToAvoid = new HashSet<String>();
@@ -111,19 +109,27 @@ public class StatisticsRunner {
             Map<String, Map<String, Double>> mapMetricUserValues = readMetricFile(file, format, usersToAvoid);
             methodsMapMetricUserValues.put(m, mapMetricUserValues);
         }
+        run(properties, outStatistics, baselineFile.getName(), baselineMapMetricUserValues, methodsMapMetricUserValues);
+        // close files
+        outStatistics.close();
+    }
+
+    public static void run(Properties properties, PrintStream outStatistics, String baselineName, Map<String, Map<String, Double>> baselineMapMetricUserValues, Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues) {
+        // read alpha
+        Double alpha = Double.parseDouble(properties.getProperty(ALPHA));
         // for each statistic function, call a different method and produce a different output depending on the number of methods
         String[] statFunctions = properties.getProperty(STATISTICS).split(",");
         for (String statFunction : statFunctions) {
             if (statFunction.equals("confidence_interval")) {
                 for (String metric : baselineMapMetricUserValues.keySet()) {
                     Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodFiles) {
+                    for (String method : methodsMapMetricUserValues.keySet()) {
                         if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
                             Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
                             // samples are paired
                             double[] interval = new ConfidenceInterval().getConfidenceInterval(alpha, userMetricValuesBaseline, userMetricValuesMethod, true);
-                            outStatistics.println(baselineFile + "\t" + method + "\t" + metric + "\t" + statFunction + "_lower" + "\t" + interval[0]);
-                            outStatistics.println(baselineFile + "\t" + method + "\t" + metric + "\t" + statFunction + "_upper" + "\t" + interval[1]);
+                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "_lower" + "\t" + interval[0]);
+                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "_upper" + "\t" + interval[1]);
                         }
                     }
                 }
@@ -131,22 +137,22 @@ public class StatisticsRunner {
                 String effectSizeMethod = statFunction.replaceAll("effect_size_", "");
                 for (String metric : baselineMapMetricUserValues.keySet()) {
                     Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodFiles) {
+                    for (String method : methodsMapMetricUserValues.keySet()) {
                         if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
                             Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
                             double es = new EffectSize<String>(userMetricValuesBaseline, userMetricValuesMethod).getEffectSize(effectSizeMethod);
-                            outStatistics.println(baselineFile + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + es);
+                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + es);
                         }
                     }
                 }
             } else if (statFunction.equals("standard_error")) {
                 for (String metric : baselineMapMetricUserValues.keySet()) {
                     Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodFiles) {
+                    for (String method : methodsMapMetricUserValues.keySet()) {
                         if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
                             Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
                             double se = new StandardError<String>(userMetricValuesBaseline, userMetricValuesMethod).getStandardError();
-                            outStatistics.println(baselineFile + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + se);
+                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + se);
                         }
                     }
                 }
@@ -154,18 +160,16 @@ public class StatisticsRunner {
                 String statFunctionMethod = statFunction.replaceAll("statistical_significance_", "");
                 for (String metric : baselineMapMetricUserValues.keySet()) {
                     Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodFiles) {
+                    for (String method : methodsMapMetricUserValues.keySet()) {
                         if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
                             Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
                             double p = new StatisticalSignificance(userMetricValuesBaseline, userMetricValuesMethod).getPValue(statFunctionMethod);
-                            outStatistics.println(baselineFile + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + p);
+                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + p);
                         }
                     }
                 }
             }
         }
-        // close files
-        outStatistics.close();
     }
 
     /**
