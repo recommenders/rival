@@ -144,6 +144,26 @@ public class MultipleStrategyRunner {
         }
     }
 
+    /**
+     *
+     * Instantiates several strategies, according to the provided properties
+     * mapping.
+     *
+     * @param properties the properties to be used.
+     * @param trainingModel datamodel containing the training interactions to be
+     * considered when generating the strategies.
+     * @param testModel datamodel containing the interactions in the test split
+     * to be considered when generating the strategies.
+     * @return an array of strategies, generated according to the provided
+     * properties.
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
     public static EvaluationStrategy<Long, Long>[] instantiateStrategies(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         List<EvaluationStrategy<Long, Long>> stratList = new ArrayList();
 

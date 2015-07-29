@@ -34,7 +34,7 @@ public class MultipleRecommendationRunner {
     public static final String OUTPUT = "output";
 
     /**
-     * Instantiates the runners based on input (property) files.
+     * Instantiates and runs the runners based on input (property) files.
      *
      * @param args not used.
      */
@@ -59,13 +59,10 @@ public class MultipleRecommendationRunner {
     }
 
     /**
-     * Runs the Lenskit recommenders created in @main.
+     * Runs the Lenskit recommenders.
      *
      * @param paths the input and output paths.
      * @param properties the properties.
-     * @param neighborhoods the different neihborhood types to instantiate.
-     * @param svdIterations the number of iterations that should be performed in
-     * SVD-based recommenders.
      */
     public static void runLenskitRecommenders(Set<String> paths, Properties properties) {
         for (AbstractRunner<Long, Long> rec : instantiateLenskitRecommenders(paths, properties)) {
@@ -73,6 +70,14 @@ public class MultipleRecommendationRunner {
         }
     }
 
+    /**
+     *
+     * Instantiates recommenders based on the provided properties.
+     *
+     * @param paths the input and output paths.
+     * @param properties the properties.
+     * @return an array of recommenders, prepared to be run.
+     */
     public static AbstractRunner<Long, Long>[] instantiateLenskitRecommenders(Set<String> paths, Properties properties) {
         List<AbstractRunner<Long, Long>> recList = new ArrayList();
         try {
@@ -137,13 +142,10 @@ public class MultipleRecommendationRunner {
     }
 
     /**
-     * Runs Mahout-based recommender created in @main.
+     * Runs Mahout-based recommenders.
      *
      * @param paths the input and output paths.
      * @param properties the properties.
-     * @param neighborhoods the different neihborhood types to instantiate.
-     * @param svdIterations the number of iterations that should be performed in
-     * SVD-based recommenders.
      */
     public static void runMahoutRecommenders(Set<String> paths, Properties properties) {
         for (AbstractRunner<Long, Long> rec : instantiateMahoutRecommenders(paths, properties)) {
@@ -151,6 +153,14 @@ public class MultipleRecommendationRunner {
         }
     }
 
+    /**
+     *
+     * Instantiates recommenders based on the provided properties.
+     *
+     * @param paths the input and output paths.
+     * @param properties the properties.
+     * @return an array of recommenders, prepared to be run.
+     */
     public static AbstractRunner<Long, Long>[] instantiateMahoutRecommenders(Set<String> paths, Properties properties) {
         List<AbstractRunner<Long, Long>> recList = new ArrayList();
         try {

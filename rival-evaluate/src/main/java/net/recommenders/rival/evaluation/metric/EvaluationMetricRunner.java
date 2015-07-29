@@ -1,5 +1,13 @@
 package net.recommenders.rival.evaluation.metric;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.metric.error.AbstractErrorMetric;
@@ -7,10 +15,6 @@ import net.recommenders.rival.evaluation.metric.ranking.AbstractRankingMetric;
 import net.recommenders.rival.evaluation.metric.ranking.NDCG;
 import net.recommenders.rival.evaluation.parser.TrecEvalParser;
 import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
-
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 
 /**
  * Runner for a single evaluation metric.
@@ -57,7 +61,7 @@ public class EvaluationMetricRunner {
     }
 
     /**
-     * Run a single evaluation metric.
+     * Runs a single evaluation metric.
      *
      * @param properties The properties of the strategy.
      * @throws IOException if file not found.
@@ -103,6 +107,13 @@ public class EvaluationMetricRunner {
         generateOutput(testModel, rankingCutoffs, metric, metric.getClass().getSimpleName(), perUser, resultsFile, overwrite, doAppend);
     }
 
+    /**
+     *
+     * Gets the ranking cutoffs requested in a properties mapping.
+     *
+     * @param properties the properties mapping to be parsed.
+     * @return an array with the ranking cutoffs (if available).
+     */
     public static int[] getRankingCutoffs(Properties properties) {
         int[] rankingCutoffs = new int[0];
         String metricClassName = properties.getProperty(METRIC);
@@ -116,6 +127,22 @@ public class EvaluationMetricRunner {
         return rankingCutoffs;
     }
 
+    /**
+     *
+     * Instantiates a single evaluation metric.
+     *
+     * @param properties the properties to be used.
+     * @param predictions datamodel containing the predictions of a recommender.
+     * @param testModel a datamodel containing the test split.
+     * @return a single evaluation metric according to the properties provided.
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
     public static EvaluationMetric<Long> instantiateEvaluationMetric(Properties properties, DataModel<Long, Long> predictions, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         int[] rankingCutoffs = getRankingCutoffs(properties);

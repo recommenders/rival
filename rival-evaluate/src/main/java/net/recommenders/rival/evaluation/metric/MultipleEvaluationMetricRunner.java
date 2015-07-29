@@ -40,7 +40,7 @@ public class MultipleEvaluationMetricRunner {
     public static final String METRIC_PER_USER = "evaluation.peruser";
 
     /**
-     * Main method for running a single evaluation metric.
+     * Main method for running multiple evaluation metrics.
      *
      * @param args Arguments.
      * @throws Exception If file not found.
@@ -61,7 +61,7 @@ public class MultipleEvaluationMetricRunner {
     }
 
     /**
-     * Run multiple evaluation metrics.
+     * Runs multiple evaluation metrics.
      *
      * @param properties The properties of the strategy.
      * @throws IOException if file not found.
@@ -119,6 +119,22 @@ public class MultipleEvaluationMetricRunner {
         }
     }
 
+    /**
+     *
+     * Instantiates multiple evaluation metrics.
+     *
+     * @param properties the properties to be used.
+     * @param predictions datamodel containing the predictions of a recommender.
+     * @param testModel datamodel containing the test split.
+     * @return a set of evaluation metrics.
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
     public static EvaluationMetric<Long>[] instantiateEvaluationMetrics(Properties properties, DataModel<Long, Long> predictions, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         List<EvaluationMetric<Long>> metricList = new ArrayList();
         String[] metricClassNames = properties.getProperty(METRICS).split(",");
@@ -135,7 +151,7 @@ public class MultipleEvaluationMetricRunner {
     }
 
     /**
-     * Get all prediction files.
+     * Gets all prediction files.
      *
      * @param predictionFiles The splits.
      * @param path The path where the splits are.

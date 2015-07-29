@@ -63,11 +63,17 @@ public class SplitterRunner {
             String testFile = outputFolder + splitTestPrefix + i + splitTestSuffix;
             DataModelUtils.saveDataModel(training, trainingFile, overwrite);
             DataModelUtils.saveDataModel(test, testFile, overwrite);
-//            saveDataModel(training, trainingFile, overwrite);
-//            saveDataModel(test, testFile, overwrite);
         }
     }
 
+    /**
+     *
+     * Instantiates a splitter based on the properties.
+     *
+     * @param properties the properties to be used.
+     * @return a splitter according to the properties mapping provided.
+     * @throws ClassNotFoundException
+     */
     public static Splitter<Long, Long> instantiateSplitter(Properties properties) throws ClassNotFoundException {
         // read parameters
         String splitterClassName = properties.getProperty(DATASET_SPLITTER);

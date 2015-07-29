@@ -134,8 +134,9 @@ public abstract class AbstractRunner<U, I> {
      *
      * @param opts options to run this recommender. See {@link RUN_OPTIONS}
      * enum.
-     * @param  trainingModel Model to train the recommender.
-     * @param testModel Model from where users to generate recommendations to will be considered.
+     * @param trainingModel Model to train the recommender.
+     * @param testModel Model from where users to generate recommendations to
+     * will be considered.
      * @throws Exception when the recommender cannot be run. See implementations
      * for more information on possible exceptions.
      */

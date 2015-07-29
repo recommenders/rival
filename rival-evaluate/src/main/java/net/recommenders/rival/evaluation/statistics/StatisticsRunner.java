@@ -30,8 +30,8 @@ import java.util.Set;
 
 /**
  *
- * Runner of methods to compute whether the evaluation measures ar statistically
- * significant
+ * Runner of methods to compute whether the evaluation measures are
+ * statistically significant
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -71,7 +71,7 @@ public class StatisticsRunner {
     }
 
     /**
-     * Run all the statistic functions included in the property file.
+     * Run all the statistic functions included in the properties mapping.
      *
      * @param properties The properties to be executed.
      * @throws IOException when a file cannot be parsed
@@ -114,6 +114,19 @@ public class StatisticsRunner {
         outStatistics.close();
     }
 
+    /**
+     *
+     * Run all the statistic functions included in the properties mapping,
+     * taking the results of the metrics from memory.
+     *
+     * @param properties the properties to be used.
+     * @param outStatistics stream where the output will be printed to.
+     * @param baselineName name of the baseline method (for printing purposes)
+     * @param baselineMapMetricUserValues result values for each metric for the
+     * baseline method.
+     * @param methodsMapMetricUserValues result values for each metric for each
+     * recommender that should be compared against the baseline method.
+     */
     public static void run(Properties properties, PrintStream outStatistics, String baselineName, Map<String, Map<String, Double>> baselineMapMetricUserValues, Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues) {
         // read alpha
         Double alpha = Double.parseDouble(properties.getProperty(ALPHA));
@@ -173,6 +186,8 @@ public class StatisticsRunner {
     }
 
     /**
+     *
+     * Reads results from the metric file.
      *
      * @param input The metric file.
      * @param format The format of the file.

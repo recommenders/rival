@@ -26,7 +26,7 @@ public class ParserRunner {
      * Run the parser based on given properties.
      *
      * @param properties The properties
-     * @return The data model.
+     * @return The data model parsed by the parser.
      * @throws ClassNotFoundException when no class found
      * @throws IllegalAccessException when
      * @throws IllegalArgumentException when argument is illegal
@@ -58,6 +58,20 @@ public class ParserRunner {
         return model;
     }
 
+    /**
+     *
+     * Instantiates a parser based on the properties.
+     *
+     * @param properties the properties to be used.
+     * @return a parser according to the provided properties.
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
     public static Parser instantiateParser(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
