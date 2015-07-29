@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Abstract class which represents all the basic elements of a
- * ranking based metric.
+ * Abstract class which represents all the basic elements of a ranking based
+ * metric.
  *
  * @param <U> - type associated to users' ids
  * @param <I> - type associated to items' ids
@@ -130,6 +130,14 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
             prec = 1.0;
         }
         return prec;
+    }
+
+    /**
+     * Returns the array of cutoff levels where this metric has computed values
+     * at.
+     */
+    public int[] getCutoffs() {
+        return ats;
     }
 
     /**
