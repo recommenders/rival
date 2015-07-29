@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.recommenders.rival.examples.movielens100k;
+package net.recommenders.rival.examples;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +42,7 @@ import net.recommenders.rival.split.splitter.SplitterRunner;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class CompleteExampleInMemory {
+public class CompletePipelineInMemory {
 
     private static void fillDefaultProperties(Properties props) {
         System.out.println("Setting default properties...");
