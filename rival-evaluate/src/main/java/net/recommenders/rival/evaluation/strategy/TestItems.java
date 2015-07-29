@@ -24,4 +24,9 @@ public class TestItems extends AbstractStrategy {
     public Set<Long> getCandidateItemsToRank(Long user) {
         return getModelTrainingDifference(test, user);
     }
+
+    @Override
+    public String toString() {
+        return "TestItems_" + threshold;
+    }
 }

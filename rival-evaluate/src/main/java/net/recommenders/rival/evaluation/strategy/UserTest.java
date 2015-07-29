@@ -25,4 +25,9 @@ public class UserTest extends AbstractStrategy {
     public Set<Long> getCandidateItemsToRank(Long user) {
         return test.getUserItemPreferences().get(user).keySet();
     }
+
+    @Override
+    public String toString() {
+        return "UserTest_" + threshold;
+    }
 }

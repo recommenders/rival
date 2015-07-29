@@ -141,8 +141,8 @@ public class StatisticsRunner {
                             Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
                             // samples are paired
                             double[] interval = new ConfidenceInterval().getConfidenceInterval(alpha, userMetricValuesBaseline, userMetricValuesMethod, true);
-                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "_lower" + "\t" + interval[0]);
-                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "_upper" + "\t" + interval[1]);
+                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "_lower" + "@" + alpha + "\t" + interval[0]);
+                            outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "_upper" + "@" + alpha + "\t" + interval[1]);
                         }
                     }
                 }

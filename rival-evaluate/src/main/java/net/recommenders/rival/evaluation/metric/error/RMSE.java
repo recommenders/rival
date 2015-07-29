@@ -67,4 +67,9 @@ public class RMSE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationM
         }
         value = (testItems == 0) ? Double.NaN : Math.sqrt(value / testItems);
     }
+
+    @Override
+    public String toString() {
+        return "RMSE_" + strategy;
+    }
 }

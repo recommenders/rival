@@ -172,4 +172,9 @@ public class EffectSize<V> {
         double e = Math.abs(meanOfDifferences) / stdOfDifferences;
         return e;
     }
+
+    @Override
+    public String toString() {
+        return "EffectSize";
+    }
 }

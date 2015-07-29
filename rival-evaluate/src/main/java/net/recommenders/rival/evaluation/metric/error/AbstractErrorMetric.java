@@ -46,7 +46,7 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
      * Strategy to decide what to do when there is no predicted value for a user
      * and item contained in the test set
      */
-    private ErrorStrategy strategy;
+    protected ErrorStrategy strategy;
 
     /**
      * Default constructor with predictions and groundtruth information

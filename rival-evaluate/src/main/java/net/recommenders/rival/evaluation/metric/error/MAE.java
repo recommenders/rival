@@ -67,4 +67,9 @@ public class MAE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMe
         }
         value = (testItems == 0) ? Double.NaN : value / testItems;
     }
+
+    @Override
+    public String toString() {
+        return "MAE_" + strategy;
+    }
 }

@@ -195,4 +195,9 @@ public class ConfidenceInterval {
         double[] interval = new double[]{lower, upper};
         return interval;
     }
+
+    @Override
+    public String toString() {
+        return "ConfidenceInterval";
+    }
 }

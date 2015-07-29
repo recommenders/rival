@@ -151,4 +151,9 @@ public class Recall<U, I> extends AbstractRankingMetric<U, I> implements Evaluat
         }
         return Double.NaN;
     }
+
+    @Override
+    public String toString() {
+        return "Recall_" + relevanceThreshold;
+    }
 }

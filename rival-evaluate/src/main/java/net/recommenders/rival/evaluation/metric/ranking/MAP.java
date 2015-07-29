@@ -157,4 +157,9 @@ public class MAP<U, I> extends AbstractRankingMetric<U, I> implements Evaluation
         }
         return Double.NaN;
     }
+
+    @Override
+    public String toString() {
+        return "MAP_" + relevanceThreshold;
+    }
 }

@@ -150,4 +150,9 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
         }
         return Double.NaN;
     }
+
+    @Override
+    public String toString() {
+        return "Precision_" + relevanceThreshold;
+    }
 }

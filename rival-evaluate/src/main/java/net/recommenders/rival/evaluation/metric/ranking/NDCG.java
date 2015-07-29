@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain" target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
+ * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
+ * target="_blank">discounted cumulative gain</a> (NDCG) of a ranked list of
  * items.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
@@ -249,5 +250,10 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
             return dcg / idcg;
         }
         return Double.NaN;
+    }
+
+    @Override
+    public String toString() {
+        return "NDCG" + type + "_" + relevanceThreshold;
     }
 }

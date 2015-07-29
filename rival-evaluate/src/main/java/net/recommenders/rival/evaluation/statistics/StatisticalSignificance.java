@@ -74,4 +74,9 @@ public class StatisticalSignificance {
 
         return p;
     }
+
+    @Override
+    public String toString() {
+        return "StatisticalSignificance";
+    }
 }

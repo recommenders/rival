@@ -107,4 +107,9 @@ public class RelPlusN extends AbstractStrategy {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "RelPlusN_" + N + "_" + threshold;
+    }
 }

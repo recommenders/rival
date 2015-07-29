@@ -26,4 +26,9 @@ public class AllItems extends AbstractStrategy {
         items.addAll(getModelTrainingDifference(test, user));
         return items;
     }
+
+    @Override
+    public String toString() {
+        return "AllItems_" + threshold;
+    }
 }

@@ -66,4 +66,9 @@ public class StandardError<V> {
         double e = differences.getStandardDeviation() / Math.sqrt(differences.getN());
         return e;
     }
+
+    @Override
+    public String toString() {
+        return "StandardError";
+    }
 }
