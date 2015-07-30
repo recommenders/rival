@@ -36,6 +36,7 @@ import org.apache.mahout.cf.taste.model.PreferenceArray;
  */
 public class DataModelWrapper implements DataModel {
 
+    private static final long serialVersionUID = 20150729L;
     private GenericDataModel wrapper;
 
     public DataModelWrapper(net.recommenders.rival.core.DataModel<Long, Long> model) {

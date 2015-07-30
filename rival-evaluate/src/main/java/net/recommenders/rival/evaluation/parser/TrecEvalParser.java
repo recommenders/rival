@@ -2,8 +2,9 @@ package net.recommenders.rival.evaluation.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
 
@@ -34,12 +35,15 @@ public class TrecEvalParser implements Parser {
     public DataModel<Long, Long> parseData(File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
-        BufferedReader br = new BufferedReader(new FileReader(f));
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            parseLine(line, dataset);
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+        try {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                parseLine(line, dataset);
+            }
+        } finally {
+            br.close();
         }
-        br.close();
 
         return dataset;
     }

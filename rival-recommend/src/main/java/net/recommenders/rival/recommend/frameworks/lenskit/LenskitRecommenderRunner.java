@@ -143,12 +143,18 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
                 model = new DataModel();
+                break;
+            default:
+                model = null;
         }
         String name = null;
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case OUTPUT_RECS:
                 name = fileName;
+                break;
+            default:
+                name = null;
         }
         boolean createFile = true;
         for (long user : test.getUserIds()) {

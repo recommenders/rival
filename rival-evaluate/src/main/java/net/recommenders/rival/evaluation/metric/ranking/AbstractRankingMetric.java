@@ -5,6 +5,7 @@ import net.recommenders.rival.evaluation.metric.AbstractMetric;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
     public AbstractRankingMetric(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats) {
         super(predictions, test);
         this.value = Double.NaN;
-        this.ats = ats;
+        this.ats = Arrays.copyOf(ats, ats.length);
         this.relevanceThreshold = relThreshold;
     }
 

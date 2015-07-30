@@ -13,7 +13,9 @@ import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 /**
- * A generic recommender builder for Mahout recommenders in order to avoid generating separate builders for each recommender type.
+ * A generic recommender builder for Mahout recommenders in order to avoid
+ * generating separate builders for each recommender type.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>
  * @param <T> generic parameter
  */
@@ -38,7 +40,9 @@ public final class GenericRecommenderBuilder<T>
     public static final int NOFACTORS = 0;
 
     /**
-     * Builds a random recommender which will recommend items from the data model passed as a parameter.
+     * Builds a random recommender which will recommend items from the data
+     * model passed as a parameter.
+     *
      * @param dataModel the data model
      * @return the recommender
      * @throws TasteException when the recommender is instantiated incorrectly.
@@ -55,7 +59,7 @@ public final class GenericRecommenderBuilder<T>
      * @param dataModel the data model
      * @param recType the recommender type
      * @return the recommender
-     * @throws TasteException  when
+     * @throws TasteException when
      * @throws RecommenderException when
      */
     public Recommender buildRecommender(DataModel dataModel, String recType)
@@ -116,7 +120,7 @@ public final class GenericRecommenderBuilder<T>
      * @param recType the type of the recommender, e.g. Basic
      * @param similarityType the type of the similarity, e.g. PersonCorrelation
      * @param neighborhoodSize the neighborhood size
-     * @param factors  number of factors
+     * @param factors number of factors
      * @param iterations number of iterations
      * @param facType the factorizer
      * @return the recommender
@@ -132,88 +136,138 @@ public final class GenericRecommenderBuilder<T>
             String facType)
             throws TasteException, RecommenderException {
         String neighborhoodType = "org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood";
-        try {
-            Object simObj = null;
-            /**
-             * Instantiate similarity class
-             */
-            if (similarityType != null) {
-                Class<?> similarityClass = null;
-                try {
-                    similarityClass = Class.forName(similarityType);
-                    simObj = similarityClass.getConstructor(DataModel.class).newInstance(dataModel);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new RecommenderException("Could not create Similarity class " + e.getMessage());
-                }
-            }
-            /**
-             * Instantiate neighborhood class
-             */
-            Object neighObj = null;
-            //if (neighborhoodType != null){
-            if (neighborhoodSize != NO_N) {
-                Class<?> neighborhoodClass = null;
-                try {
-                    neighborhoodClass = Class.forName(neighborhoodType);
-                    neighObj = neighborhoodClass.getConstructor(int.class, UserSimilarity.class, DataModel.class).newInstance(neighborhoodSize, simObj, dataModel);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
-                }
-            }
-            /**
-             * Instantiate factorizer class
-             */
-            if (facType != null) {
-                Class<?> factorizerClass = null;
-                try {
-                    factorizerClass = Class.forName(facType);
-                } catch (ClassNotFoundException e) {
-                    System.out.println("Could not create Factorizer " + e.getMessage());
-                }
-                simObj = factorizerClass.getConstructor(DataModel.class, int.class, int.class).newInstance(dataModel, factors, iterations);
-
-            }
-            /**
-             * Instantiate recommender class
-             */
-            final Class<?> recommenderClass;
+        Object simObj = null;
+        /**
+         * Instantiate similarity class
+         */
+        if (similarityType != null) {
+            Class<?> similarityClass = null;
             try {
-                recommenderClass = Class.forName(recType);
+                similarityClass = Class.forName(similarityType);
+                simObj = similarityClass.getConstructor(DataModel.class).newInstance(dataModel);
             } catch (ClassNotFoundException e) {
-                throw new RecommenderException("Could not create Recommender class " + e.getMessage());
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Similarity class " + e.getMessage());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Similarity class " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Similarity class " + e.getMessage());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Similarity class " + e.getMessage());
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Similarity class " + e.getMessage());
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Similarity class " + e.getMessage());
+            } catch (SecurityException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Similarity class " + e.getMessage());
             }
-            final Object recObj;
-            try {
-                if (facType != null) {
-                    recObj = recommenderClass.getConstructor(DataModel.class, Factorizer.class).newInstance(dataModel, (Factorizer) simObj);
-                } // user-based similarity with neighborhood
-                //                else if (neighborhoodType != null && similarityType != null) {
-                else if (recType.contains("UserBased")) {
-                    recObj = recommenderClass.getConstructor(DataModel.class, UserNeighborhood.class, UserSimilarity.class).newInstance(dataModel, neighObj, simObj);
-                } // item-based similarity, no neighborhood
-                else if (similarityType != null) {
-                    recObj = recommenderClass.getConstructor(DataModel.class, ItemSimilarity.class).newInstance(dataModel, simObj);
-                } else {
-                    recObj = recommenderClass.getConstructor(DataModel.class).newInstance(dataModel);
-                }
-            } catch (Exception e) { //ClassNotFoundException e) {
-                throw new RecommenderException("Could not create Recommender: " + e.getMessage());
-            }
-            return (Recommender) recObj;
-        } catch (IllegalArgumentException e) {
-            throw new RecommenderException("Could not create generic Recommender: " + e.getMessage(), e);
-        } catch (SecurityException e) {
-            throw new RecommenderException("Could not create generic Recommender: " + e.getMessage(), e);
-        } catch (InstantiationException e) {
-            throw new RecommenderException("Could not create generic Recommender: " + e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            throw new RecommenderException("Could not create generic Recommender: " + e.getMessage(), e);
-        } catch (InvocationTargetException e) {
-            throw new RecommenderException("Could not create generic Recommender: " + e.getMessage(), e);
-        } catch (NoSuchMethodException e) {
-            throw new RecommenderException("Could not create generic Recommender: " + e.getMessage(), e);
         }
+        /**
+         * Instantiate neighborhood class
+         */
+        Object neighObj = null;
+        //if (neighborhoodType != null){
+        if (neighborhoodSize != NO_N) {
+            Class<?> neighborhoodClass = null;
+            try {
+                neighborhoodClass = Class.forName(neighborhoodType);
+                neighObj = neighborhoodClass.getConstructor(int.class, UserSimilarity.class, DataModel.class).newInstance(neighborhoodSize, simObj, dataModel);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
+            } catch (SecurityException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Neighborhood class " + e.getMessage());
+            }
+        }
+        /**
+         * Instantiate factorizer class
+         */
+        if (facType != null) {
+            Class<?> factorizerClass = null;
+            try {
+                factorizerClass = Class.forName(facType);
+                simObj = factorizerClass.getConstructor(DataModel.class, int.class, int.class).newInstance(dataModel, factors, iterations);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Factorizer " + e.getMessage());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Factorizer " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Factorizer " + e.getMessage());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Factorizer " + e.getMessage());
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Factorizer " + e.getMessage());
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Factorizer " + e.getMessage());
+            } catch (SecurityException e) {
+                e.printStackTrace();
+                throw new RecommenderException("Could not create Factorizer " + e.getMessage());
+            }
+        }
+        /**
+         * Instantiate recommender class
+         */
+        final Class<?> recommenderClass;
+        try {
+            recommenderClass = Class.forName(recType);
+        } catch (ClassNotFoundException e) {
+            throw new RecommenderException("Could not create Recommender class " + e.getMessage());
+        }
+        final Object recObj;
+        try {
+            if (facType != null) {
+                recObj = recommenderClass.getConstructor(DataModel.class, Factorizer.class).newInstance(dataModel, (Factorizer) simObj);
+            } // user-based similarity with neighborhood
+            //                else if (neighborhoodType != null && similarityType != null) {
+            else if (recType.contains("UserBased")) {
+                recObj = recommenderClass.getConstructor(DataModel.class, UserNeighborhood.class, UserSimilarity.class).newInstance(dataModel, neighObj, simObj);
+            } // item-based similarity, no neighborhood
+            else if (similarityType != null) {
+                recObj = recommenderClass.getConstructor(DataModel.class, ItemSimilarity.class).newInstance(dataModel, simObj);
+            } else {
+                recObj = recommenderClass.getConstructor(DataModel.class).newInstance(dataModel);
+            }
+        } catch (IllegalAccessException e) {
+            throw new RecommenderException("Could not create Recommender: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new RecommenderException("Could not create Recommender: " + e.getMessage());
+        } catch (InstantiationException e) {
+            throw new RecommenderException("Could not create Recommender: " + e.getMessage());
+        } catch (InvocationTargetException e) {
+            throw new RecommenderException("Could not create Recommender: " + e.getMessage());
+        } catch (NoSuchMethodException e) {
+            throw new RecommenderException("Could not create Recommender: " + e.getMessage());
+        } catch (SecurityException e) {
+            throw new RecommenderException("Could not create Recommender: " + e.getMessage());
+        }
+        return (Recommender) recObj;
     }
 }

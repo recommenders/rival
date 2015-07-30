@@ -19,12 +19,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -85,7 +86,7 @@ public class StatisticsRunner {
         if (outputFile.exists() && !overwrite) {
             throw new IllegalArgumentException("Cannot generate statistics because " + outputFile + " exists and overwrite is " + overwrite);
         } else {
-            outStatistics = new PrintStream(outputFile);
+            outStatistics = new PrintStream(outputFile, "UTF-8");
         }
         // read format
         String format = properties.getProperty(INPUT_FORMAT);
@@ -95,23 +96,25 @@ public class StatisticsRunner {
         for (String u : usersToAvoidArray) {
             usersToAvoid.add(u);
         }
-        // read baseline <-- this file is mandatory
-        File baselineFile = new File(properties.getProperty(BASELINE_FILE));
-        Map<String, Map<String, Double>> baselineMapMetricUserValues = readMetricFile(baselineFile, format, usersToAvoid);
-        // read methods <-- at least one file should be provided
-        String[] methodFiles = properties.getProperty(TEST_METHODS_FILES).split(",");
-        if (methodFiles.length < 1) {
-            throw new IllegalArgumentException("At least one test file should be provided!");
+        try {
+            // read baseline <-- this file is mandatory
+            File baselineFile = new File(properties.getProperty(BASELINE_FILE));
+            Map<String, Map<String, Double>> baselineMapMetricUserValues = readMetricFile(baselineFile, format, usersToAvoid);
+            // read methods <-- at least one file should be provided
+            String[] methodFiles = properties.getProperty(TEST_METHODS_FILES).split(",");
+            if (methodFiles.length < 1) {
+                throw new IllegalArgumentException("At least one test file should be provided!");
+            }
+            Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues = new HashMap();
+            for (String m : methodFiles) {
+                File file = new File(m);
+                Map<String, Map<String, Double>> mapMetricUserValues = readMetricFile(file, format, usersToAvoid);
+                methodsMapMetricUserValues.put(m, mapMetricUserValues);
+            }
+            run(properties, outStatistics, baselineFile.getName(), baselineMapMetricUserValues, methodsMapMetricUserValues);
+        } finally {// close files
+            outStatistics.close();
         }
-        Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues = new HashMap();
-        for (String m : methodFiles) {
-            File file = new File(m);
-            Map<String, Map<String, Double>> mapMetricUserValues = readMetricFile(file, format, usersToAvoid);
-            methodsMapMetricUserValues.put(m, mapMetricUserValues);
-        }
-        run(properties, outStatistics, baselineFile.getName(), baselineMapMetricUserValues, methodsMapMetricUserValues);
-        // close files
-        outStatistics.close();
     }
 
     /**
@@ -134,11 +137,13 @@ public class StatisticsRunner {
         String[] statFunctions = properties.getProperty(STATISTICS).split(",");
         for (String statFunction : statFunctions) {
             if (statFunction.equals("confidence_interval")) {
-                for (String metric : baselineMapMetricUserValues.keySet()) {
-                    Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodsMapMetricUserValues.keySet()) {
-                        if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
-                            Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
+                for (Entry<String, Map<String, Double>> e : baselineMapMetricUserValues.entrySet()) {
+                    String metric = e.getKey();
+                    Map<String, Double> userMetricValuesBaseline = e.getValue();
+                    for (Entry<String, Map<String, Map<String, Double>>> e2 : methodsMapMetricUserValues.entrySet()) {
+                        String method = e2.getKey();
+                        if (e2.getValue().containsKey(metric)) {
+                            Map<String, Double> userMetricValuesMethod = e2.getValue().get(metric);
                             // samples are paired
                             double[] interval = new ConfidenceInterval().getConfidenceInterval(alpha, userMetricValuesBaseline, userMetricValuesMethod, true);
                             outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "_lower" + "@" + alpha + "\t" + interval[0]);
@@ -148,22 +153,26 @@ public class StatisticsRunner {
                 }
             } else if (statFunction.startsWith("effect_size")) {
                 String effectSizeMethod = statFunction.replaceAll("effect_size_", "");
-                for (String metric : baselineMapMetricUserValues.keySet()) {
-                    Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodsMapMetricUserValues.keySet()) {
-                        if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
-                            Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
+                for (Entry<String, Map<String, Double>> e : baselineMapMetricUserValues.entrySet()) {
+                    String metric = e.getKey();
+                    Map<String, Double> userMetricValuesBaseline = e.getValue();
+                    for (Entry<String, Map<String, Map<String, Double>>> e2 : methodsMapMetricUserValues.entrySet()) {
+                        String method = e2.getKey();
+                        if (e2.getValue().containsKey(metric)) {
+                            Map<String, Double> userMetricValuesMethod = e2.getValue().get(metric);
                             double es = new EffectSize<String>(userMetricValuesBaseline, userMetricValuesMethod).getEffectSize(effectSizeMethod);
                             outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + es);
                         }
                     }
                 }
             } else if (statFunction.equals("standard_error")) {
-                for (String metric : baselineMapMetricUserValues.keySet()) {
-                    Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodsMapMetricUserValues.keySet()) {
-                        if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
-                            Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
+                for (Entry<String, Map<String, Double>> e : baselineMapMetricUserValues.entrySet()) {
+                    String metric = e.getKey();
+                    Map<String, Double> userMetricValuesBaseline = e.getValue();
+                    for (Entry<String, Map<String, Map<String, Double>>> e2 : methodsMapMetricUserValues.entrySet()) {
+                        String method = e2.getKey();
+                        if (e2.getValue().containsKey(metric)) {
+                            Map<String, Double> userMetricValuesMethod = e2.getValue().get(metric);
                             double se = new StandardError<String>(userMetricValuesBaseline, userMetricValuesMethod).getStandardError();
                             outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + se);
                         }
@@ -171,11 +180,13 @@ public class StatisticsRunner {
                 }
             } else if (statFunction.startsWith("statistical_significance")) {
                 String statFunctionMethod = statFunction.replaceAll("statistical_significance_", "");
-                for (String metric : baselineMapMetricUserValues.keySet()) {
-                    Map<String, Double> userMetricValuesBaseline = baselineMapMetricUserValues.get(metric);
-                    for (String method : methodsMapMetricUserValues.keySet()) {
-                        if (methodsMapMetricUserValues.get(method).containsKey(metric)) {
-                            Map<String, Double> userMetricValuesMethod = methodsMapMetricUserValues.get(method).get(metric);
+                for (Entry<String, Map<String, Double>> e : baselineMapMetricUserValues.entrySet()) {
+                    String metric = e.getKey();
+                    Map<String, Double> userMetricValuesBaseline = e.getValue();
+                    for (Entry<String, Map<String, Map<String, Double>>> e2 : methodsMapMetricUserValues.entrySet()) {
+                        String method = e2.getKey();
+                        if (e2.getValue().containsKey(metric)) {
+                            Map<String, Double> userMetricValuesMethod = e2.getValue().get(metric);
                             double p = new StatisticalSignificance(userMetricValuesBaseline, userMetricValuesMethod).getPValue(statFunctionMethod);
                             outStatistics.println(baselineName + "\t" + method + "\t" + metric + "\t" + statFunction + "\t" + p);
                         }
@@ -199,12 +210,15 @@ public class StatisticsRunner {
      */
     private static Map<String, Map<String, Double>> readMetricFile(File input, String format, Set<String> usersToAvoid) throws IOException {
         Map<String, Map<String, Double>> mapMetricUserValue = new HashMap<String, Map<String, Double>>();
-        BufferedReader br = new BufferedReader(new FileReader(input));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(input), "UTF-8"));
         String line = null;
-        while ((line = br.readLine()) != null) {
-            readLine(format, line, mapMetricUserValue, usersToAvoid);
+        try {
+            while ((line = br.readLine()) != null) {
+                readLine(format, line, mapMetricUserValue, usersToAvoid);
+            }
+        } finally {
+            br.close();
         }
-        br.close();
         return mapMetricUserValue;
     }
 

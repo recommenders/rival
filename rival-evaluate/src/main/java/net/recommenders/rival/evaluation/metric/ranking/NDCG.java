@@ -92,8 +92,9 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
         metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (U user : data.keySet()) {
-            List<Double> sortedList = data.get(user);
+        for (Map.Entry<U, List<Double>> e : data.entrySet()) {
+            U user = e.getKey();
+            List<Double> sortedList = e.getValue();
             double dcg = 0.0;
             int rank = 0;
             for (double rel : sortedList) {

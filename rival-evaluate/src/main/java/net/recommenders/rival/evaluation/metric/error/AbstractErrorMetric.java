@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @param <U> - type associated to users' ids
@@ -93,7 +94,8 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
                 userData = new ArrayList<Double>();
                 data.put(testUser, userData);
             }
-            for (I testItem : ratings.keySet()) {
+            for (Entry<I, Double> e : ratings.entrySet()) {
+                I testItem = e.getKey();
                 double realRating = ratings.get(testItem);
                 double predictedRating = Double.NaN; // NaN as default value
                 if (predictedRatings.containsKey(testUser)) {

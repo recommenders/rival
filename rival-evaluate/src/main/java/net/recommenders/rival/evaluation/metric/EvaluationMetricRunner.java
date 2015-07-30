@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
@@ -153,9 +154,9 @@ public class EvaluationMetricRunner {
             if (metricClassName.endsWith("NDCG")) {
                 String ndcgType = properties.getProperty(NDCG_TYPE, "exp");
                 NDCG.TYPE nt = ndcgType.equalsIgnoreCase(NDCG.TYPE.EXP.toString()) ? NDCG.TYPE.EXP : NDCG.TYPE.LIN;
-                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class, NDCG.TYPE.class).newInstance(predictions, testModel, threshold.doubleValue(), rankingCutoffs, nt);
+                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class, NDCG.TYPE.class).newInstance(predictions, testModel, threshold, rankingCutoffs, nt);
             } else {
-                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class).newInstance(predictions, testModel, threshold.doubleValue(), rankingCutoffs);
+                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class).newInstance(predictions, testModel, threshold, rankingCutoffs);
             }
         } else {
             String strategy = properties.getProperty(ERROR_STRATEGY);
@@ -189,7 +190,7 @@ public class EvaluationMetricRunner {
      * @throws FileNotFoundException If file not found.
      */
     @SuppressWarnings("unchecked")
-    public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs, EvaluationMetric<U> metric, String metricName, Boolean perUser, File resultsFile, Boolean overwrite, Boolean append) throws FileNotFoundException {
+    public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs, EvaluationMetric<U> metric, String metricName, Boolean perUser, File resultsFile, Boolean overwrite, Boolean append) throws FileNotFoundException, UnsupportedEncodingException {
         PrintStream out = null;
         if (overwrite && append) {
             System.out.println("Incompatible arguments: overwrite && append!!!");
@@ -199,7 +200,7 @@ public class EvaluationMetricRunner {
             System.out.println("Ignoring " + resultsFile);
             return;
         } else {
-            out = new PrintStream(new FileOutputStream(resultsFile, append));
+            out = new PrintStream(new FileOutputStream(resultsFile, append), false, "UTF-8");
         }
         metric.compute();
         out.println(metricName + "\tall\t" + metric.getValue());
@@ -220,8 +221,6 @@ public class EvaluationMetricRunner {
                 }
             }
         }
-        if (out != null) {
-            out.close();
-        }
+        out.close();
     }
 }

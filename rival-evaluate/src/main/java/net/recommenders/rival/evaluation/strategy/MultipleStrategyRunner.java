@@ -108,12 +108,15 @@ public class MultipleStrategyRunner {
                 String inputFileName = new File(inputFile).getName();
                 // read recommendations: user \t item \t score
                 final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<EvaluationStrategy.Pair<Long, Double>>>();
-                BufferedReader in = new BufferedReader(new FileReader(inputFile));
-                String line = null;
-                while ((line = in.readLine()) != null) {
-                    StrategyRunner.readLine(line, mapUserRecommendations);
+                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
+                try {
+                    String line = null;
+                    while ((line = in.readLine()) != null) {
+                        StrategyRunner.readLine(line, mapUserRecommendations);
+                    }
+                } finally {
+                    in.close();
                 }
-                in.close();
                 // generate output for each strategy
                 // improvement: call to instantiateStrategies instead of having duplicated code. Current problem: how to obtain nice suffix text and threshold information in a generic way
                 for (String strategyClassName : strategyClassNames) {
@@ -214,7 +217,7 @@ public class MultipleStrategyRunner {
      * @param overwrite Whether or not to overwrite the results file.
      * @throws FileNotFoundException if file does not exist.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
         File outRanking = new File(rankingFolder, "out" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
         File outGroundtruth = new File(groundtruthFolder, "gr" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
         StrategyRunner.generateOutput(testModel, mapUserRecommendations, strategy, format, outRanking, outGroundtruth, overwrite);
@@ -229,7 +232,14 @@ public class MultipleStrategyRunner {
      * @param testSuffix The suffix of the test files.
      */
     public static void getAllSplits(Set<String> splits, File path, String trainingSuffix, String testSuffix) {
-        for (File file : path.listFiles()) {
+        if (path == null) {
+            return;
+        }
+        File[] files = path.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (file.isDirectory()) {
                 getAllSplits(splits, file, trainingSuffix, testSuffix);
             } else if (file.getName().endsWith(trainingSuffix)) {
@@ -249,7 +259,14 @@ public class MultipleStrategyRunner {
      * @param suffix The suffix of the recommendation files.
      */
     public static void getAllRecommendationFiles(Set<String> recommendationFiles, File path, String prefix, String suffix) {
-        for (File file : path.listFiles()) {
+        if (path == null) {
+            return;
+        }
+        File[] files = path.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (file.isDirectory()) {
                 getAllRecommendationFiles(recommendationFiles, file, prefix, suffix);
             } else if (file.getName().startsWith(prefix) && file.getName().endsWith(suffix)) {

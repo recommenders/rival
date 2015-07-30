@@ -170,7 +170,14 @@ public class MultipleStrategyRunnerInfile {
      * @param testSuffix The suffix of the test files.
      */
     public static void getAllSplits(Set<String> splits, File path, String trainingSuffix, String testSuffix) {
-        for (File file : path.listFiles()) {
+        if (path == null) {
+            return;
+        }
+        File[] files = path.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (file.isDirectory()) {
                 getAllSplits(splits, file, trainingSuffix, testSuffix);
             } else if (file.getName().endsWith(trainingSuffix)) {
@@ -190,7 +197,14 @@ public class MultipleStrategyRunnerInfile {
      * @param suffix The suffix of the recommendation files.
      */
     public static void getAllRecommendationFiles(Set<String> recommendationFiles, File path, String prefix, String suffix) {
-        for (File file : path.listFiles()) {
+        if (path == null) {
+            return;
+        }
+        File[] files = path.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (file.isDirectory()) {
                 getAllRecommendationFiles(recommendationFiles, file, prefix, suffix);
             } else if (file.getName().startsWith(prefix) && file.getName().endsWith(suffix)) {

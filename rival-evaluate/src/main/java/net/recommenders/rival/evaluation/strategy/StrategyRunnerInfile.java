@@ -128,13 +128,13 @@ public class StrategyRunnerInfile {
         if (rankingFile.exists() && !overwrite) {
             System.out.println("Ignoring " + rankingFile);
         } else {
-            outRanking = new PrintStream(rankingFile);
+            outRanking = new PrintStream(rankingFile, "UTF-8");
         }
         PrintStream outGroundtruth = null;
         if (groundtruthFile.exists() && !overwrite) {
             System.out.println("Ignoring " + groundtruthFile);
         } else {
-            outGroundtruth = new PrintStream(groundtruthFile);
+            outGroundtruth = new PrintStream(groundtruthFile, "UTF-8");
         }
         for (Long user : testModel.getUsers()) {
             if (outRanking != null) {
@@ -175,22 +175,25 @@ public class StrategyRunnerInfile {
      */
     public static List<EvaluationStrategy.Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
-        BufferedReader in = new BufferedReader(new FileReader(userRecommendationFile));
-        String line = null;
-        boolean foundUser = false;
-        // read recommendations: user \t item \t score
-        while ((line = in.readLine()) != null) {
-            String[] toks = line.split("\t");
-            String u = toks[0];
-            if (u.equals(user + "")) {
-                readLine(line, mapUserRecommendations);
-                foundUser = true;
-            } else if (foundUser) {
-                // assuming a sorted file (at least, per user)
-                break;
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(userRecommendationFile), "UTF-8"));
+        try {
+            String line = null;
+            boolean foundUser = false;
+            // read recommendations: user \t item \t score
+            while ((line = in.readLine()) != null) {
+                String[] toks = line.split("\t");
+                String u = toks[0];
+                if (u.equals(user + "")) {
+                    readLine(line, mapUserRecommendations);
+                    foundUser = true;
+                } else if (foundUser) {
+                    // assuming a sorted file (at least, per user)
+                    break;
+                }
             }
+        } finally {
+            in.close();
         }
-        in.close();
         return mapUserRecommendations.get(user);
     }
 

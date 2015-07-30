@@ -238,7 +238,14 @@ public class MultipleRecommendationRunner {
      * @param inputPath the path to check
      */
     public static void listAllFiles(Set<String> setOfPaths, String inputPath) {
-        for (File file : new File(inputPath).listFiles()) {
+        if (inputPath == null) {
+            return;
+        }
+        File[] files = new File(inputPath).listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (file.isDirectory()) {
                 listAllFiles(setOfPaths, file.getAbsolutePath());
             } else if (file.getName().contains("_train.dat")) {

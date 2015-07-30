@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
@@ -147,11 +148,13 @@ public class CompletePipelineInMemory {
                 DataModel<Long, Long> test = splits[2 * i + 1];
                 Map<String, DataModel<Long, Long>> recModels = getRecommenderModels(properties, training, test);
                 Map<String, Map<String, Map<String, Map<String, Double>>>> mapStrategyRecommenderMetricUserValue = new HashMap();
-                for (String rec : recModels.keySet()) {
-                    DataModel<Long, Long> recModel = recModels.get(rec);
+                for (Entry<String, DataModel<Long, Long>> e : recModels.entrySet()) {
+                    String rec = e.getKey();
+                    DataModel<Long, Long> recModel = e.getValue();
                     Map<String, DataModel<Long, Long>> evalModels = applyStrategiesToRecommender(properties, training, test, recModel);
-                    for (String strat : evalModels.keySet()) {
-                        DataModel<Long, Long> evalModel = evalModels.get(strat);
+                    for (Entry<String, DataModel<Long, Long>> e2 : evalModels.entrySet()) {
+                        String strat = e2.getKey();
+                        DataModel<Long, Long> evalModel = e2.getValue();
                         Map<String, Map<String, Double>> results = evaluateStrategy(properties, test, evalModel);
                         // assign these results to a rec+strategy, at the end, compute statistics for all recs and one strategy
                         Map<String, Map<String, Map<String, Double>>> stratResults = mapStrategyRecommenderMetricUserValue.get(strat);
@@ -161,8 +164,9 @@ public class CompletePipelineInMemory {
                         }
                         stratResults.put(rec, results);
                         // print results
-                        for (String metric : results.keySet()) {
-                            Map<String, Double> metricResults = results.get(metric);
+                        for (Entry<String, Map<String, Double>> e3 : results.entrySet()) {
+                            String metric = e3.getKey();
+                            Map<String, Double> metricResults = e3.getValue();
                             System.out.println(rec + "\t" + strat + "\t" + metric + "\t" + metricResults.get("all"));
                             // remove this value to not be considered in subsequent statistical analysis
                             metricResults.remove("all");
@@ -170,8 +174,9 @@ public class CompletePipelineInMemory {
                     }
                 }
                 // compute statistics for a given strategy
-                for (String strat : mapStrategyRecommenderMetricUserValue.keySet()) {
-                    Map<String, Map<String, Map<String, Double>>> strategyResults = mapStrategyRecommenderMetricUserValue.get(strat);
+                for (Entry<String, Map<String, Map<String, Map<String, Double>>>> e : mapStrategyRecommenderMetricUserValue.entrySet()) {
+                    String strat = e.getKey();
+                    Map<String, Map<String, Map<String, Double>>> strategyResults = e.getValue();
                     System.out.println("----> Statistics for strategy " + strat);
                     computeStatistics(properties, strategyResults, System.out);
                 }
@@ -311,8 +316,9 @@ public class CompletePipelineInMemory {
             mapMetricResults.put(metric.toString(), results);
             results.put("all", all);
             Map<Long, Double> perUser = metric.getValuePerUser();
-            for (Long u : perUser.keySet()) {
-                results.put(u.toString(), perUser.get(u));
+            for (Entry<Long, Double> e : perUser.entrySet()) {
+                Long u = e.getKey();
+                results.put(u.toString(), e.getValue());
             }
             // is this a ranking metric?
             if (metric instanceof AbstractRankingMetric) {
@@ -345,13 +351,18 @@ public class CompletePipelineInMemory {
     private static void computeStatistics(Properties properties, Map<String, Map<String, Map<String, Double>>> strategyResults, PrintStream out) {
         // extract baseline from map
         String baselineName = properties.getProperty(StatisticsRunner.BASELINE_FILE);
+        if (baselineName == null) {
+            System.err.println("Name of baseline method not found in properties!");
+            return;
+        }
         Map<String, Map<String, Double>> baselineResults = null;
-        Map<String, Map<String, Map<String, Double>>> methodsResults = null;
-        for (String n : strategyResults.keySet()) {
+        Map<String, Map<String, Map<String, Double>>> methodsResults = new HashMap();
+        for (Entry<String, Map<String, Map<String, Double>>> e : strategyResults.entrySet()) {
+            String n = e.getKey();
             if (n.equals(baselineName)) {
-                baselineResults = strategyResults.get(n);
+                baselineResults = e.getValue();
             } else {
-                methodsResults.put(n, strategyResults.get(n));
+                methodsResults.put(n, e.getValue());
             }
         }
         if (baselineResults == null) {

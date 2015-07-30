@@ -91,12 +91,15 @@ public class StrategyRunner {
 
         // read recommendations: user \t item \t score
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
-        BufferedReader in = new BufferedReader(new FileReader(inputFile));
-        String line = null;
-        while ((line = in.readLine()) != null) {
-            readLine(line, mapUserRecommendations);
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
+        try {
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                readLine(line, mapUserRecommendations);
+            }
+        } finally {
+            in.close();
         }
-        in.close();
         // generate output
         generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFile, groundtruthFile, overwrite);
     }
@@ -134,43 +137,49 @@ public class StrategyRunner {
      * @param overwrite Whether or not to overwrite results file.
      * @throws FileNotFoundException If file not found.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
         PrintStream outRanking = null;
         if (rankingFile.exists() && !overwrite) {
             System.out.println("Ignoring " + rankingFile);
         } else {
-            outRanking = new PrintStream(rankingFile);
+            outRanking = new PrintStream(rankingFile, "UTF-8");
         }
-        PrintStream outGroundtruth = null;
-        if (groundtruthFile.exists() && !overwrite) {
-            System.out.println("Ignoring " + groundtruthFile);
-        } else {
-            outGroundtruth = new PrintStream(groundtruthFile);
-        }
-        for (Long user : testModel.getUsers()) {
-            if (outRanking != null) {
-                final List<EvaluationStrategy.Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
-                if (allScoredItems == null) {
-                    continue;
-                }
-                final Set<Long> items = strategy.getCandidateItemsToRank(user);
-                final List<EvaluationStrategy.Pair<Long, Double>> scoredItems = new ArrayList<EvaluationStrategy.Pair<Long, Double>>();
-                for (EvaluationStrategy.Pair<Long, Double> scoredItem : allScoredItems) {
-                    if (items.contains(scoredItem.getFirst())) {
-                        scoredItems.add(scoredItem);
+        try {
+            PrintStream outGroundtruth = null;
+            if (groundtruthFile.exists() && !overwrite) {
+                System.out.println("Ignoring " + groundtruthFile);
+            } else {
+                outGroundtruth = new PrintStream(groundtruthFile, "UTF-8");
+            }
+            try {
+                for (Long user : testModel.getUsers()) {
+                    if (outRanking != null) {
+                        final List<EvaluationStrategy.Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
+                        if (allScoredItems == null) {
+                            continue;
+                        }
+                        final Set<Long> items = strategy.getCandidateItemsToRank(user);
+                        final List<EvaluationStrategy.Pair<Long, Double>> scoredItems = new ArrayList<EvaluationStrategy.Pair<Long, Double>>();
+                        for (EvaluationStrategy.Pair<Long, Double> scoredItem : allScoredItems) {
+                            if (items.contains(scoredItem.getFirst())) {
+                                scoredItems.add(scoredItem);
+                            }
+                        }
+                        strategy.printRanking(user, scoredItems, outRanking, format);
+                    }
+                    if (outGroundtruth != null) {
+                        strategy.printGroundtruth(user, outGroundtruth, format);
                     }
                 }
-                strategy.printRanking(user, scoredItems, outRanking, format);
+            } finally {
+                if (outGroundtruth != null) {
+                    outGroundtruth.close();
+                }
             }
-            if (outGroundtruth != null) {
-                strategy.printGroundtruth(user, outGroundtruth, format);
+        } finally {
+            if (outRanking != null) {
+                outRanking.close();
             }
-        }
-        if (outRanking != null) {
-            outRanking.close();
-        }
-        if (outGroundtruth != null) {
-            outGroundtruth.close();
         }
     }
 

@@ -3,32 +3,32 @@ package net.recommenders.rival.core;
 /**
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public abstract class AbstractParser implements Parser {
+public abstract class AbstractParser {
 
     /**
      * The column index for the user id in the file.
      */
-    public static int USER_TOK = 0;
+    public static final int USER_TOK = 0;
     /**
      * The column index for the item id in the file.
      */
-    public static int ITEM_TOK = 1;
+    public static final int ITEM_TOK = 1;
     /**
      * The column index for the interaction value (e.g. rating) in the file.
      */
-    public static int PREFERENCE_TOK = 2;
+    public static final int PREFERENCE_TOK = 2;
     /**
      * The column index for the timestamp in the file.
      */
-    public static int TIME_TOK = 3;
+    public static final int TIME_TOK = 3;
     /**
      * Whether the file contains a column header.
      */
-    public static boolean HAS_HEADER = false;
+    public static final boolean HAS_HEADER = false;
     /**
      * The column delimiter.
      */
-    public static char DELIMITER = ',';
+    public static final char DELIMITER = ',';
     /**
      * Protected variables
      */

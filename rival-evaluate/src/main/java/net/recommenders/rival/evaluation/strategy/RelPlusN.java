@@ -87,9 +87,10 @@ public class RelPlusN extends AbstractStrategy {
                 notRelScores.put(p.getFirst(), p.getSecond());
             }
         }
-        for (Long r : relScores.keySet()) {
+        for (Entry<Long, Double> e : relScores.entrySet()) {
+            Long r = e.getKey();
             Map<Long, Double> m = new HashMap<Long, Double>(notRelScores);
-            m.put(r, relScores.get(r));
+            m.put(r, e.getValue());
             printRanking(user + "_" + r, m, out, format);
         }
     }

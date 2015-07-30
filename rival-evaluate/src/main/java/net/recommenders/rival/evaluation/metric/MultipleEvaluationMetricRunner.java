@@ -158,7 +158,14 @@ public class MultipleEvaluationMetricRunner {
      * @param predictionPrefix The prefix of the prediction files.
      */
     public static void getAllPredictionFiles(Set<String> predictionFiles, File path, String predictionPrefix) {
-        for (File file : path.listFiles()) {
+        if (path == null) {
+            return;
+        }
+        File[] files = path.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (file.isDirectory()) {
                 getAllPredictionFiles(predictionFiles, file, predictionPrefix);
             } else if (file.getName().startsWith(predictionPrefix)) {

@@ -5,8 +5,9 @@ import org.grouplens.lenskit.scored.ScoredId;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import net.recommenders.rival.core.DataModel;
 
@@ -25,17 +26,20 @@ public class RecommenderIO {
      * @param <T> list
      */
     public static <T> void writeData(long user, List<T> recommendations, String path, String fileName, boolean append, DataModel<Long, Long> model) {
+        BufferedWriter out = null;
         try {
             File dir = null;
             if (path != null) {
                 dir = new File(path);
                 if (!dir.isDirectory()) {
-                    dir.mkdir();
+                    if (!dir.mkdir()) {
+                        System.out.println("Directory " + path + " could not be created");
+                        return;
+                    }
                 }
             }
-            BufferedWriter out = null;
             if ((path != null) && (fileName != null)) {
-                out = new BufferedWriter(new FileWriter(path + "/" + fileName, append));
+                out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "/" + fileName, append), "UTF-8"));
             }
             for (Object ri : recommendations) {
                 if (ri instanceof RecommendedItem) {
@@ -64,6 +68,14 @@ public class RecommenderIO {
         } catch (IOException e) {
             System.out.println(e.getMessage());
 //            logger.error(e.getMessage());
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

@@ -111,13 +111,13 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
         // save map ids?
         if (mapIdsPrefix != null) {
             // save user map
-            PrintStream outUser = new PrintStream(mapIdsPrefix + "_userId.txt");
+            PrintStream outUser = new PrintStream(mapIdsPrefix + "_userId.txt", "UTF-8");
             for (Entry<String, Long> e : mapUserIds.entrySet()) {
                 outUser.println(e.getKey() + "\t" + e.getValue());
             }
             outUser.close();
             // save item map
-            PrintStream outItem = new PrintStream(mapIdsPrefix + "_itemId.txt");
+            PrintStream outItem = new PrintStream(mapIdsPrefix + "_itemId.txt", "UTF-8");
             for (Entry<String, Long> e : mapItemIds.entrySet()) {
                 outItem.println(e.getKey() + "\t" + e.getValue());
             }

@@ -6,6 +6,7 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Mean Average Precision of a ranked list of items.
@@ -68,8 +69,9 @@ public class MAP<U, I> extends AbstractRankingMetric<U, I> implements Evaluation
         metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (U user : data.keySet()) {
-            List<Double> sortedList = data.get(user);
+        for (Entry<U, List<Double>> e : data.entrySet()) {
+            U user = e.getKey();
+            List<Double> sortedList = e.getValue();
             // number of relevant items for this user
             double uRel = getNumberOfRelevantItems(user);
             double uMAP = 0.0;

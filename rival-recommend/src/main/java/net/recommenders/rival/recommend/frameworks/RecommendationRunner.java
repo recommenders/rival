@@ -3,8 +3,9 @@ package net.recommenders.rival.recommend.frameworks;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import net.recommenders.rival.recommend.frameworks.lenskit.LenskitRecommenderRunner;
 import net.recommenders.rival.recommend.frameworks.mahout.MahoutRecommenderRunner;
 
@@ -67,11 +68,11 @@ public class RecommendationRunner {
     /**
      * The canonical path
      */
-    public static String statPath;
+    private static String statPath;
     /**
      * The execution time
      */
-    public static long time;
+    private static long time;
 
     /**
      * Main method for running a recommendation.
@@ -152,13 +153,22 @@ public class RecommendationRunner {
      * @param stat the value
      */
     public static void writeStats(String path, String statLabel, long stat) {
+        BufferedWriter out = null;
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(path, true));
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true), "UTF-8"));
             out.write(statLabel + "\t" + stat + "\n");
             out.flush();
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

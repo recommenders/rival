@@ -20,8 +20,9 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
 
     /**
      * Constructor when a canidate item strategy is to be used.
+     *
      * @param dataModel the data model
-     * @param candidateItemsStrategy    the strategy
+     * @param candidateItemsStrategy the strategy
      */
     public PopularityBasedRecommender(DataModel dataModel, CandidateItemsStrategy candidateItemsStrategy) {
         super(dataModel, candidateItemsStrategy);
@@ -29,6 +30,7 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
 
     /**
      * Default constructor.
+     *
      * @param dataModel the data model.
      */
     public PopularityBasedRecommender(DataModel dataModel) {
@@ -37,23 +39,26 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
 
     /**
      * Estimate the preference of @u of @i.
+     *
      * @param u the user
      * @param i the item
-     * @return  the preference
-     * @throws TasteException   when the recommender cannot estimate the preference.
+     * @return the preference
+     * @throws TasteException when the recommender cannot estimate the
+     * preference.
      */
     @Override
     public float estimatePreference(long u, long i) throws TasteException {
-        return new Float(getDataModel().getPreferencesForItem(i).length());
+        return 1.0f * getDataModel().getPreferencesForItem(i).length();
     }
 
     /**
      * Recommend items to a user.
-     * @param userID    the user
-     * @param howMany   how many items to recommend
-     * @param rescorer  what rescorer to use
-     * @return  the list of recommendations
-     * @throws TasteException   if something in the recommender breaks.
+     *
+     * @param userID the user
+     * @param howMany how many items to recommend
+     * @param rescorer what rescorer to use
+     * @return the list of recommendations
+     * @throws TasteException if something in the recommender breaks.
      */
     public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer) throws TasteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -61,6 +66,7 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
 
     /**
      * Refresh the recommender.
+     *
      * @param clctn the data.
      */
     @Override

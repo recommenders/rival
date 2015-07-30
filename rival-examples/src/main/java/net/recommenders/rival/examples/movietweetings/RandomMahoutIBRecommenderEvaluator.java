@@ -19,6 +19,7 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class RandomMahoutIBRecommenderEvaluator {
 
         boolean perUser = true;
         long seed = 20;
-        AbstractParser parser = new UIPParser();
+        UIPParser parser = new UIPParser();
 
         parser.setDelimiter(':');
         parser.setUserTok(0);
@@ -63,7 +64,10 @@ public class RandomMahoutIBRecommenderEvaluator {
         DataModel<Long, Long>[] splits = new RandomSplitter(0.2f, perUser, seed, false).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
-            dir.mkdir();
+            if (!dir.mkdir()) {
+                System.err.println("Directory " + dir + " could not be created");
+                return;
+            }
         }
         for (int i = 0; i < splits.length / 2; i++) {
             DataModel<Long, Long> training = splits[2 * i];
@@ -78,6 +82,8 @@ public class RandomMahoutIBRecommenderEvaluator {
                 DataModelUtils.saveDataModel(test, testFile, overwrite);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -91,6 +97,7 @@ public class RandomMahoutIBRecommenderEvaluator {
                 testModel = new FileDataModel(new File(inPath + "test_" + i + ".csv"));
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
 
             GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
@@ -138,6 +145,7 @@ public class RandomMahoutIBRecommenderEvaluator {
                 recModel = new SimpleParser().parseData(recFile);
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
 
             Double threshold = 2.0;
@@ -171,6 +179,8 @@ public class RandomMahoutIBRecommenderEvaluator {
             try {
                 DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
             } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }

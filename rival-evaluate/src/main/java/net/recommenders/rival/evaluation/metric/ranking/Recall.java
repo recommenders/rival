@@ -68,8 +68,9 @@ public class Recall<U, I> extends AbstractRankingMetric<U, I> implements Evaluat
         metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (U user : data.keySet()) {
-            List<Double> sortedList = data.get(user);
+        for (Map.Entry<U, List<Double>> e : data.entrySet()) {
+            U user = e.getKey();
+            List<Double> sortedList = e.getValue();
             // number of relevant items for this user
             double uRel = getNumberOfRelevantItems(user);
             double urec = 0.0;

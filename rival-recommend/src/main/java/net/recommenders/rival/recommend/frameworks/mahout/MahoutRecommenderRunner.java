@@ -108,12 +108,18 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
                 model = new net.recommenders.rival.core.DataModel();
+                break;
+            default:
+                model = null;
         }
         String name = null;
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case OUTPUT_RECS:
                 name = fileName;
+                break;
+            default:
+                name = null;
         }
         boolean createFile = true;
         while (users.hasNext()) {

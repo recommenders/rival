@@ -68,8 +68,9 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
         metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (U user : data.keySet()) {
-            List<Double> sortedList = data.get(user);
+        for (Map.Entry<U, List<Double>> e : data.entrySet()) {
+            U user = e.getKey();
+            List<Double> sortedList = e.getValue();
             double uprec = 0.0;
             int rank = 0;
             for (double rel : sortedList) {

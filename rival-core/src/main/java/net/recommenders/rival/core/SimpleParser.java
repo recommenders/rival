@@ -1,6 +1,11 @@
 package net.recommenders.rival.core;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -29,6 +34,7 @@ public class SimpleParser implements Parser {
 
     /**
      * Parse data file.
+     *
      * @param f The file to be parsed.
      * @return A dataset created from the file.
      * @throws IOException if the file cannot be read.
@@ -51,7 +57,7 @@ public class SimpleParser implements Parser {
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
         String line = br.readLine();
-        if (!line.matches(".*[a-zA-Z].*")) {
+        if ((line != null) && (!line.matches(".*[a-zA-Z].*"))) {
             parseLine(line, dataset, token);
         }
         while ((line = br.readLine()) != null) {
@@ -79,9 +85,9 @@ public class SimpleParser implements Parser {
             return br;
         }
         if (f.getName().endsWith(".gz") || f.getName().endsWith(".zip") || f.getName().endsWith(".tgz")) {
-            br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(f))));
+            br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(f)), "UTF-8"));
         } else {
-            br = new BufferedReader(new FileReader(f));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         }
         return br;
     }
@@ -94,6 +100,9 @@ public class SimpleParser implements Parser {
      * @param token the token to split on
      */
     private void parseLine(String line, DataModel<Long, Long> dataset, String token) {
+        if (line == null) {
+            return;
+        }
         String[] toks = line.split(token);
         // user
         long userId = Long.parseLong(toks[USER_TOK]);

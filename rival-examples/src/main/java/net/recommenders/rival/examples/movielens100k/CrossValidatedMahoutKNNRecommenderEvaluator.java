@@ -22,6 +22,7 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
@@ -64,7 +65,10 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         DataModel<Long, Long>[] splits = new CrossValidationSplitter(nFolds, perUser, seed).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
-            dir.mkdir();
+            if (!dir.mkdir()) {
+                System.err.println("Directory " + dir + " could not be created");
+                return;
+            }
         }
         for (int i = 0; i < splits.length / 2; i++) {
             DataModel<Long, Long> training = splits[2 * i];
@@ -81,6 +85,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 DataModelUtils.saveDataModel(test, testFile, overwrite);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -94,6 +100,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 testModel = new FileDataModel(new File(inPath + "test_" + i + ".csv"));
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
 
             GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
@@ -142,6 +149,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 recModel = new SimpleParser().parseData(recFile);
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
 
             Double threshold = 2.0;
@@ -164,7 +172,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             }
 
             DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
-
             for (Long user : recModel.getUsers()) {
                 for (Long item : strategy.getCandidateItemsToRank(user)) {
                     if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
@@ -176,6 +183,8 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 //                modelToEval.saveDataModel(outPath + "strategymodel_" + i + ".csv", true);
                 DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
             } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
