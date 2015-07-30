@@ -1,6 +1,7 @@
 package net.recommenders.rival.split.splitter;
 
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelUtils;
@@ -38,7 +39,7 @@ public class SplitterRunner {
      * @throws ClassNotFoundException when
      * @throws FileNotFoundException when
      */
-    public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws ClassNotFoundException, FileNotFoundException {
+    public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws ClassNotFoundException, FileNotFoundException, UnsupportedEncodingException {
         System.out.println("Start splitting");
         DataModel<Long, Long>[] splits = null;
         // read parameters
