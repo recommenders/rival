@@ -6,6 +6,7 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * Precision of a ranked list of items.
@@ -63,17 +64,18 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
             return;
         }
         value = 0.0;
-        Map<U, List<Double>> data = processDataAsRankedTestRelevance();
+        Map<U, List<Pair<I, Double>>> data = processDataAsRankedTestRelevance();
         userPrecAtCutoff = new HashMap<Integer, Map<U, Double>>();
         metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (Map.Entry<U, List<Double>> e : data.entrySet()) {
+        for (Map.Entry<U, List<Pair<I, Double>>> e : data.entrySet()) {
             U user = e.getKey();
-            List<Double> sortedList = e.getValue();
+            List<Pair<I, Double>> sortedList = e.getValue();
             double uprec = 0.0;
             int rank = 0;
-            for (double rel : sortedList) {
+            for (Pair<I, Double> pair : sortedList) {
+                double rel = pair.getSecond();
                 rank++;
                 uprec += computeBinaryPrecision(rel);
                 // compute at a particular cutoff

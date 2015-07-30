@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * Mean Average Precision of a ranked list of items.
@@ -64,20 +65,21 @@ public class MAP<U, I> extends AbstractRankingMetric<U, I> implements Evaluation
             return;
         }
         value = 0.0;
-        Map<U, List<Double>> data = processDataAsRankedTestRelevance();
+        Map<U, List<Pair<I, Double>>> data = processDataAsRankedTestRelevance();
         userMAPAtCutoff = new HashMap<Integer, Map<U, Double>>();
         metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (Entry<U, List<Double>> e : data.entrySet()) {
+        for (Entry<U, List<Pair<I, Double>>> e : data.entrySet()) {
             U user = e.getKey();
-            List<Double> sortedList = e.getValue();
+            List<Pair<I, Double>> sortedList = e.getValue();
             // number of relevant items for this user
             double uRel = getNumberOfRelevantItems(user);
             double uMAP = 0.0;
             double uPrecision = 0.0;
             int rank = 0;
-            for (double rel : sortedList) {
+            for (Pair<I, Double> pair : sortedList) {
+                double rel = pair.getSecond();
                 rank++;
                 double itemPrecision = computeBinaryPrecision(rel);
                 uPrecision += itemPrecision;

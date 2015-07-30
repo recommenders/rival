@@ -3,6 +3,7 @@ package net.recommenders.rival.evaluation.strategy;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * An interface for evaluation strategies.
@@ -47,29 +48,4 @@ public interface EvaluationStrategy<U, I> {
      * @param format The format of the printer.
      */
     public void printGroundtruth(U user, PrintStream out, OUTPUT_FORMAT format);
-
-    /**
-     * Bean class to store an element of type A and another of type B
-     *
-     * @param <A> The type of the first element in the pair.
-     * @param <B> The type of the second element in the pair.
-     */
-    public static class Pair<A, B> {
-
-        private A first;
-        private B second;
-
-        public Pair(A first, B second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public A getFirst() {
-            return first;
-        }
-
-        public B getSecond() {
-            return second;
-        }
-    }
 }

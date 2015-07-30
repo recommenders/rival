@@ -3,6 +3,7 @@ package net.recommenders.rival.evaluation.metric.ranking;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.AbstractMetric;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
+import net.recommenders.rival.evaluation.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,21 +78,21 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      *
      * @return a map with the transformed data, one list per user
      */
-    public Map<U, List<Double>> processDataAsRankedTestRelevance() {
-        Map<U, List<Double>> data = new HashMap<U, List<Double>>();
+    public Map<U, List<Pair<I, Double>>> processDataAsRankedTestRelevance() {
+        Map<U, List<Pair<I, Double>>> data = new HashMap<U, List<Pair<I, Double>>>();
 
         Map<U, Map<I, Double>> predictedRatings = predictions.getUserItemPreferences();
         for (U testUser : test.getUsers()) {
             Map<I, Double> userPredictedRatings = predictedRatings.get(testUser);
             Map<I, Double> userRelevance = test.getUserItemPreferences().get(testUser);
             if (userPredictedRatings != null) {
-                List<Double> rankedTestRel = new ArrayList<Double>();
+                List<Pair<I, Double>> rankedTestRel = new ArrayList<Pair<I, Double>>();
                 for (I item : rankItems(userPredictedRatings)) {
                     double rel = 0.0;
                     if (userRelevance.containsKey(item)) {
                         rel = userRelevance.get(item);
                     }
-                    rankedTestRel.add(rel);
+                    rankedTestRel.add(new Pair<I, Double>(item, rel));
                 }
                 data.put(testUser, rankedTestRel);
             }

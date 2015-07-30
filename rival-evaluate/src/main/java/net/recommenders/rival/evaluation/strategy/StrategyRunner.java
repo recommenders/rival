@@ -10,7 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
-import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * Runner for a single strategy.
@@ -137,7 +137,7 @@ public class StrategyRunner {
      * @param overwrite Whether or not to overwrite results file.
      * @throws FileNotFoundException If file not found.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
         PrintStream outRanking = null;
         if (rankingFile.exists() && !overwrite) {
             System.out.println("Ignoring " + rankingFile);
@@ -154,13 +154,13 @@ public class StrategyRunner {
             try {
                 for (Long user : testModel.getUsers()) {
                     if (outRanking != null) {
-                        final List<EvaluationStrategy.Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
+                        final List<Pair<Long, Double>> allScoredItems = mapUserRecommendations.get(user);
                         if (allScoredItems == null) {
                             continue;
                         }
                         final Set<Long> items = strategy.getCandidateItemsToRank(user);
-                        final List<EvaluationStrategy.Pair<Long, Double>> scoredItems = new ArrayList<EvaluationStrategy.Pair<Long, Double>>();
-                        for (EvaluationStrategy.Pair<Long, Double> scoredItem : allScoredItems) {
+                        final List<Pair<Long, Double>> scoredItems = new ArrayList<Pair<Long, Double>>();
+                        for (Pair<Long, Double> scoredItem : allScoredItems) {
                             if (items.contains(scoredItem.getFirst())) {
                                 scoredItems.add(scoredItem);
                             }

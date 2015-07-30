@@ -6,6 +6,7 @@ import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * Normalized <a href="http://recsyswiki.com/wiki/Discounted_Cumulative_Gain"
@@ -86,18 +87,19 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
             return;
         }
         value = 0.0;
-        Map<U, List<Double>> data = processDataAsRankedTestRelevance();
+        Map<U, List<Pair<I, Double>>> data = processDataAsRankedTestRelevance();
         userDcgAtCutoff = new HashMap<Integer, Map<U, Double>>();
         userIdcgAtCutoff = new HashMap<Integer, Map<U, Double>>();
         metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
-        for (Map.Entry<U, List<Double>> e : data.entrySet()) {
+        for (Map.Entry<U, List<Pair<I, Double>>> e : data.entrySet()) {
             U user = e.getKey();
-            List<Double> sortedList = e.getValue();
+            List<Pair<I, Double>> sortedList = e.getValue();
             double dcg = 0.0;
             int rank = 0;
-            for (double rel : sortedList) {
+            for (Pair<I, Double> pair : sortedList) {
+                double rel = pair.getSecond();
                 rank++;
                 dcg += computeDCG(rel, rank);
                 // compute at a particular cutoff

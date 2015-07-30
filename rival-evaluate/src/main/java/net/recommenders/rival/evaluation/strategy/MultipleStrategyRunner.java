@@ -1,6 +1,12 @@
 package net.recommenders.rival.evaluation.strategy;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +17,7 @@ import java.util.Properties;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * Runner of multiple evaluation strategies.
@@ -107,7 +114,7 @@ public class MultipleStrategyRunner {
                 System.out.println("Recommendation file: " + inputFile);
                 String inputFileName = new File(inputFile).getName();
                 // read recommendations: user \t item \t score
-                final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<EvaluationStrategy.Pair<Long, Double>>>();
+                final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
                 BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
                 try {
                     String line = null;
@@ -217,7 +224,7 @@ public class MultipleStrategyRunner {
      * @param overwrite Whether or not to overwrite the results file.
      * @throws FileNotFoundException if file does not exist.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<EvaluationStrategy.Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
         File outRanking = new File(rankingFolder, "out" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
         File outGroundtruth = new File(groundtruthFolder, "gr" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
         StrategyRunner.generateOutput(testModel, mapUserRecommendations, strategy, format, outRanking, outGroundtruth, overwrite);

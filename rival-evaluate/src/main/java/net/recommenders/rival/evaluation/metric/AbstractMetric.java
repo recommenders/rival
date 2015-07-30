@@ -1,8 +1,14 @@
 package net.recommenders.rival.evaluation.metric;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.recommenders.rival.core.DataModel;
-
-import java.util.*;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * @param <U> - type associated to users' ids

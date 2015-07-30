@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * Implementation of the Relevant + N Evaluation Strategy as described by

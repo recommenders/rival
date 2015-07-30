@@ -10,7 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.SimpleParser;
-import net.recommenders.rival.evaluation.strategy.EvaluationStrategy.Pair;
+import net.recommenders.rival.evaluation.Pair;
 
 /**
  * Runner for a strategy where the information is not completely stored in
@@ -138,13 +138,13 @@ public class StrategyRunnerInfile {
         }
         for (Long user : testModel.getUsers()) {
             if (outRanking != null) {
-                final List<EvaluationStrategy.Pair<Long, Double>> allScoredItems = readScoredItems(userRecommendationFile, user);
+                final List<Pair<Long, Double>> allScoredItems = readScoredItems(userRecommendationFile, user);
                 if (allScoredItems == null) {
                     continue;
                 }
                 final Set<Long> items = strategy.getCandidateItemsToRank(user);
-                final List<EvaluationStrategy.Pair<Long, Double>> scoredItems = new ArrayList<EvaluationStrategy.Pair<Long, Double>>();
-                for (EvaluationStrategy.Pair<Long, Double> scoredItem : allScoredItems) {
+                final List<Pair<Long, Double>> scoredItems = new ArrayList<Pair<Long, Double>>();
+                for (Pair<Long, Double> scoredItem : allScoredItems) {
                     if (items.contains(scoredItem.getFirst())) {
                         scoredItems.add(scoredItem);
                     }
@@ -173,7 +173,7 @@ public class StrategyRunnerInfile {
      * @throws IOException when the file cannot be opened
      * @see StrategyRunnerInfile#readLine(java.lang.String, java.util.Map)
      */
-    public static List<EvaluationStrategy.Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {
+    public static List<Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(userRecommendationFile), "UTF-8"));
         try {
