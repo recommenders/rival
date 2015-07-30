@@ -32,7 +32,7 @@ public class RecommenderIO {
             if (path != null) {
                 dir = new File(path);
                 if (!dir.isDirectory()) {
-                    if (!dir.mkdir()) {
+                    if (!dir.mkdir() && (fileName != null)) {
                         System.out.println("Directory " + path + " could not be created");
                         return;
                     }

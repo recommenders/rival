@@ -1,6 +1,7 @@
 package net.recommenders.rival.recommend.frameworks;
 
 import java.io.File;
+import java.util.Map.Entry;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import org.slf4j.Logger;
@@ -49,9 +50,12 @@ public abstract class AbstractRunner<U, I> {
      *
      * @param properties The properties.
      */
-    public AbstractRunner(Properties properties) {
-        this.properties = properties;
-        this.setFileName();
+    public AbstractRunner(Properties props) {
+        this.properties = new Properties();
+        for (Entry e : props.entrySet()) {
+            properties.put(e.getKey(), e.getValue());
+        }
+        setFileName();
         String filePath = properties.getProperty(RecommendationRunner.output, "") + "/" + fileName;
         alreadyRecommended = new File(filePath).exists();
         if (alreadyRecommended) {
