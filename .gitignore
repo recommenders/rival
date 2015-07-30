@@ -3,3 +3,4 @@ target/
 nbactions.xml
 .idea/
 nb-configuration.xml
+rival-examples/data/
