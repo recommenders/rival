@@ -13,7 +13,7 @@ import java.util.zip.GZIPInputStream;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class SimpleParser implements Parser {
+public class SimpleParser implements Parser<Long, Long> {
 
     /**
      * The column index for the user id in the file.
@@ -33,7 +33,7 @@ public class SimpleParser implements Parser {
     public static final int TIME_TOK = 3;
 
     /**
-     * Parse data file.
+     * Parses data file.
      *
      * @param f The file to be parsed.
      * @return A dataset created from the file.
@@ -45,7 +45,7 @@ public class SimpleParser implements Parser {
     }
 
     /**
-     * Parse a data file with a specific separator between fields.
+     * Parses a data file with a specific separator between fields.
      *
      * @param f The file to be parsed.
      * @param token The separator to be used.
@@ -93,7 +93,7 @@ public class SimpleParser implements Parser {
     }
 
     /**
-     * Parse line from data file.
+     * Parses line from data file.
      *
      * @param line The line to be parsed.
      * @param dataset The dataset to add data from line to.

@@ -28,7 +28,13 @@ import org.apache.commons.math3.stat.inference.WilcoxonSignedRankTest;
  */
 public class StatisticalSignificance {
 
+    /**
+     * Baseline metric for each dimension (users)
+     */
     private Map<?, Double> baselineMetricPerDimension;
+    /**
+     * Test metric for each dimension (users)
+     */
     private Map<?, Double> testMetricPerDimension;
 
     /**
@@ -45,7 +51,10 @@ public class StatisticalSignificance {
     }
 
     /**
+     * Gets the p-value according to the requested method.
+     *
      * @param method one of "t", "pairedT", "wilcoxon"
+     * @return the p-value according to the requested method
      */
     public double getPValue(String method) {
         double p = Double.NaN;
@@ -75,6 +84,9 @@ public class StatisticalSignificance {
         return p;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "StatisticalSignificance";

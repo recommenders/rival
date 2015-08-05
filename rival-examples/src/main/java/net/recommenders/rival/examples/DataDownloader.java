@@ -1,26 +1,45 @@
 package net.recommenders.rival.examples;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
+ * Class used to download a file and unzips it.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class DataDownloader {
 
+    /**
+     * The URL.
+     */
     private String url;
+    /**
+     * The folder where the file will be unzipped it.
+     */
     private String folder;
 
+    /**
+     * Default constructor.
+     *
+     * @param url the URL from where the file will be downloaded
+     * @param folder the folder where the file will be uncompressed
+     */
     public DataDownloader(String url, String folder) {
         this.url = url;
         this.folder = folder;
     }
 
+    /**
+     * Main method
+     *
+     * @param args argument (not used)
+     */
     public static void main(String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
         String folder = "data3/ml-100k";
@@ -28,6 +47,9 @@ public class DataDownloader {
         dd.downloadAndUnzip();
     }
 
+    /**
+     * Downloads the file from the provided url.
+     */
     public void download() {
         URL dataURL = null;
         String fileName = folder + "/" + url.substring(url.lastIndexOf("/") + 1);
@@ -48,6 +70,10 @@ public class DataDownloader {
         }
     }
 
+    /**
+     * Downloads the file from the provided url and uncompresses it to the given
+     * folder.
+     */
     public void downloadAndUnzip() {
         URL dataURL = null;
         String fileName = folder + "/" + url.substring(url.lastIndexOf("/") + 1);

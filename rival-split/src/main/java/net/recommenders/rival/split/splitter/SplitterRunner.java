@@ -36,10 +36,10 @@ public class SplitterRunner {
      * @param data the data to be split
      * @param doDataClear flag to clear the memory used for the data before
      * saving the splits
-     * @throws ClassNotFoundException when
-     * @throws FileNotFoundException when
+     * @throws FileNotFoundException see {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
+     * @throws UnsupportedOperationException see {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
      */
-    public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws ClassNotFoundException, FileNotFoundException, UnsupportedEncodingException {
+    public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws FileNotFoundException, UnsupportedEncodingException {
         System.out.println("Start splitting");
         DataModel<Long, Long>[] splits = null;
         // read parameters
@@ -73,9 +73,8 @@ public class SplitterRunner {
      *
      * @param properties the properties to be used.
      * @return a splitter according to the properties mapping provided.
-     * @throws ClassNotFoundException
      */
-    public static Splitter<Long, Long> instantiateSplitter(Properties properties) throws ClassNotFoundException {
+    public static Splitter<Long, Long> instantiateSplitter(Properties properties) {
         // read parameters
         String splitterClassName = properties.getProperty(DATASET_SPLITTER);
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(SPLIT_PERUSER));

@@ -13,6 +13,9 @@ import net.recommenders.rival.evaluation.Pair;
  * Mean Average Precision of a ranked list of items.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  */
 public class MAP<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
@@ -162,6 +165,9 @@ public class MAP<U, I> extends AbstractRankingMetric<U, I> implements Evaluation
         return Double.NaN;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "MAP_" + relevanceThreshold;

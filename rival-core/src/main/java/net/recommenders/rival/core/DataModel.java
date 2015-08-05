@@ -11,6 +11,9 @@ import java.util.Set;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>, <a
  * href="http://github.com/alansaid">Alan</a>
+ *
+ * @param <U> generic type for users
+ * @param <I> generic type for items
  */
 public class DataModel<U, I> {
 
@@ -169,38 +172,4 @@ public class DataModel<U, I> {
         userItemTimestamps.clear();
         itemUserPreferences.clear();
     }
-
-    /**
-     * Method that saves a data model to a file.
-     * Moved to @DataModelUtils
-     *
-     * @param outfile file where the model will be saved
-     * @param overwrite flag that indicates if the file should be overwritten
-     * @throws java.io.FileNotFoundException when
-     */
-    /**
-    public void saveDataModel(String outfile, boolean overwrite) throws FileNotFoundException {
-        if (new File(outfile).exists() && !overwrite) {
-            System.out.println("Ignoring " + outfile);
-        } else {
-            PrintStream out = new PrintStream(outfile);
-            for (U user : getUsers()) {
-                Map<I, Double> userPrefModel = getUserItemPreferences().get(user);
-                Map<I, Set<Long>> userTimeModel = getUserItemTimestamps().get(user);
-                for (I item : userPrefModel.keySet()) {
-                    Double pref = userPrefModel.get(item);
-                    Set<Long> time = userTimeModel != null ? userTimeModel.get(item) : null;
-                    if (time == null) {
-                        out.println(user + "\t" + item + "\t" + pref + "\t-1");
-                    } else {
-                        for (Long t : time) {
-                            out.println(user + "\t" + item + "\t" + pref + "\t" + t);
-                        }
-                    }
-                }
-            }
-            out.close();
-        }
-    }
-     */
 }

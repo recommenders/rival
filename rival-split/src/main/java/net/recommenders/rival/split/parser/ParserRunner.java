@@ -3,6 +3,7 @@ package net.recommenders.rival.split.parser;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
@@ -27,14 +28,21 @@ public class ParserRunner {
      *
      * @param properties The properties
      * @return The data model parsed by the parser.
-     * @throws ClassNotFoundException when no class found
-     * @throws IllegalAccessException when
-     * @throws IllegalArgumentException when argument is illegal
-     * @throws InstantiationException when
-     * @throws InvocationTargetException when
-     * @throws NoSuchMethodException when
-     * @throws SecurityException when
-     * @throws IOException when
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link Parser#parseData(java.io.File)}
+     * fails
+     * @throws InvocationTargetException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
+     * fails
+     * @throws IOException when {@link Parser#parseData(java.io.File)} fails
      */
     public static DataModel<Long, Long> run(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
         System.out.println("Parsing started");
@@ -64,13 +72,20 @@ public class ParserRunner {
      *
      * @param properties the properties to be used.
      * @return a parser according to the provided properties.
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link Parser#parseData(java.io.File)
+     * } fails
+     * @throws InvocationTargetException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
+     * fails
      */
     public static Parser instantiateParser(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         String parserClassName = properties.getProperty(DATASET_PARSER);

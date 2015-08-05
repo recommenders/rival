@@ -15,6 +15,9 @@ import net.recommenders.rival.evaluation.Pair;
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  */
 public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
@@ -255,6 +258,9 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
         return Double.NaN;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "NDCG" + type + "_" + relevanceThreshold;

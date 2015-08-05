@@ -14,6 +14,9 @@ import net.recommenders.rival.evaluation.Pair;
  * Steck & Yu Xin.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  */
 public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
@@ -42,6 +45,8 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
+     * @param gamma smoothing parameter
+     * @param observedItemRelevance item relevance (popularity)
      */
     public PopularityStratifiedRecall(DataModel<U, I> predictions, DataModel<U, I> test, double gamma, Map<I, Integer> observedItemRelevance) {
         this(predictions, test, 1.0, gamma, observedItemRelevance);
@@ -53,6 +58,8 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
+     * @param gamma smoothing parameter
+     * @param observedItemRelevance item relevance (popularity)
      */
     public PopularityStratifiedRecall(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, double gamma, Map<I, Integer> observedItemRelevance) {
         this(predictions, test, relThreshold, new int[]{}, gamma, observedItemRelevance);
@@ -65,6 +72,8 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      * @param ats cutoffs
+     * @param gamma smoothing parameter
+     * @param observedItemRelevance item relevance (popularity)
      */
     public PopularityStratifiedRecall(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats, double gamma, Map<I, Integer> observedItemRelevance) {
         super(predictions, test, relThreshold, ats);
@@ -195,6 +204,9 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
         return Double.NaN;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "PopularityStratifiedRecall_" + gamma + "_" + relevanceThreshold;

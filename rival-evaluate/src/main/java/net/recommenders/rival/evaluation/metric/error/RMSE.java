@@ -11,6 +11,9 @@ import java.util.Map;
  * error</a> (RMSE) of a list of predicted ratings.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  */
 public class RMSE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMetric<U> {
 
@@ -68,6 +71,9 @@ public class RMSE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationM
         value = (testItems == 0) ? Double.NaN : Math.sqrt(value / testItems);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "RMSE_" + strategy;

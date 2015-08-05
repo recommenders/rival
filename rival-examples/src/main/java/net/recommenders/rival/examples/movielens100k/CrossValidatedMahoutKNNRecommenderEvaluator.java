@@ -34,6 +34,11 @@ import net.recommenders.rival.evaluation.metric.error.RMSE;
  */
 public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
+    /**
+     * Main method. Parameter is not used.
+     *
+     * @param args the arguments (not used)
+     */
     public static void main(String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
         String folder = "data/ml-100k";
@@ -47,6 +52,15 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         evaluate(nFolds, modelPath, recPath);
     }
 
+    /**
+     * Downloads a dataset and stores the splits generated from it.
+     *
+     * @param url url where dataset can be downloaded from
+     * @param nFolds number of folds
+     * @param inFile file to be used once the dataset has been downloaded
+     * @param folder folder where dataset will be stored
+     * @param outPath path where the splits will be stored
+     */
     public static void prepareSplits(String url, int nFolds, String inFile, String folder, String outPath) {
         DataDownloader dd = new DataDownloader(url, folder);
         dd.downloadAndUnzip();
@@ -79,8 +93,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             System.out.println("test: " + testFile);
             boolean overwrite = true;
             try {
-//                training.saveDataModel(trainingFile, overwrite);
-//                test.saveDataModel(testFile, overwrite);
                 DataModelUtils.saveDataModel(training, trainingFile, overwrite);
                 DataModelUtils.saveDataModel(test, testFile, overwrite);
             } catch (FileNotFoundException e) {
@@ -91,6 +103,13 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         }
     }
 
+    /**
+     * Recommends using an UB algorithm
+     *
+     * @param nFolds number of folds
+     * @param inPath path where training and test models have been stored
+     * @param outPath path where recommendation files will be stored
+     */
     public static void recommend(int nFolds, String inPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
             org.apache.mahout.cf.taste.model.DataModel trainModel = null;
@@ -110,8 +129,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
             Recommender recommender = null;
             try {
                 recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass, neighborhoodSize);
-            } catch (TasteException e) {
-                e.printStackTrace();
             } catch (RecommenderException e) {
                 e.printStackTrace();
             }
@@ -134,6 +151,15 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         }
     }
 
+    /**
+     * Prepares the strategies to be evaluated with the recommenders already
+     * generated.
+     *
+     * @param nFolds number of folds
+     * @param splitPath path where splits have been stored
+     * @param recPath path where recommendation files have been stored
+     * @param outPath path where the filtered recommendations will be stored
+     */
     @SuppressWarnings("unchecked")
     public static void prepareStrategy(int nFolds, String splitPath, String recPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
@@ -180,7 +206,6 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
                 }
             }
             try {
-//                modelToEval.saveDataModel(outPath + "strategymodel_" + i + ".csv", true);
                 DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -190,6 +215,13 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
         }
     }
 
+    /**
+     * Evaluates the recommendations generated in previous steps.
+     *
+     * @param nFolds number of folds
+     * @param splitPath path where splits have been stored
+     * @param recPath path where recommendation files have been stored
+     */
     public static void evaluate(int nFolds, String splitPath, String recPath) {
         double ndcgRes = 0.0;
         double precisionRes = 0.0;

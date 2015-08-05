@@ -12,6 +12,9 @@ import net.recommenders.rival.evaluation.Pair;
  * Recall of a ranked list of items.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  */
 public class Recall<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
@@ -155,6 +158,9 @@ public class Recall<U, I> extends AbstractRankingMetric<U, I> implements Evaluat
         return Double.NaN;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "Recall_" + relevanceThreshold;

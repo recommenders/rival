@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.evaluation.Pair;
 
 /**
+ * Abstract class for evaluation metrics.
+ *
  * @param <U> - type associated to users' ids
  * @param <I> - type associated to items' ids
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {

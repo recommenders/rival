@@ -23,7 +23,13 @@ public class RecommenderIO {
      *
      * @param user the user
      * @param recommendations the recommendations
-     * @param <T> list
+     * @param path directory where fileName will be written (if not null)
+     * @param fileName name of the file, if null recommendations will not be
+     * printed
+     * @param append flag to decide if recommendations should be appended to
+     * file
+     * @param model if not null, recommendations will be saved here
+     * @param <T> type of recommendations
      */
     public static <T> void writeData(long user, List<T> recommendations, String path, String fileName, boolean append, DataModel<Long, Long> model) {
         BufferedWriter out = null;

@@ -24,10 +24,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
+ * Example where data from MovieTweetings is used to evaluate an IB recommender.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class RandomMahoutIBRecommenderEvaluator {
 
+    /**
+     * Main method. Parameter is not used.
+     *
+     * @param args the arguments (not used)
+     */
     public static void main(String[] args) {
         String url = "https://raw.githubusercontent.com/sidooms/MovieTweetings/master/snapshots/10K/ratings.dat";
         String modelPath = "data/movietweeting/model/";
@@ -40,6 +47,15 @@ public class RandomMahoutIBRecommenderEvaluator {
         evaluate(nFolds, modelPath, recPath);
     }
 
+    /**
+     * Downloads a dataset and stores the splits generated from it.
+     *
+     * @param url url where dataset can be downloaded from
+     * @param nFolds number of folds
+     * @param inFile file to be used once the dataset has been downloaded
+     * @param folder folder where dataset will be stored
+     * @param outPath path where the splits will be stored
+     */
     public static void prepareSplits(String url, int nFolds, String inFile, String folder, String outPath) {
         DataDownloader dd = new DataDownloader(url, folder);
         dd.download();
@@ -88,6 +104,13 @@ public class RandomMahoutIBRecommenderEvaluator {
         }
     }
 
+    /**
+     * Recommends using an IB algorithm
+     *
+     * @param nFolds number of folds
+     * @param inPath path where training and test models have been stored
+     * @param outPath path where recommendation files will be stored
+     */
     public static void recommend(int nFolds, String inPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
             org.apache.mahout.cf.taste.model.DataModel trainModel = null;
@@ -106,8 +129,6 @@ public class RandomMahoutIBRecommenderEvaluator {
             Recommender recommender = null;
             try {
                 recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass);
-            } catch (TasteException e) {
-                e.printStackTrace();
             } catch (RecommenderException e) {
                 e.printStackTrace();
             }
@@ -130,6 +151,15 @@ public class RandomMahoutIBRecommenderEvaluator {
         }
     }
 
+    /**
+     * Prepares the strategies to be evaluated with the recommenders already
+     * generated.
+     *
+     * @param nFolds number of folds
+     * @param splitPath path where splits have been stored
+     * @param recPath path where recommendation files have been stored
+     * @param outPath path where the filtered recommendations will be stored
+     */
     @SuppressWarnings("unchecked")
     public static void prepareStrategy(int nFolds, String splitPath, String recPath, String outPath) {
         for (int i = 0; i < nFolds; i++) {
@@ -186,6 +216,13 @@ public class RandomMahoutIBRecommenderEvaluator {
         }
     }
 
+    /**
+     * Evaluates the recommendations generated in previous steps.
+     *
+     * @param nFolds number of folds
+     * @param splitPath path where splits have been stored
+     * @param recPath path where recommendation files have been stored
+     */
     public static void evaluate(int nFolds, String splitPath, String recPath) {
         double ndcgRes = 0.0;
         double precisionRes = 0.0;

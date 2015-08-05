@@ -12,12 +12,12 @@ import net.recommenders.rival.core.ParserWithIdMapping;
 import net.recommenders.rival.core.SimpleParser;
 
 /**
- * Parser for the 360K Last.fm dataset by O. Celma. More information here
+ * Parser for the 360K Last.fm dataset by O Celma. More information here
  * http://www.dtic.upf.edu/~ocelma/MusicRecommendationDataset/lastfm-360K.html
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
+public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping<Long, Long> {
 
     /**
      * The column index for the user id in the file.
@@ -47,7 +47,7 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
     }
 
     /**
-     * @inheritDoc
+     * @see ParserWithIdMapping#parseData(java.io.File, java.lang.String)
      */
     @Override
     public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {

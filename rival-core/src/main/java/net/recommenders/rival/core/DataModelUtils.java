@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
+ * Utilities for datamodels
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class DataModelUtils {
@@ -19,10 +21,11 @@ public class DataModelUtils {
      * @param dm the data model
      * @param outfile file where the model will be saved
      * @param overwrite flag that indicates if the file should be overwritten
-     * @param <U> user
-     * @param <I> item
-     * @throws FileNotFoundException
-     * @throws UnsupportedEncodingException
+     * @param <U> type of users
+     * @param <I> type of items
+     * @throws FileNotFoundException when outfile cannot be used.
+     * @throws UnsupportedEncodingException when the requested encoding (UTF-8)
+     * is not available.
      */
     public static <U, I> void saveDataModel(DataModel<U, I> dm, String outfile, boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
         if (new File(outfile).exists() && !overwrite) {

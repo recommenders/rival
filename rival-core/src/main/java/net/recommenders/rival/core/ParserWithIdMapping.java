@@ -7,8 +7,11 @@ import java.io.IOException;
  * Parser of files where users or items are not represented as integer ids
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
+ *
+ * @param <U> generic type of users
+ * @param <I> generic type of items
  */
-public interface ParserWithIdMapping {
+public interface ParserWithIdMapping<U, I> {
 
     /**
      * Parse data file
@@ -19,5 +22,5 @@ public interface ParserWithIdMapping {
      * @return The data model created from the file.
      * @throws IOException if the file cannot be read.
      */
-    public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException;
+    public DataModel<U, I> parseData(File f, String mapIdsPrefix) throws IOException;
 }

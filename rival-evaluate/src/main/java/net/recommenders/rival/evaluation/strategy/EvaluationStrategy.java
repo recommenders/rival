@@ -9,6 +9,9 @@ import net.recommenders.rival.evaluation.Pair;
  * An interface for evaluation strategies.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
+ *
+ * @param <U> generic type for users
+ * @param <I> generic type for items
  */
 public interface EvaluationStrategy<U, I> {
 
@@ -36,7 +39,7 @@ public interface EvaluationStrategy<U, I> {
      * @param user The user.
      * @param scoredItems The scored items to print.
      * @param out Where to print.
-     * @param format The format of the printer.
+     * @param format The format of the printer (see {@link OUTPUT_FORMAT}).
      */
     public void printRanking(U user, List<Pair<I, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format);
 
@@ -45,7 +48,7 @@ public interface EvaluationStrategy<U, I> {
      *
      * @param user The user.
      * @param out Where to print.
-     * @param format The format of the printer.
+     * @param format The format of the printer (see {@link OUTPUT_FORMAT}).
      */
     public void printGroundtruth(U user, PrintStream out, OUTPUT_FORMAT format);
 }

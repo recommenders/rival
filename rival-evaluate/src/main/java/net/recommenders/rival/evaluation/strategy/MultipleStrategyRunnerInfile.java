@@ -66,14 +66,20 @@ public class MultipleStrategyRunnerInfile {
      *
      * @param properties The properties of the strategies to run.
      * @throws IOException when a file cannot be parsed
-     * @throws ClassNotFoundException when the name of the class does not exist
-     * @throws IllegalAccessException when the strategy cannot be instantiated
-     * @throws IllegalArgumentException when some property cannot be parsed
-     * @throws InstantiationException when the strategy cannot be instantiated
-     * @throws InvocationTargetException when the strategy cannot be
-     * instantiated
-     * @throws NoSuchMethodException when the strategy cannot be instantiated
-     * @throws SecurityException when the strategy cannot be instantiated
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // get splits
@@ -137,8 +143,7 @@ public class MultipleStrategyRunnerInfile {
     }
 
     /**
-     * Runs a particular strategy on some data and outputs the result into a
-     * file.
+     * Runs multiple strategies on some data and outputs the result into a file.
      *
      * @param testModel The test datamodel.
      * @param userRecommendationFile The file that contains the recommendations

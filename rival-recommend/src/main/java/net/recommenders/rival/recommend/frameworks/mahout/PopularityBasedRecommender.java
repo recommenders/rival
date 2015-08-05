@@ -61,7 +61,7 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
      * @throws TasteException if something in the recommender breaks.
      */
     public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer) throws TasteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

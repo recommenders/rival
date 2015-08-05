@@ -24,7 +24,6 @@ import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
- *
  * Class used to compute confidence intervals. Methods are implemented as
  * suggested in Tetsuya Sakai. 2014. Statistical reform in information
  * retrieval?. SIGIR Forum 48, 1 (June 2014), 3-12. DOI=10.1145/2641383.2641385
@@ -196,6 +195,9 @@ public class ConfidenceInterval {
         return interval;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "ConfidenceInterval";

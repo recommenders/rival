@@ -7,7 +7,7 @@ import java.util.Map;
 import net.recommenders.rival.core.SimpleParser;
 
 /**
- * Parser for the Last.fm dataset by O. Celma.
+ * Parser for the Last.fm dataset by O Celma.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */

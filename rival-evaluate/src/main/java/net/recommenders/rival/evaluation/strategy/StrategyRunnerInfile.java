@@ -1,6 +1,12 @@
 package net.recommenders.rival.evaluation.strategy;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,14 +68,20 @@ public class StrategyRunnerInfile {
      *
      * @param properties The property file
      * @throws IOException when a file cannot be parsed
-     * @throws ClassNotFoundException when the name of the class does not exist
-     * @throws IllegalAccessException when the strategy cannot be instantiated
-     * @throws IllegalArgumentException when some property cannot be parsed
-     * @throws InstantiationException when the strategy cannot be instantiated
-     * @throws InvocationTargetException when the strategy cannot be
-     * instantiated
-     * @throws NoSuchMethodException when the strategy cannot be instantiated
-     * @throws SecurityException when the strategy cannot be instantiated
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // read splits
@@ -171,7 +183,7 @@ public class StrategyRunnerInfile {
      * @param user The user
      * @return the pairs (item, score) contained in the file for that user
      * @throws IOException when the file cannot be opened
-     * @see StrategyRunnerInfile#readLine(java.lang.String, java.util.Map)
+     * @see StrategyIO#readLine(java.lang.String, java.util.Map)
      */
     public static List<Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
@@ -184,7 +196,7 @@ public class StrategyRunnerInfile {
                 String[] toks = line.split("\t");
                 String u = toks[0];
                 if (u.equals(user + "")) {
-                    readLine(line, mapUserRecommendations);
+                    StrategyIO.readLine(line, mapUserRecommendations);
                     foundUser = true;
                 } else if (foundUser) {
                     // assuming a sorted file (at least, per user)
@@ -195,46 +207,5 @@ public class StrategyRunnerInfile {
             in.close();
         }
         return mapUserRecommendations.get(user);
-    }
-
-    /**
-     * Method that reads a line that contains a(some) recommendation(s) and
-     * store it in a map.
-     *
-     * The line can have a simple format <br> "user \t item \t score" <br> or
-     * the one used in MyMediaLite <br> "user \t [item:score,item:score,...]".
-     *
-     * @param line The line to be parsed.
-     * @param mapUserRecommendations The map where the parsed recommendations
-     * will be stored.
-     */
-    public static void readLine(String line, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
-        String[] toks = line.split("\t");
-        // mymedialite format: user \t [item:score,item:score,...]
-        if (line.contains(":") && line.contains(",")) {
-            Long user = Long.parseLong(toks[0]);
-            String items = toks[1].replace("[", "").replace("]", "");
-            for (String pair : items.split(",")) {
-                String[] pairToks = pair.split(":");
-                Long item = Long.parseLong(pairToks[0]);
-                Double score = Double.parseDouble(pairToks[1]);
-                List<Pair<Long, Double>> userRec = mapUserRecommendations.get(user);
-                if (userRec == null) {
-                    userRec = new ArrayList<Pair<Long, Double>>();
-                    mapUserRecommendations.put(user, userRec);
-                }
-                userRec.add(new Pair<Long, Double>(item, score));
-            }
-        } else {
-            Long user = Long.parseLong(toks[0]);
-            Long item = Long.parseLong(toks[1]);
-            Double score = Double.parseDouble(toks[2]);
-            List<Pair<Long, Double>> userRec = mapUserRecommendations.get(user);
-            if (userRec == null) {
-                userRec = new ArrayList<Pair<Long, Double>>();
-                mapUserRecommendations.put(user, userRec);
-            }
-            userRec.add(new Pair<Long, Double>(item, score));
-        }
     }
 }

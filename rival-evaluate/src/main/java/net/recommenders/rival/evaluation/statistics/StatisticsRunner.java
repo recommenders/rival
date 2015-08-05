@@ -206,7 +206,7 @@ public class StatisticsRunner {
      * testing (e.g., 'all')
      * @return A map where for each metric, each user has been assigned her
      * corresponding metric value.
-     * @throws IOException
+     * @throws IOException if file cannot be read
      */
     private static Map<String, Map<String, Double>> readMetricFile(File input, String format, Set<String> usersToAvoid) throws IOException {
         Map<String, Map<String, Double>> mapMetricUserValue = new HashMap<String, Map<String, Double>>();

@@ -12,7 +12,13 @@ import net.recommenders.rival.core.DataModel;
 public class TrainItems extends AbstractStrategy {
 
     /**
-     * @inheritDoc
+     * @see
+     * AbstractStrategy#AbstractStrategy(net.recommenders.rival.core.DataModel,
+     * net.recommenders.rival.core.DataModel, double)
+     *
+     * @param training The training set.
+     * @param test The test set.
+     * @param threshold The relevance threshold.
      */
     public TrainItems(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
         super(training, test, threshold);
@@ -26,6 +32,9 @@ public class TrainItems extends AbstractStrategy {
         return getModelTrainingDifference(training, user);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "TrainItems_" + threshold;

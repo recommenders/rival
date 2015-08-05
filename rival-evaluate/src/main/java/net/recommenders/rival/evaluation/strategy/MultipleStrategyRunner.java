@@ -73,14 +73,20 @@ public class MultipleStrategyRunner {
      *
      * @param properties The properties of the strategies to run.
      * @throws IOException when a file cannot be parsed
-     * @throws ClassNotFoundException when the name of the class does not exist
-     * @throws IllegalAccessException when the strategy cannot be instantiated
-     * @throws IllegalArgumentException when some property cannot be parsed
-     * @throws InstantiationException when the strategy cannot be instantiated
-     * @throws InvocationTargetException when the strategy cannot be
-     * instantiated
-     * @throws NoSuchMethodException when the strategy cannot be instantiated
-     * @throws SecurityException when the strategy cannot be instantiated
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // get splits
@@ -119,7 +125,7 @@ public class MultipleStrategyRunner {
                 try {
                     String line = null;
                     while ((line = in.readLine()) != null) {
-                        StrategyRunner.readLine(line, mapUserRecommendations);
+                        StrategyIO.readLine(line, mapUserRecommendations);
                     }
                 } finally {
                     in.close();
@@ -166,13 +172,20 @@ public class MultipleStrategyRunner {
      * to be considered when generating the strategies.
      * @return an array of strategies, generated according to the provided
      * properties.
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
      */
     public static EvaluationStrategy<Long, Long>[] instantiateStrategies(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         List<EvaluationStrategy<Long, Long>> stratList = new ArrayList();
@@ -207,8 +220,7 @@ public class MultipleStrategyRunner {
     }
 
     /**
-     * Runs a particular strategy on some data and outputs the result into a
-     * file.
+     * Runs multiple strategies on some data and outputs the result into a file.
      *
      * @param testModel The test datamodel.
      * @param mapUserRecommendations A map with the recommendations for the
@@ -222,7 +234,8 @@ public class MultipleStrategyRunner {
      * @param threshold The relevance threshold.
      * @param suffix The file suffix.
      * @param overwrite Whether or not to overwrite the results file.
-     * @throws FileNotFoundException if file does not exist.
+     * @throws FileNotFoundException see {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy, net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
+     * @throws UnsupportedEncodingException see {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy, net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
      */
     public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
         File outRanking = new File(rankingFolder, "out" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
@@ -260,7 +273,7 @@ public class MultipleStrategyRunner {
     /**
      * Get all recommendation files.
      *
-     * @param recommendationFiles The recommendation files (what is this?)
+     * @param recommendationFiles The recommendation files
      * @param path The path of the recommendation files.
      * @param prefix The prefix of the recommendation files.
      * @param suffix The suffix of the recommendation files.

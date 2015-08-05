@@ -19,7 +19,7 @@ import net.recommenders.rival.core.SimpleParser;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping {
+public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements ParserWithIdMapping<Long, Long> {
 
     /**
      * The column index for the user id in the file.
@@ -49,7 +49,7 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
     }
 
     /**
-     * @inheritDoc
+     * @see ParserWithIdMapping#parseData(java.io.File, java.lang.String)
      */
     @Override
     public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {

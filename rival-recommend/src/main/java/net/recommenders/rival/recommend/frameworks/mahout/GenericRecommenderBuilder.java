@@ -17,10 +17,8 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
  * generating separate builders for each recommender type.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
- * @param <T> generic parameter
  */
-public final class GenericRecommenderBuilder<T>
-        implements RecommenderBuilder {
+public final class GenericRecommenderBuilder implements RecommenderBuilder {
 
     /**
      * Number of neighbors.
@@ -31,11 +29,11 @@ public final class GenericRecommenderBuilder<T>
      */
     public static final int NO_N = 0;
     /**
-     * No iterations.
+     * Number of iterations.
      */
     public static final int NOITER = 0;
     /**
-     * No factors.
+     * Number of factors.
      */
     public static final int NOFACTORS = 0;
 
@@ -54,31 +52,29 @@ public final class GenericRecommenderBuilder<T>
     }
 
     /**
-     * Default CF recommender.
+     * CF recommender with default parameters.
      *
      * @param dataModel the data model
-     * @param recType the recommender type
+     * @param recType the recommender type (as Mahout class)
      * @return the recommender
-     * @throws TasteException when
-     * @throws RecommenderException when
+     * @throws RecommenderException see {@link #buildRecommender(org.apache.mahout.cf.taste.model.DataModel, java.lang.String, java.lang.String, int, int, int, java.lang.String)}
      */
     public Recommender buildRecommender(DataModel dataModel, String recType)
-            throws TasteException, RecommenderException {
+            throws RecommenderException {
         return buildRecommender(dataModel, recType, null, DEFAULT_N, NOFACTORS, NOITER, null);
     }
 
     /**
-     * Recommender based on given recType and simType
+     * Recommender based on given recType and simType (with default parameters).
      *
      * @param dataModel the data model
-     * @param recType the recommender type
-     * @param simType the similarity type
+     * @param recType the recommender type (as Mahout class)
+     * @param simType the similarity type (as Mahout class)
      * @return the recommender
-     * @throws TasteException when
-     * @throws RecommenderException when
+     * @throws RecommenderException see {@link #buildRecommender(org.apache.mahout.cf.taste.model.DataModel, java.lang.String, java.lang.String, int, int, int, java.lang.String)}
      */
     public Recommender buildRecommender(DataModel dataModel, String recType, String simType)
-            throws TasteException, RecommenderException {
+            throws RecommenderException {
         return buildRecommender(dataModel, recType, simType, DEFAULT_N, NOFACTORS, NOITER, null);
     }
 
@@ -86,15 +82,14 @@ public final class GenericRecommenderBuilder<T>
      * Recommender based on given recType, simType and neighborhood type
      *
      * @param dataModel the data model
-     * @param recType the recommender type
-     * @param simType the similarity type
+     * @param recType the recommender type (as Mahout class)
+     * @param simType the similarity type (as Mahout class)
      * @param nbSize the neighborhood size
      * @return the recommender
-     * @throws TasteException when
-     * @throws RecommenderException when
+     * @throws RecommenderException see {@link #buildRecommender(org.apache.mahout.cf.taste.model.DataModel, java.lang.String, java.lang.String, int, int, int, java.lang.String)}
      */
     public Recommender buildRecommender(DataModel dataModel, String recType, String simType, int nbSize)
-            throws TasteException, RecommenderException {
+            throws RecommenderException {
         return buildRecommender(dataModel, recType, simType, nbSize, NOFACTORS, NOITER, null);
     }
 
@@ -102,30 +97,31 @@ public final class GenericRecommenderBuilder<T>
      * SVD
      *
      * @param dataModel the data model
-     * @param recType the recommender type
-     * @param facType the factorizer
+     * @param recType the recommender type (as Mahout class)
+     * @param facType the factorizer (as Mahout class)
      * @param iterations number of iterations
      * @param factors number of factors
      * @return the recommender
-     * @throws TasteException when
-     * @throws RecommenderException when
+     * @throws RecommenderException see {@link #buildRecommender(org.apache.mahout.cf.taste.model.DataModel, java.lang.String, java.lang.String, int, int, int, java.lang.String)}
      */
     public Recommender buildRecommender(DataModel dataModel, String recType, String facType, int iterations, int factors)
-            throws TasteException, RecommenderException {
+            throws RecommenderException {
         return buildRecommender(dataModel, recType, null, NO_N, factors, iterations, facType);
     }
 
     /**
+     * General method to instantiate a Mahout recommender.
+     *
      * @param dataModel the data model
-     * @param recType the type of the recommender, e.g. Basic
-     * @param similarityType the type of the similarity, e.g. PersonCorrelation
+     * @param recType the type of the recommender (as Mahout class)
+     * @param similarityType the type of the similarity (as Mahout class), e.g.
+     * PearsonCorrelation
      * @param neighborhoodSize the neighborhood size
      * @param factors number of factors
      * @param iterations number of iterations
-     * @param facType the factorizer
+     * @param facType the factorizer (as Mahout class)
      * @return the recommender
-     * @throws TasteException when
-     * @throws RecommenderException when
+     * @throws RecommenderException when there is a problem with instantiation
      */
     public Recommender buildRecommender(final DataModel dataModel,
             final String recType,
@@ -134,7 +130,7 @@ public final class GenericRecommenderBuilder<T>
             final int factors,
             final int iterations,
             String facType)
-            throws TasteException, RecommenderException {
+            throws RecommenderException {
         String neighborhoodType = "org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood";
         Object simObj = null;
         /**
@@ -172,7 +168,6 @@ public final class GenericRecommenderBuilder<T>
          * Instantiate neighborhood class
          */
         Object neighObj = null;
-        //if (neighborhoodType != null){
         if (neighborhoodSize != NO_N) {
             Class<?> neighborhoodClass = null;
             try {

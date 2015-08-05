@@ -21,22 +21,44 @@ package net.recommenders.rival.evaluation;
  * @param <A> The type of the first element in the pair.
  * @param <B> The type of the second element in the pair.
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class Pair<A, B> {
 
+    /**
+     * First element
+     */
     private A first;
+    /**
+     * Second element
+     */
     private B second;
 
+    /**
+     * Default constructor
+     *
+     * @param first first element to store
+     * @param second second element to store
+     */
     public Pair(A first, B second) {
         this.first = first;
         this.second = second;
     }
 
+    /**
+     * Gets the first element of the pair
+     *
+     * @return the first element of the pair
+     */
     public A getFirst() {
         return first;
     }
 
+    /**
+     * Gets the second element of the pair
+     *
+     * @return the second element of the pair
+     */
     public B getSecond() {
         return second;
     }

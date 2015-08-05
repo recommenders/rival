@@ -14,12 +14,18 @@ import java.io.InputStreamReader;
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public class UIPParser extends AbstractParser implements Parser {
+public class UIPParser extends AbstractParser implements Parser<Long, Long> {
 
+    /**
+     * Default constructor
+     */
     public UIPParser() {
         super();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();

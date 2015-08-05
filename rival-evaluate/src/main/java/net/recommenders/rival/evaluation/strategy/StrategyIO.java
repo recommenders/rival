@@ -6,6 +6,8 @@ import java.util.Map;
 import net.recommenders.rival.evaluation.Pair;
 
 /**
+ * Methods related to input/output of strategies
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class StrategyIO {
@@ -14,7 +16,8 @@ public class StrategyIO {
      * Read a file from the recommended items file.
      *
      * @param line The line.
-     * @param mapUserRecommendations The recommendations for the users.
+     * @param mapUserRecommendations The recommendations for the users where
+     * information will be stored into.
      */
     public static void readLine(String line, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
         String[] toks = line.split("\t");

@@ -6,6 +6,8 @@ import java.util.Map;
  * An evaluation metric expressing the quality of the evaluated system.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
+ *
+ * @param <V> generic type for users
  */
 public interface EvaluationMetric<V> {
 
@@ -33,7 +35,8 @@ public interface EvaluationMetric<V> {
     public double getValue(V u);
 
     /**
-     * Computes the evaluation metric.
+     * Computes the evaluation metric. This method should be called
+     * <b>before</b> asking for the values of the metric.
      */
     public void compute();
 }

@@ -1,6 +1,13 @@
 package net.recommenders.rival.evaluation.strategy;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,18 +63,17 @@ public class StrategyRunner {
     }
 
     /**
-     * Run a single evaluation strategy.
+     * Runs a single evaluation strategy.
      *
      * @param properties The properties of the strategy.
      * @throws IOException when a file cannot be parsed
-     * @throws ClassNotFoundException when the name of the class does not exist
-     * @throws IllegalAccessException when the strategy cannot be instantiated
-     * @throws IllegalArgumentException when some property cannot be parsed
-     * @throws InstantiationException when the strategy cannot be instantiated
-     * @throws InvocationTargetException when the strategy cannot be
-     * instantiated
-     * @throws NoSuchMethodException when the strategy cannot be instantiated
-     * @throws SecurityException when the strategy cannot be instantiated
+     * @throws ClassNotFoundException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalAccessException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalArgumentException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InstantiationException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InvocationTargetException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws NoSuchMethodException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws SecurityException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // read splits
@@ -95,7 +101,7 @@ public class StrategyRunner {
         try {
             String line = null;
             while ((line = in.readLine()) != null) {
-                readLine(line, mapUserRecommendations);
+                StrategyIO.readLine(line, mapUserRecommendations);
             }
         } finally {
             in.close();
@@ -104,6 +110,30 @@ public class StrategyRunner {
         generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFile, groundtruthFile, overwrite);
     }
 
+    /**
+     * Instantiates an strategy, according to the provided properties mapping.
+     *
+     * @param properties the properties to be used.
+     * @param trainingModel datamodel containing the training interactions to be
+     * considered when generating the strategy.
+     * @param testModel datamodel containing the interactions in the test split
+     * to be considered when generating the strategy.
+     * @return the strategy generated according to the provided properties
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
+     */
     public static EvaluationStrategy<Long, Long> instantiateStrategy(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         String strategyClassName = properties.getProperty(STRATEGY);
@@ -136,6 +166,8 @@ public class StrategyRunner {
      * @param groundtruthFile The ground truth.
      * @param overwrite Whether or not to overwrite results file.
      * @throws FileNotFoundException If file not found.
+     * @throws UnsupportedEncodingException If the default encoding (UTF-8) is
+     * not supported.
      */
     public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
         PrintStream outRanking = null;
@@ -180,42 +212,6 @@ public class StrategyRunner {
             if (outRanking != null) {
                 outRanking.close();
             }
-        }
-    }
-
-    /**
-     * Read a file from the recommended items file.
-     *
-     * @param line The line.
-     * @param mapUserRecommendations The recommendations for the users.
-     */
-    public static void readLine(String line, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
-        String[] toks = line.split("\t");
-        // mymedialite format: user \t [item:score,item:score,...]
-        if (line.contains(":") && line.contains(",")) {
-            Long user = Long.parseLong(toks[0]);
-            String items = toks[1].replace("[", "").replace("]", "");
-            for (String pair : items.split(",")) {
-                String[] pairToks = pair.split(":");
-                Long item = Long.parseLong(pairToks[0]);
-                Double score = Double.parseDouble(pairToks[1]);
-                List<Pair<Long, Double>> userRec = mapUserRecommendations.get(user);
-                if (userRec == null) {
-                    userRec = new ArrayList<Pair<Long, Double>>();
-                    mapUserRecommendations.put(user, userRec);
-                }
-                userRec.add(new Pair<Long, Double>(item, score));
-            }
-        } else {
-            Long user = Long.parseLong(toks[0]);
-            Long item = Long.parseLong(toks[1]);
-            Double score = Double.parseDouble(toks[2]);
-            List<Pair<Long, Double>> userRec = mapUserRecommendations.get(user);
-            if (userRec == null) {
-                userRec = new ArrayList<Pair<Long, Double>>();
-                mapUserRecommendations.put(user, userRec);
-            }
-            userRec.add(new Pair<Long, Double>(item, score));
         }
     }
 }

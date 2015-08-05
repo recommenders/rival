@@ -26,10 +26,18 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * baseline.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
+ *
+ * @param <V> generic type for users
  */
 public class EffectSize<V> {
 
+    /**
+     * Baseline metric for each dimension (users)
+     */
     private Map<V, Double> baselineMetricPerDimension;
+    /**
+     * Test metric for each dimension (users)
+     */
     private Map<V, Double> testMetricPerDimension;
 
     /**
@@ -173,6 +181,9 @@ public class EffectSize<V> {
         return e;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "EffectSize";

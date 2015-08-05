@@ -12,7 +12,13 @@ import net.recommenders.rival.core.DataModel;
 public class UserTest extends AbstractStrategy {
 
     /**
-     * @inheritDoc
+     * @see
+     * AbstractStrategy#AbstractStrategy(net.recommenders.rival.core.DataModel,
+     * net.recommenders.rival.core.DataModel, double)
+     *
+     * @param training The training set.
+     * @param test The test set.
+     * @param threshold The relevance threshold.
      */
     public UserTest(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
         super(training, test, threshold);
@@ -26,6 +32,9 @@ public class UserTest extends AbstractStrategy {
         return test.getUserItemPreferences().get(user).keySet();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "UserTest_" + threshold;

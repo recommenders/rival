@@ -15,8 +15,9 @@ public class Split {
 
     /**
      * Main method that loads properties from a file and runs a SplitterRunner
+     *
      * @param args program arguments (not used)
-     * @throws Exception 
+     * @throws Exception
      * @see net.recommenders.rival.split.splitter.SplitterRunner
      */
     public static void main(String[] args) throws Exception {

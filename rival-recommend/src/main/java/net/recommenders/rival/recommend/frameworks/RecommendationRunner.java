@@ -12,6 +12,7 @@ import net.recommenders.rival.recommend.frameworks.mahout.MahoutRecommenderRunne
 import java.util.Properties;
 
 /**
+ * Runner for recommendation methods.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
@@ -106,6 +107,11 @@ public class RecommendationRunner {
         run(rr);
     }
 
+    /**
+     * Run recommendations based on an already instantiated recommender
+     *
+     * @param rr abstract recommender already initialized
+     */
     public static void run(AbstractRunner rr) {
         time = System.currentTimeMillis();
         boolean statsExist = false;
@@ -122,6 +128,13 @@ public class RecommendationRunner {
         }
     }
 
+    /**
+     * Instantiates a recommender according to the provided properties mapping.
+     *
+     * @param properties the properties to be used when initializing the
+     * recommender
+     * @return the recommender instantiated
+     */
     public static AbstractRunner<Long, Long> instantiateRecommender(Properties properties) {
         if (properties.getProperty(recommender) == null) {
             System.out.println("No recommenderClass specified, exiting.");

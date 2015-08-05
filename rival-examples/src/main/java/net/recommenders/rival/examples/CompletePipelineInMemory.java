@@ -41,12 +41,16 @@ import net.recommenders.rival.split.splitter.Splitter;
 import net.recommenders.rival.split.splitter.SplitterRunner;
 
 /**
+ * Class that demonstrates the complete pipeline (at the moment) in RiVal,
+ * starting from a file read from disk and without printing anything else to
+ * disk (the whole process is hence done in memory).
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class CompletePipelineInMemory {
 
     /**
+     * Fills a property mapping with default values.
      *
      * @param props mapping where the default properties will be set.
      */
@@ -193,14 +197,14 @@ public class CompletePipelineInMemory {
      *
      * @param properties properties to be used.
      * @return the splits generated according to the properties passed.
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws IOException see {@link Parser#parseData(java.io.File)}
+     * @throws ClassNotFoundException see {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws IllegalAccessException see {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws IllegalArgumentException see {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws InstantiationException see {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws InvocationTargetException see {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws NoSuchMethodException see {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws SecurityException see {@link ParserRunner#instantiateParser(java.util.Properties)}
      */
     public static DataModel<Long, Long>[] prepareSplitsInMemory(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // get parameters
@@ -224,7 +228,7 @@ public class CompletePipelineInMemory {
      * @param testModel model to test the recommenders.
      * @return a DataModel for every recommender generated assigned to its
      * corresponding name.
-     * @throws Exception
+     * @throws Exception see {@link AbstractRunner#run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
     public static Map<String, DataModel<Long, Long>> getRecommenderModels(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws Exception {
         AbstractRunner<Long, Long>[] mahoutRecs = MultipleRecommendationRunner.instantiateMahoutRecommenders(new HashSet<String>() {
@@ -262,13 +266,13 @@ public class CompletePipelineInMemory {
      * @param testModel test model used to generate strategies.
      * @param recModel a recommender model containing recommendations for users.
      * @return a datamodel for each strategy and its corresponding name.
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws ClassNotFoundException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalAccessException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalArgumentException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InstantiationException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InvocationTargetException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws NoSuchMethodException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws SecurityException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
     public static Map<String, DataModel<Long, Long>> applyStrategiesToRecommender(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel, DataModel<Long, Long> recModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         // apply all strategies
@@ -299,13 +303,13 @@ public class CompletePipelineInMemory {
      * the strategies) to be evaluated.
      * @return the evaluation results for every metric included in the
      * properties mapping.
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws ClassNotFoundException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalAccessException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalArgumentException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InstantiationException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InvocationTargetException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws NoSuchMethodException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws SecurityException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
     private static Map<String, Map<String, Double>> evaluateStrategy(Properties properties, DataModel<Long, Long> test, DataModel<Long, Long> modelToEvaluate) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         Map<String, Map<String, Double>> mapMetricResults = new HashMap();

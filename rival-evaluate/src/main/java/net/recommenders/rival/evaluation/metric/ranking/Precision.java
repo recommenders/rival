@@ -12,6 +12,9 @@ import net.recommenders.rival.evaluation.Pair;
  * Precision of a ranked list of items.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
+ *
+ * @param <U> - type associated to users' ids
+ * @param <I> - type associated to items' ids
  */
 public class Precision<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
@@ -154,6 +157,9 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
         return Double.NaN;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String toString() {
         return "Precision_" + relevanceThreshold;

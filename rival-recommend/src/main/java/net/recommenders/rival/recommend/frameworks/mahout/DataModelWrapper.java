@@ -31,14 +31,26 @@ import org.apache.mahout.cf.taste.model.Preference;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 
 /**
+ * Mahout's DataModel wrapper for {@link net.recommenders.rival.core.DataModel}
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class DataModelWrapper implements DataModel {
 
-    private static final long serialVersionUID = 20150729L;
+    /**
+     * Serial version UID
+     */
+    private static final long serialVersionUID = 220150729L;
+    /**
+     * Mahout's datamodel that will be used as wrapper
+     */
     private GenericDataModel wrapper;
 
+    /**
+     * Constructs the wrapper using the provided model
+     *
+     * @param model the model to be used to create the wrapped model
+     */
     public DataModelWrapper(net.recommenders.rival.core.DataModel<Long, Long> model) {
         FastByIDMap<Collection<Preference>> data = new FastByIDMap();
         FastByIDMap<FastByIDMap<Long>> timestampData = new FastByIDMap();
@@ -65,86 +77,137 @@ public class DataModelWrapper implements DataModel {
         wrapper = new GenericDataModel(userData, timestampData);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LongPrimitiveIterator getUserIDs() throws TasteException {
         return wrapper.getUserIDs();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreferenceArray getPreferencesFromUser(long l) throws TasteException {
         return wrapper.getPreferencesFromUser(l);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FastIDSet getItemIDsFromUser(long l) throws TasteException {
         return wrapper.getItemIDsFromUser(l);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LongPrimitiveIterator getItemIDs() throws TasteException {
         return wrapper.getItemIDs();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreferenceArray getPreferencesForItem(long l) throws TasteException {
         return wrapper.getPreferencesForItem(l);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Float getPreferenceValue(long l, long l1) throws TasteException {
         return wrapper.getPreferenceValue(l, l1);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long getPreferenceTime(long l, long l1) throws TasteException {
         return wrapper.getPreferenceTime(l, l1);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNumItems() throws TasteException {
         return wrapper.getNumItems();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNumUsers() throws TasteException {
         return wrapper.getNumUsers();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNumUsersWithPreferenceFor(long l) throws TasteException {
         return wrapper.getNumUsersWithPreferenceFor(l);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNumUsersWithPreferenceFor(long l, long l1) throws TasteException {
         return wrapper.getNumUsersWithPreferenceFor(l, l1);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setPreference(long l, long l1, float f) throws TasteException {
         wrapper.setPreference(l, l1, f);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removePreference(long l, long l1) throws TasteException {
         wrapper.removePreference(l, l1);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasPreferenceValues() {
         return wrapper.hasPreferenceValues();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public float getMaxPreference() {
         return wrapper.getMaxPreference();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public float getMinPreference() {
         return wrapper.getMinPreference();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void refresh(Collection<Refreshable> clctn) {
         wrapper.refresh(clctn);

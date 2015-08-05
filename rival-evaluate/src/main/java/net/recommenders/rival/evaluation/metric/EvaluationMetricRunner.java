@@ -43,8 +43,8 @@ public class EvaluationMetricRunner {
     /**
      * Main method for running a single evaluation metric.
      *
-     * @param args Arguments.
-     * @throws Exception If file not found.
+     * @param args the arguments.
+     * @throws Exception see {@link #run(java.util.Properties)}
      */
     public static void main(String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
@@ -65,14 +65,15 @@ public class EvaluationMetricRunner {
      * Runs a single evaluation metric.
      *
      * @param properties The properties of the strategy.
-     * @throws IOException if file not found.
-     * @throws ClassNotFoundException when
-     * @throws IllegalAccessException when
-     * @throws IllegalArgumentException when
-     * @throws InstantiationException when
-     * @throws InvocationTargetException when
-     * @throws NoSuchMethodException when
-     * @throws SecurityException when
+     * @throws IOException if recommendation file is not found or output cannot
+     * be written (see {@link #generateOutput(net.recommenders.rival.core.DataModel, int[], net.recommenders.rival.evaluation.metric.EvaluationMetric, java.lang.String, java.lang.Boolean, java.io.File, java.lang.Boolean, java.lang.Boolean)})
+     * @throws ClassNotFoundException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalAccessException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalArgumentException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InstantiationException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InvocationTargetException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws NoSuchMethodException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws SecurityException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
     @SuppressWarnings("unchecked")
     public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
@@ -136,13 +137,20 @@ public class EvaluationMetricRunner {
      * @param predictions datamodel containing the predictions of a recommender.
      * @param testModel a datamodel containing the test split.
      * @return a single evaluation metric according to the properties provided.
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws SecurityException
+     * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
+     * fails
+     * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
+     * fails
+     * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
+     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
+     * fails
      */
     public static EvaluationMetric<Long> instantiateEvaluationMetric(Properties properties, DataModel<Long, Long> predictions, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
@@ -187,7 +195,12 @@ public class EvaluationMetricRunner {
      * @param resultsFile The results file.
      * @param overwrite Whether or not to overwrite results file.
      * @param append Whether or not to append results in an existing file.
-     * @throws FileNotFoundException If file not found.
+     * @throws FileNotFoundException If file not found or cannot be created.
+     * @throws UnsupportedOperationException If default encoding (UTF-8) is not
+     * available.
+     *
+     * @param <U> generic type for users.
+     * @param <I> generic type for items.
      */
     @SuppressWarnings("unchecked")
     public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs, EvaluationMetric<U> metric, String metricName, Boolean perUser, File resultsFile, Boolean overwrite, Boolean append) throws FileNotFoundException, UnsupportedEncodingException {

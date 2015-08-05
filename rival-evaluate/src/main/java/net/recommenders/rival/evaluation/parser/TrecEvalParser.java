@@ -13,7 +13,7 @@ import net.recommenders.rival.core.Parser;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class TrecEvalParser implements Parser {
+public class TrecEvalParser implements Parser<Long, Long> {
 
     /**
      * The column index for the user id in the file.

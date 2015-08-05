@@ -28,13 +28,26 @@ import org.grouplens.lenskit.data.event.Rating;
 import org.grouplens.lenskit.data.event.RatingBuilder;
 
 /**
+ * Lenskit's EventDAO wrapper for {@link net.recommenders.rival.core.DataModel}
  *
- * @author Alejandro
+ * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class EventDAOWrapper implements EventDAO {
 
+    /**
+     * Serial version UID
+     */
+    private static final long serialVersionUID = 120150729L;
+    /**
+     * Lenskit's EventDAO that will be used as wrapper
+     */
     private EventCollectionDAO wrapper;
 
+    /**
+     * Constructs the wrapper using the provided model
+     *
+     * @param model the model to be used to create the wrapped model
+     */
     public EventDAOWrapper(DataModel<Long, Long> model) {
         List<Rating> events = new ArrayList();
         RatingBuilder rb = new RatingBuilder();
@@ -58,16 +71,25 @@ public class EventDAOWrapper implements EventDAO {
         wrapper = new EventCollectionDAO(events);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Cursor<Event> streamEvents() {
         return wrapper.streamEvents();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <E extends Event> Cursor<E> streamEvents(Class<E> type) {
         return wrapper.streamEvents(type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <E extends Event> Cursor<E> streamEvents(Class<E> type, SortOrder so) {
         return wrapper.streamEvents(type, so);

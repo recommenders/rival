@@ -12,7 +12,7 @@ import net.recommenders.rival.core.SimpleParser;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class MovielensParser implements Parser {
+public class MovielensParser implements Parser<Long, Long> {
 
     /**
      * The column index for the user id in the file.
@@ -32,7 +32,7 @@ public class MovielensParser implements Parser {
     public static final int TIME_TOK = 3;
 
     /**
-     * @inheritDoc
+     * @see Parser#parseData(java.io.File)
      */
     @Override
     public DataModel<Long, Long> parseData(File f) throws IOException {
@@ -71,4 +71,4 @@ public class MovielensParser implements Parser {
         dataset.addPreference(userId, itemId, preference);
         dataset.addTimestamp(userId, itemId, timestamp);
     }
- }
+}

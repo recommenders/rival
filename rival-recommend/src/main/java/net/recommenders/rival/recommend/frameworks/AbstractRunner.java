@@ -14,6 +14,11 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRunner<U, I> {
 
+    /**
+     * Options to be used when running a RecommenderRunner to decide what should
+     * be returned: nothing (only output recommendations), the recommendations
+     * (but without printing recommendations anywhere) or both.
+     */
     public enum RUN_OPTIONS {
 
         RETURN_RECS,
@@ -48,7 +53,7 @@ public abstract class AbstractRunner<U, I> {
     /**
      * Default constructor.
      *
-     * @param properties The properties.
+     * @param props The properties.
      */
     public AbstractRunner(Properties props) {
         this.properties = new Properties();
