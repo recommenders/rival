@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Main class that parses a data set and splits it according to a property file.
+ * It tests implementations of {@link net.recommenders.rival.split.splitter.Splitter}.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */

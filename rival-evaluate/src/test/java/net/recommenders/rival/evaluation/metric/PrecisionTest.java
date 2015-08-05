@@ -26,6 +26,8 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Tests for {@link Precision}.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 @RunWith(JUnit4.class)

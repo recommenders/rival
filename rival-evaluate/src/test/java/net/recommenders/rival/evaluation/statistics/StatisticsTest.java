@@ -25,10 +25,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- *
- * Examples taken from: Tetsuya Sakai. 2014. Statistical reform in information
- * retrieval?. SIGIR Forum 48, 1 (June 2014), 3-12. DOI=10.1145/2641383.2641385
- * http://doi.acm.org/10.1145/2641383.2641385
+ * Test for {@link StatisticalSignificance}, {@link ConfidenceInterval}, {@link EffectSize},
+ * and {@link StandardError}. Examples taken from: Tetsuya Sakai. 2014.
+ * Statistical reform in information retrieval?. SIGIR Forum 48, 1 (June 2014),
+ * 3-12. DOI=10.1145/2641383.2641385 http://doi.acm.org/10.1145/2641383.2641385
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */

@@ -17,7 +17,6 @@ package net.recommenders.rival.evaluation.metric;
 
 import java.util.HashMap;
 import net.recommenders.rival.core.DataModel;
-import net.recommenders.rival.evaluation.metric.ranking.Recall;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -28,6 +27,8 @@ import net.recommenders.rival.evaluation.metric.ranking.PopularityStratifiedReca
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Test for {@link PopularityStratifiedRecall}.
+ *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  */
 @RunWith(JUnit4.class)

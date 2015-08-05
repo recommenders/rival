@@ -34,6 +34,8 @@ import java.util.Arrays;
 import static org.junit.Assert.assertTrue;
 
 /**
+ * Test for {@link GenericRecommenderBuilder}.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 public class GenericRecommenderBuilderTest {

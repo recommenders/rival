@@ -26,6 +26,8 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Tests for {@link NDCG}.
+ *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 @RunWith(JUnit4.class)
@@ -77,7 +79,7 @@ public class NDCGTest {
         ndcg.compute();
 
         assertEquals(1.0, ndcg.getValue(), 0.001);
-        
+
         // change the order of the predictions:
         // groundtruth: 0 0 1 1
         // predictions: 0 1 1 1
