@@ -127,6 +127,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * @throws RecommenderException when recommender cannot be instantiated
      * properly
      */
+    @SuppressWarnings("unchecked")
     public DataModel<Long, Long> runLenskitRecommender(RUN_OPTIONS opts, EventDAO trainingModel, EventDAO testModel) throws RecommenderException {
         if (alreadyRecommended) {
             return null;
@@ -187,7 +188,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
-                model = new DataModel();
+                model = new DataModel<Long, Long>();
                 break;
             default:
                 model = null;

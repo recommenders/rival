@@ -83,7 +83,7 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
         boolean perUser = true;
         boolean perItem = false;
         long seed = 2048;
-        Parser parser = new MovielensParser();
+        Parser<Long, Long> parser = new MovielensParser();
 
         DataModel<Long, Long> data = null;
         try {

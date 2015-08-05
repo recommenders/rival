@@ -82,7 +82,7 @@ public class CrossValidatedMahoutKNNRecommenderEvaluator {
 
         boolean perUser = true;
         long seed = 2048;
-        Parser parser = new MovielensParser();
+        Parser<Long, Long> parser = new MovielensParser();
 
         DataModel<Long, Long> data = null;
         try {

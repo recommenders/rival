@@ -93,8 +93,9 @@ public class MultipleRecommendationRunner {
      * @param properties the properties.
      * @return an array of recommenders, prepared to be run.
      */
+    @SuppressWarnings("unchecked")
     public static AbstractRunner<Long, Long>[] instantiateLenskitRecommenders(Set<String> paths, Properties properties) {
-        List<AbstractRunner<Long, Long>> recList = new ArrayList();
+        List<AbstractRunner<Long, Long>> recList = new ArrayList<AbstractRunner<Long, Long>>();
         try {
             String[] ibRecs = properties.getProperty(LENSKIT_ITEMBASED_RECS).split(",");
             String[] ubRecs = properties.getProperty(LENSKIT_USERBASED_RECS).split(",");
@@ -176,8 +177,9 @@ public class MultipleRecommendationRunner {
      * @param properties the properties.
      * @return an array of recommenders, prepared to be run.
      */
+    @SuppressWarnings("unchecked")
     public static AbstractRunner<Long, Long>[] instantiateMahoutRecommenders(Set<String> paths, Properties properties) {
-        List<AbstractRunner<Long, Long>> recList = new ArrayList();
+        List<AbstractRunner<Long, Long>> recList = new ArrayList<AbstractRunner<Long, Long>>();
         try {
             String[] ibRecs = properties.getProperty(MAHOUT_ITEMBASED_RECS).split(",");
             String[] ubRecs = properties.getProperty(MAHOUT_USERBASED_RECS).split(",");

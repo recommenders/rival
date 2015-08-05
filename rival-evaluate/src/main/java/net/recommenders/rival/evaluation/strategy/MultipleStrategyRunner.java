@@ -202,8 +202,9 @@ public class MultipleStrategyRunner {
      * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
      */
+    @SuppressWarnings("unchecked")
     public static EvaluationStrategy<Long, Long>[] instantiateStrategies(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        List<EvaluationStrategy<Long, Long>> stratList = new ArrayList();
+        List<EvaluationStrategy<Long, Long>> stratList = new ArrayList<EvaluationStrategy<Long, Long>>();
 
         String[] thresholds = properties.getProperty(RELEVANCE_THRESHOLDS).split(",");
         String[] strategyClassNames = properties.getProperty(STRATEGIES).split(",");

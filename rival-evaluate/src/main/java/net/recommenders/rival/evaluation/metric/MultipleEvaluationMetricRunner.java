@@ -152,8 +152,9 @@ public class MultipleEvaluationMetricRunner {
      * @throws NoSuchMethodException see {@link EvaluationMetricRunner#instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws SecurityException see {@link EvaluationMetricRunner#instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
+    @SuppressWarnings("unchecked")
     public static EvaluationMetric<Long>[] instantiateEvaluationMetrics(Properties properties, DataModel<Long, Long> predictions, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        List<EvaluationMetric<Long>> metricList = new ArrayList();
+        List<EvaluationMetric<Long>> metricList = new ArrayList<EvaluationMetric<Long>>();
         String[] metricClassNames = properties.getProperty(METRICS).split(",");
         for (String metricClassName : metricClassNames) {
             // get metric

@@ -82,7 +82,7 @@ public class TemporalSplitMahoutKNNRecommenderEvaluator {
 
         boolean perUser = true;
         boolean perItem = false;
-        Parser parser = new MovielensParser();
+        Parser<Long, Long> parser = new MovielensParser();
 
         DataModel<Long, Long> data = null;
         try {

@@ -167,6 +167,7 @@ public class EvaluationMetricRunner {
      * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
      */
+    @SuppressWarnings("unchecked")
     public static EvaluationMetric<Long> instantiateEvaluationMetric(Properties properties, DataModel<Long, Long> predictions, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         int[] rankingCutoffs = getRankingCutoffs(properties);
