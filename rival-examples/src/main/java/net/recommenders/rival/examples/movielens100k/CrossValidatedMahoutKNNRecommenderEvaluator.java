@@ -43,7 +43,7 @@ import java.util.List;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 
 /**
- * RiVal Movielens100k Mahout Example
+ * RiVal Movielens100k Mahout Example, using 5-fold cross validation
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
