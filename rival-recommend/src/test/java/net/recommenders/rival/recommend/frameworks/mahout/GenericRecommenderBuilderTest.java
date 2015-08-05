@@ -1,6 +1,6 @@
 package net.recommenders.rival.recommend.frameworks.mahout;
 
-import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
+import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
@@ -58,8 +58,6 @@ public class GenericRecommenderBuilderTest {
         String similarityType = "org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity";
         try {
             rec = rb.buildRecommender(dm, recommenderType, similarityType);
-        } catch (TasteException e) {
-            e.printStackTrace();
         } catch (RecommenderException e) {
             e.printStackTrace();
         }

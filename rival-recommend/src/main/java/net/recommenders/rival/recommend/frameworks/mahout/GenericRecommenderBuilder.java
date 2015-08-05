@@ -1,7 +1,7 @@
 package net.recommenders.rival.recommend.frameworks.mahout;
 
 import java.lang.reflect.InvocationTargetException;
-import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
+import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
 import org.apache.mahout.cf.taste.impl.recommender.RandomRecommender;

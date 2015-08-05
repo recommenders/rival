@@ -10,7 +10,7 @@ import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
 import net.recommenders.rival.examples.DataDownloader;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
-import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
+import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
 import net.recommenders.rival.split.parser.MovielensParser;
 import net.recommenders.rival.split.splitter.CrossValidationSplitter;
 import org.apache.mahout.cf.taste.common.TasteException;

@@ -1,4 +1,4 @@
-package net.recommenders.rival.recommend.frameworks.mahout.exceptions;
+package net.recommenders.rival.recommend.frameworks.exceptions;
 
 /**
  * Exception to be used in the recommender module.

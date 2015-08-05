@@ -50,7 +50,7 @@ public class ParserRunner {
         File file = new File(properties.getProperty(DATASET_FILE));
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
-        Parser parser = instantiateParser(properties);
+        Parser<Long, Long> parser = instantiateParser(properties);
         if (parserClassName.contains("LastfmCelma")) {
             String mapIdsPrefix = properties.getProperty(LASTFM_IDS_PREFIX);
             Object modelObj = parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
@@ -87,15 +87,16 @@ public class ParserRunner {
      * @throws SecurityException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
      * fails
      */
-    public static Parser instantiateParser(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    @SuppressWarnings("unchecked")
+    public static Parser<Long, Long> instantiateParser(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
-        Parser parser = null;
+        Parser<Long, Long> parser = null;
         if (parserClassName.contains("LastfmCelma")) {
             Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
-            parser = (Parser) parserClass.getConstructor(boolean.class).newInstance(useArtists);
+            parser = (Parser<Long, Long>) parserClass.getConstructor(boolean.class).newInstance(useArtists);
         } else {
-            parser = (Parser) parserClass.getConstructor().newInstance();
+            parser = (Parser<Long, Long>) parserClass.getConstructor().newInstance();
         }
         return parser;
     }

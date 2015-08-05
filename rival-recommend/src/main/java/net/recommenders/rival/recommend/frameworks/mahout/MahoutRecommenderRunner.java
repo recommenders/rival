@@ -3,7 +3,7 @@ package net.recommenders.rival.recommend.frameworks.mahout;
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
-import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
+import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;

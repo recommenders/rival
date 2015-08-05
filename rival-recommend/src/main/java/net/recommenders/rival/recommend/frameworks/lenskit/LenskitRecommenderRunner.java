@@ -7,7 +7,7 @@ import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
-import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
+import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
 import org.grouplens.lenskit.ItemRecommender;
 import org.grouplens.lenskit.ItemScorer;
 import org.grouplens.lenskit.Recommender;

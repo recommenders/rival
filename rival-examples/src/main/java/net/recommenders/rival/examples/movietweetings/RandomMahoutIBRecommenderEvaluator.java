@@ -8,7 +8,7 @@ import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
 import net.recommenders.rival.examples.DataDownloader;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
-import net.recommenders.rival.recommend.frameworks.mahout.exceptions.RecommenderException;
+import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
 import net.recommenders.rival.split.splitter.RandomSplitter;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
