@@ -16,7 +16,13 @@
 package net.recommenders.rival.split.splitter;
 
 import java.io.FileNotFoundException;
+<<<<<<< HEAD
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
+=======
+import java.io.UnsupportedEncodingException;
+>>>>>>> 88000b7f831c2fd97217933ae41f7794b5ec8b6e
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelUtils;
@@ -95,8 +101,12 @@ public final class SplitterRunner {
      * @throws UnsupportedEncodingException see
      * {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
      */
+<<<<<<< HEAD
+    public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws ClassNotFoundException, FileNotFoundException, UnsupportedEncodingException {
+=======
     public static void run(final Properties properties, final DataModel<Long, Long> data, final boolean doDataClear)
             throws FileNotFoundException, UnsupportedEncodingException {
+>>>>>>> 88000b7f831c2fd97217933ae41f7794b5ec8b6e
         System.out.println("Start splitting");
         DataModel<Long, Long>[] splits = null;
         // read parameters
@@ -107,8 +117,23 @@ public final class SplitterRunner {
         String splitTestPrefix = properties.getProperty(SPLIT_TEST_PREFIX);
         String splitTestSuffix = properties.getProperty(SPLIT_TEST_SUFFIX);
         // generate splits
+<<<<<<< HEAD
+        if (splitterClassName.contains("CrossValidation")) {
+            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
+            Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
+            splits = new CrossValidationSplitter<Long, Long>(nFolds, perUser, seed).split(data);
+        } else if (splitterClassName.contains("Random")) {
+            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
+            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
+            splits = new RandomSplitter(percentage, perUser, seed, doSplitPerItems).split(data);
+        } else if (splitterClassName.contains("Temporal")) {
+            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
+            splits = new TemporalSplitter(percentage, perUser, doSplitPerItems).split(data);
+        }
+=======
         Splitter<Long, Long> splitter = instantiateSplitter(properties);
         splits = splitter.split(data);
+>>>>>>> 88000b7f831c2fd97217933ae41f7794b5ec8b6e
         if (doDataClear) {
             data.clear();
         }

@@ -28,7 +28,7 @@ import net.recommenders.rival.core.DataModel;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class CrossValidationSplitter implements Splitter<Long, Long> {
+public class CrossValidationSplitter<U,I> implements Splitter<U, I> {
 
     /**
      * The number of folds that the data will be split into.
@@ -61,19 +61,23 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
      * {@inheritDoc}
      */
     @Override
+<<<<<<< HEAD
+    public DataModel<U, I>[] split(DataModel<U, I> data) {
+=======
     public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
+>>>>>>> 88000b7f831c2fd97217933ae41f7794b5ec8b6e
         @SuppressWarnings("unchecked")
-        final DataModel<Long, Long>[] splits = new DataModel[2 * nFolds];
+        final DataModel<U, I>[] splits = new DataModel[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {
-            splits[2 * i] = new DataModel<Long, Long>(); // training
-            splits[2 * i + 1] = new DataModel<Long, Long>(); // test
+            splits[2 * i] = new DataModel<U, I>(); // training
+            splits[2 * i + 1] = new DataModel<U, I>(); // test
         }
         if (perUser) {
             int n = 0;
-            for (Long user : data.getUsers()) {
-                List<Long> items = new ArrayList<Long>(data.getUserItemPreferences().get(user).keySet());
+            for (U user : data.getUsers()) {
+                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
                 Collections.shuffle(items, rnd);
-                for (Long item : items) {
+                for (I item : items) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);
                     Set<Long> time = null;
                     if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
@@ -81,7 +85,7 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
                     }
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
-                        DataModel<Long, Long> datamodel = splits[2 * i]; // training
+                        DataModel<U, I> datamodel = splits[2 * i]; // training
                         if (i == curFold) {
                             datamodel = splits[2 * i + 1]; // test
                         }
@@ -98,13 +102,13 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
                 }
             }
         } else {
-            List<Long> users = new ArrayList<Long>(data.getUsers());
+            List<U> users = new ArrayList<U>(data.getUsers());
             Collections.shuffle(users, rnd);
             int n = 0;
-            for (Long user : users) {
-                List<Long> items = new ArrayList<Long>(data.getUserItemPreferences().get(user).keySet());
+            for (U user : users) {
+                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
                 Collections.shuffle(items, rnd);
-                for (Long item : items) {
+                for (I item : items) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);
                     Set<Long> time = null;
                     if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
@@ -112,7 +116,7 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
                     }
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
-                        DataModel<Long, Long> datamodel = splits[2 * i]; // training
+                        DataModel<U, I> datamodel = splits[2 * i]; // training
                         if (i == curFold) {
                             datamodel = splits[2 * i + 1]; // test
                         }
