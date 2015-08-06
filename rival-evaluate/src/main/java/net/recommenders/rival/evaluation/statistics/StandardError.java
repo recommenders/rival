@@ -32,25 +32,25 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 public class StandardError<V> {
 
     /**
-     * Baseline metric for each dimension (users)
+     * Baseline metric for each dimension (users).
      */
     private Map<V, Double> baselineMetricPerDimension;
     /**
-     * Test metric for each dimension (users)
+     * Test metric for each dimension (users).
      */
     private Map<V, Double> testMetricPerDimension;
 
     /**
-     * Default constructor
+     * Default constructor.
      *
-     * @param baselineMetricPerDimension map for the baseline method, one value
-     * for each user (dimension)
-     * @param testMetricPerDimension map for the test method, one value for each
-     * user (dimension)
+     * @param theBaselineMetricPerDimension map for the baseline method, one
+     * value for each user (dimension)
+     * @param theTestMetricPerDimension map for the test method, one value for
+     * each user (dimension)
      */
-    public StandardError(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension) {
-        this.baselineMetricPerDimension = baselineMetricPerDimension;
-        this.testMetricPerDimension = testMetricPerDimension;
+    public StandardError(final Map<V, Double> theBaselineMetricPerDimension, final Map<V, Double> theTestMetricPerDimension) {
+        this.baselineMetricPerDimension = theBaselineMetricPerDimension;
+        this.testMetricPerDimension = theTestMetricPerDimension;
     }
 
     /**
@@ -76,7 +76,7 @@ public class StandardError<V> {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

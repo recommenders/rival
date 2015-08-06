@@ -26,16 +26,22 @@ import net.recommenders.rival.split.parser.ParserRunner;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class Split {
+public final class Split {
 
     /**
-     * Main method that loads properties from a file and runs a SplitterRunner
+     * Utility classes should not have a public or default constructor.
+     */
+    private Split() {
+    }
+
+    /**
+     * Main method that loads properties from a file and runs a SplitterRunner.
      *
      * @param args program arguments (not used)
-     * @throws Exception
+     * @throws Exception see {@link SplitterRunner#run(java.util.Properties, net.recommenders.rival.core.DataModel, boolean)}
      * @see net.recommenders.rival.split.splitter.SplitterRunner
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
         final Properties properties = new Properties();

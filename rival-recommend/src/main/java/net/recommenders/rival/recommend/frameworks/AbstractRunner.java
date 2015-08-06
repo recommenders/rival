@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
  * An abstract recommender runner.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
+ *
+ * @param <U> generic type for users
+ * @param <I> generic type for items
  */
 public abstract class AbstractRunner<U, I> {
 
@@ -36,14 +39,23 @@ public abstract class AbstractRunner<U, I> {
      */
     public enum RUN_OPTIONS {
 
+        /**
+         * Only return the recommendations.
+         */
         RETURN_RECS,
+        /**
+         * Nothing should be returned, only print the recommendations.
+         */
         OUTPUT_RECS,
+        /**
+         * Return and print recommendations.
+         */
         RETURN_AND_OUTPUT_RECS;
     }
     /**
      * Logger.
      */
-    private final static Logger logger = LoggerFactory.getLogger(AbstractRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractRunner.class);
     /**
      * Default number of iterations.
      */
@@ -51,37 +63,37 @@ public abstract class AbstractRunner<U, I> {
     /**
      * The properties.
      */
-    public Properties properties;
+    private Properties properties;
     /**
      * The file name where the properties live.
      */
-    public String fileName;
+    private String fileName;
     /**
      * The path where output is written to.
      */
-    public String path;
+    private String path;
     /**
      * True if this recommender has already been issued and output files exist.
      */
-    protected boolean alreadyRecommended;
+    private boolean alreadyRecommended;
 
     /**
      * Default constructor.
      *
      * @param props The properties.
      */
-    public AbstractRunner(Properties props) {
+    public AbstractRunner(final Properties props) {
         this.properties = new Properties();
         for (Entry e : props.entrySet()) {
             properties.put(e.getKey(), e.getValue());
         }
         setFileName();
-        String filePath = properties.getProperty(RecommendationRunner.output, "") + "/" + fileName;
+        String filePath = properties.getProperty(RecommendationRunner.OUTPUT, "") + "/" + fileName;
         alreadyRecommended = new File(filePath).exists();
         if (alreadyRecommended) {
             System.out.println("File exists: " + filePath);
         }
-        path = properties.getProperty(RecommendationRunner.output, "");
+        path = properties.getProperty(RecommendationRunner.OUTPUT, "");
     }
 
     /**
@@ -90,25 +102,30 @@ public abstract class AbstractRunner<U, I> {
     public void setFileName() {
         String type = "";
         // lenskit does not provide a factorizer class. This check is to actually see if it's a Mahout or Lenskit SVD.
-        if (properties.containsKey(RecommendationRunner.factorizer) || properties.containsKey(RecommendationRunner.similarity)) {
-            type = (properties.containsKey(RecommendationRunner.factorizer)
-                    ? properties.getProperty(RecommendationRunner.factorizer)
-                    : properties.getProperty(RecommendationRunner.similarity));
+        if (properties.containsKey(RecommendationRunner.FACTORIZER) || properties.containsKey(RecommendationRunner.SIMILARITY)) {
+            if (properties.containsKey(RecommendationRunner.FACTORIZER)) {
+                type = properties.getProperty(RecommendationRunner.FACTORIZER);
+            } else {
+                type = properties.getProperty(RecommendationRunner.SIMILARITY);
+            }
             type = type.substring(type.lastIndexOf(".") + 1) + ".";
         }
         String num = "";
-        if (properties.containsKey(RecommendationRunner.factors) || properties.containsKey(RecommendationRunner.neighborhood)) {
-            num = (properties.containsKey(RecommendationRunner.factors)
-                    ? properties.getProperty(RecommendationRunner.factors)
-                    : properties.getProperty(RecommendationRunner.neighborhood)) + ".";
+        if (properties.containsKey(RecommendationRunner.FACTORS) || properties.containsKey(RecommendationRunner.NEIGHBORHOOD)) {
+            if (properties.containsKey(RecommendationRunner.FACTORS)) {
+                num = properties.getProperty(RecommendationRunner.FACTORS);
+            } else {
+                num = properties.getProperty(RecommendationRunner.NEIGHBORHOOD);
+            }
+            num += ".";
         }
 
-        String trainingSet = properties.getProperty(RecommendationRunner.trainingSet);
+        String trainingSet = properties.getProperty(RecommendationRunner.TRAINING_SET);
         trainingSet = trainingSet.substring(trainingSet.lastIndexOf("/") + 1, trainingSet.lastIndexOf("_train"));
 
         fileName = trainingSet + "."
-                + properties.getProperty(RecommendationRunner.framework) + "."
-                + properties.getProperty(RecommendationRunner.recommender).substring(properties.getProperty(RecommendationRunner.recommender).lastIndexOf(".") + 1) + "."
+                + properties.getProperty(RecommendationRunner.FRAMEWORK) + "."
+                + properties.getProperty(RecommendationRunner.RECOMMENDER).substring(properties.getProperty(RecommendationRunner.RECOMMENDER).lastIndexOf(".") + 1) + "."
                 + type
                 + num
                 + "tsv";
@@ -126,21 +143,39 @@ public abstract class AbstractRunner<U, I> {
     }
 
     /**
-     * Sets the properties.
+     * Checks if recommendations have already been generated.
      *
-     * @param properties the properties
+     * @return true if recommendations have already been generated
      */
-    public void setProperties(Properties properties) {
-        this.properties = properties;
+    public boolean isAlreadyRecommended() {
+        return alreadyRecommended;
     }
 
     /**
-     * Check if there already exist recommendations for this recommender.
+     * Gets the properties used in this recommender.
      *
-     * @return true if recommendations exist.
+     * @return the property mapping
      */
-    public boolean getAlreadyRecommended() {
-        return alreadyRecommended;
+    protected Properties getProperties() {
+        return properties;
+    }
+
+    /**
+     * Gets the file name. See {@link #setFileName()}.
+     *
+     * @return the file name
+     */
+    protected String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * Gets the path.
+     *
+     * @return the path
+     */
+    protected String getPath() {
+        return path;
     }
 
     /**
@@ -148,6 +183,7 @@ public abstract class AbstractRunner<U, I> {
      *
      * @param opts options to run this recommender. See {@link RUN_OPTIONS}
      * enum.
+     * @return see {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws Exception when the recommender cannot be run. See implementations
      * for more information on possible exceptions.
      */
@@ -161,6 +197,10 @@ public abstract class AbstractRunner<U, I> {
      * @param trainingModel Model to train the recommender.
      * @param testModel Model from where users to generate recommendations to
      * will be considered.
+     * @return nothing when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#OUTPUT_RECS},
+     * otherwise, when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_RECS}
+     * or {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_AND_OUTPUT_RECS}
+     * it returns the predictions
      * @throws Exception when the recommender cannot be run. See implementations
      * for more information on possible exceptions.
      */

@@ -36,64 +36,66 @@ import net.recommenders.rival.evaluation.Pair;
 public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
     /**
-     * Recall values per user at each cutoff level
+     * Recall values per user at each cutoff level.
      */
     private Map<Integer, Map<U, Double>> userRecallAtCutoff;
     /**
-     * Recall values per user
+     * Recall values per user.
      */
     private Map<U, Double> userTotalRecall;
     /**
      * Relevant ratings observed for each item (assuming the probability of
-     * observing a relevant rating depends on the popularity of items)
+     * observing a relevant rating depends on the popularity of items).
      */
     private Map<I, Integer> observedItemRelevance;
     /**
      * Smoothing parameter for the observation probability with respect to item
-     * popularity
+     * popularity.
      */
     private double gamma;
 
     /**
      * Default constructor with predictions, groundtruth information, gamma
-     * parameter and item relevance
+     * parameter and item relevance.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
-     * @param gamma smoothing parameter
-     * @param observedItemRelevance item relevance (popularity)
+     * @param theGamma smoothing parameter
+     * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(DataModel<U, I> predictions, DataModel<U, I> test, double gamma, Map<I, Integer> observedItemRelevance) {
-        this(predictions, test, 1.0, gamma, observedItemRelevance);
+    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
+        this(predictions, test, 1.0, theGamma, theObservedItemRelevance);
     }
 
     /**
-     * Constructor where the relevance threshold can be initialized
+     * Constructor where the relevance threshold can be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
-     * @param gamma smoothing parameter
-     * @param observedItemRelevance item relevance (popularity)
+     * @param theGamma smoothing parameter
+     * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, double gamma, Map<I, Integer> observedItemRelevance) {
-        this(predictions, test, relThreshold, new int[]{}, gamma, observedItemRelevance);
+    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
+        this(predictions, test, relThreshold, new int[]{}, theGamma, theObservedItemRelevance);
     }
 
     /**
-     * Constructor where the cutoff levels can be initialized
+     * Constructor where the cutoff levels can be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      * @param ats cutoffs
-     * @param gamma smoothing parameter
-     * @param observedItemRelevance item relevance (popularity)
+     * @param theGamma smoothing parameter
+     * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats, double gamma, Map<I, Integer> observedItemRelevance) {
+    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test,
+            final double relThreshold, final int[] ats,
+            final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
         super(predictions, test, relThreshold, ats);
-        this.gamma = gamma;
-        this.observedItemRelevance = observedItemRelevance;
+        this.gamma = theGamma;
+        this.observedItemRelevance = theObservedItemRelevance;
     }
 
     /**
@@ -102,15 +104,16 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      */
     @Override
     public void compute() {
-        if (!Double.isNaN(value)) {
+        if (!Double.isNaN(getValue())) {
             // since the data cannot change, avoid re-doing the calculations
             return;
         }
-        value = 0.0;
+        iniCompute();
+
         Map<U, List<Pair<I, Double>>> data = processDataAsRankedTestRelevance();
         userRecallAtCutoff = new HashMap<Integer, Map<U, Double>>();
         userTotalRecall = new HashMap<U, Double>();
-        metricPerUser = new HashMap<U, Double>();
+
 
         double sum = 0.0;
         for (Map.Entry<U, List<Pair<I, Double>>> e : data.entrySet()) {
@@ -126,7 +129,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
                     urec += getPopularityStratificationWeight(item);
                 }
                 // compute at a particular cutoff
-                for (int at : ats) {
+                for (int at : getCutoffs()) {
                     if (rank == at) {
                         Map<U, Double> m = userRecallAtCutoff.get(at);
                         if (m == null) {
@@ -138,7 +141,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
                 }
             }
             // assign the recall of the whole list to those cutoffs larger than the list's size
-            for (int at : ats) {
+            for (int at : getCutoffs()) {
                 if (rank <= at) {
                     Map<U, Double> m = userRecallAtCutoff.get(at);
                     if (m == null) {
@@ -150,13 +153,13 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
             }
             if (!Double.isNaN(urec)) {
                 // these values are not meaningful, since this metric only makes sense at top-k
-                value += urec;
-                metricPerUser.put(user, urec / urec);
+                setValue(getValue() + urec);
+                getMetricPerUser().put(user, urec / urec);
                 userTotalRecall.put(user, urec);
                 sum += urec;
             }
         }
-        value = value / sum;
+        setValue(getValue() / sum);
     }
 
     /**
@@ -168,7 +171,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param item the item for which the weight has to be computed.
      * @return the popularity-stratification weight
      */
-    private double getPopularityStratificationWeight(I item) {
+    private double getPopularityStratificationWeight(final I item) {
         if (observedItemRelevance.containsKey(item)) {
             int observedRelevance = observedItemRelevance.get(item);
             double si = Math.pow(1.0 * observedRelevance, -1.0 * gamma / (gamma + 1));
@@ -184,7 +187,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @return the recall corresponding to the requested cutoff level
      */
     @Override
-    public double getValueAt(int at) {
+    public double getValueAt(final int at) {
         if (userRecallAtCutoff.containsKey(at)) {
             double sum = 0.0;
             double rec = 0.0;
@@ -196,7 +199,11 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
                     sum += utotal;
                 }
             }
-            rec = (sum == 0.0) ? 0.0 : rec / sum;
+            if (sum == 0.0) {
+                rec = 0.0;
+            } else {
+                rec = rec / sum;
+            }
             return rec;
         }
         return Double.NaN;
@@ -212,7 +219,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * level
      */
     @Override
-    public double getValueAt(U user, int at) {
+    public double getValueAt(final U user, final int at) {
         if (userRecallAtCutoff.containsKey(at) && userRecallAtCutoff.get(at).containsKey(user)) {
             return userRecallAtCutoff.get(at).get(user) / userTotalRecall.get(user);
         }
@@ -220,10 +227,10 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "PopularityStratifiedRecall_" + gamma + "_" + relevanceThreshold;
+        return "PopularityStratifiedRecall_" + gamma + "_" + getRelevanceThreshold();
     }
 }

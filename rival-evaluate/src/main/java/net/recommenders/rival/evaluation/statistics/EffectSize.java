@@ -32,25 +32,25 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 public class EffectSize<V> {
 
     /**
-     * Baseline metric for each dimension (users)
+     * Baseline metric for each dimension (users).
      */
     private Map<V, Double> baselineMetricPerDimension;
     /**
-     * Test metric for each dimension (users)
+     * Test metric for each dimension (users).
      */
     private Map<V, Double> testMetricPerDimension;
 
     /**
-     * Default constructor
+     * Default constructor.
      *
-     * @param baselineMetricPerDimension map for the baseline method, one value
-     * for each user (dimension)
-     * @param testMetricPerDimension map for the test method, one value for each
-     * user (dimension)
+     * @param theBaselineMetricPerDimension map for the baseline method, one
+     * value for each user (dimension)
+     * @param theTestMetricPerDimension map for the test method, one value for
+     * each user (dimension)
      */
-    public EffectSize(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension) {
-        this.baselineMetricPerDimension = baselineMetricPerDimension;
-        this.testMetricPerDimension = testMetricPerDimension;
+    public EffectSize(final Map<V, Double> theBaselineMetricPerDimension, final Map<V, Double> theTestMetricPerDimension) {
+        this.baselineMetricPerDimension = theBaselineMetricPerDimension;
+        this.testMetricPerDimension = theTestMetricPerDimension;
     }
 
     /**
@@ -59,8 +59,9 @@ public class EffectSize<V> {
      * samples.
      *
      * @param method one of "d", "dLS", "pairedT"
+     * @return the effect size
      */
-    public double getEffectSize(String method) {
+    public double getEffectSize(final String method) {
         if ("d".equals(method)) {
             return getCohenD(baselineMetricPerDimension, testMetricPerDimension, false);
         } else if ("dLS".equals(method)) {
@@ -86,7 +87,7 @@ public class EffectSize<V> {
      * description above)
      * @return the computed Cohen's d as estimation of the effect size..
      */
-    public static <V> double getCohenD(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension, boolean doLeastSquares) {
+    public static <V> double getCohenD(final Map<V, Double> baselineMetricPerDimension, final Map<V, Double> testMetricPerDimension, final boolean doLeastSquares) {
         SummaryStatistics statsBaseline = new SummaryStatistics();
         for (double d : baselineMetricPerDimension.values()) {
             statsBaseline.addValue(d);
@@ -96,15 +97,20 @@ public class EffectSize<V> {
             statsTest.addValue(d);
         }
         if (doLeastSquares) {
-            return getCohenDLeastSquares((int) statsBaseline.getN(), statsBaseline.getMean(), statsBaseline.getStandardDeviation(), (int) statsTest.getN(), statsTest.getMean(), statsTest.getStandardDeviation());
+            return getCohenDLeastSquares(
+                    (int) statsBaseline.getN(), statsBaseline.getMean(), statsBaseline.getStandardDeviation(),
+                    (int) statsTest.getN(), statsTest.getMean(), statsTest.getStandardDeviation());
         }
-        return getCohenD((int) statsBaseline.getN(), statsBaseline.getMean(), statsBaseline.getStandardDeviation(), (int) statsTest.getN(), statsTest.getMean(), statsTest.getStandardDeviation());
+        return getCohenD(
+                (int) statsBaseline.getN(), statsBaseline.getMean(), statsBaseline.getStandardDeviation(),
+                (int) statsTest.getN(), statsTest.getMean(), statsTest.getStandardDeviation());
     }
 
     /**
      * Original Cohen's d formulation, as in Cohen (1988), Statistical power
      * analysis for the behavioral sciences.
      *
+     * @param <V> type of the keys of each map.
      * @param baselineN number of samples of baseline method.
      * @param baselineMean mean of baseline method.
      * @param baselineStd standard deviation of baseline method.
@@ -113,7 +119,7 @@ public class EffectSize<V> {
      * @param testStd standard deviation of test method.
      * @return Cohen's d without least squares estimation.
      */
-    public static <V> double getCohenD(int baselineN, double baselineMean, double baselineStd, int testN, double testMean, double testStd) {
+    public static <V> double getCohenD(final int baselineN, final double baselineMean, final double baselineStd, final int testN, final double testMean, final double testStd) {
         double pooledStd = Math.sqrt(((testN - 1) * Math.pow(testStd, 2) + (baselineN - 1) * Math.pow(baselineStd, 2)) / (baselineN + testN));
 
         double d = Math.abs(testMean - baselineMean) / pooledStd;
@@ -126,6 +132,7 @@ public class EffectSize<V> {
      * When effect sizes disagree: the case of r and d. 2006. Psychological
      * Methods, 11 (4)
      *
+     * @param <V> type of the keys of each map.
      * @param baselineN number of samples of baseline method.
      * @param baselineMean mean of baseline method.
      * @param baselineStd standard deviation of baseline method.
@@ -134,7 +141,7 @@ public class EffectSize<V> {
      * @param testStd standard deviation of test method.
      * @return Cohen's d with least squares estimation.
      */
-    public static <V> double getCohenDLeastSquares(int baselineN, double baselineMean, double baselineStd, int testN, double testMean, double testStd) {
+    public static <V> double getCohenDLeastSquares(final int baselineN, final double baselineMean, final double baselineStd, final int testN, final double testMean, final double testStd) {
         double pooledStd = Math.sqrt(((testN - 1) * Math.pow(testStd, 2) + (baselineN - 1) * Math.pow(baselineStd, 2)) / (baselineN + testN - 2));
 
         double d = Math.abs(testMean - baselineMean) / pooledStd;
@@ -153,7 +160,7 @@ public class EffectSize<V> {
      * user (dimension)
      * @return the effect size.
      */
-    public static <V> double getEffectSizePairedT(Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension) {
+    public static <V> double getEffectSizePairedT(final Map<V, Double> baselineMetricPerDimension, final Map<V, Double> testMetricPerDimension) {
         Set<V> overlap = new HashSet<V>(baselineMetricPerDimension.keySet());
         overlap.retainAll(testMetricPerDimension.keySet());
 
@@ -176,13 +183,13 @@ public class EffectSize<V> {
      * @return the ratio between these values (absolute value of the mean is
      * considered).
      */
-    public static double getEffectSizePairedT(double meanOfDifferences, double stdOfDifferences) {
+    public static double getEffectSizePairedT(final double meanOfDifferences, final double stdOfDifferences) {
         double e = Math.abs(meanOfDifferences) / stdOfDifferences;
         return e;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

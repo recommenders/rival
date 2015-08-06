@@ -39,23 +39,62 @@ import net.recommenders.rival.evaluation.Pair;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class MultipleStrategyRunner {
+public final class MultipleStrategyRunner {
 
     /**
-     * Variables that represent the name of several properties in the file.
+     * Variable that represents the name of a property in the file.
      */
     public static final String SPLITS_FOLDER = "split.folder";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String TRAINING_SUFFIX = "split.training.suffix";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String TEST_SUFFIX = "split.test.suffix";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RECOMMENDATION_FOLDER = "recommendation.folder";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RECOMMENDATION_SUFFIX = "recommendation.suffix";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_FORMAT = "output.format";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_FOLDER = "output.ranking.folder";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String GROUNDTRUTH_FOLDER = "output.groundtruth.folder";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String STRATEGIES = "strategy.classes";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELEVANCE_THRESHOLDS = "strategy.relevance.thresholds";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELPLUSN_N = "strategy.relplusn.N";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELPLUSN_SEED = "strategy.relplusn.seed";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private MultipleStrategyRunner() {
+    }
 
     /**
      * Main method. It receives the property file using a system property
@@ -64,7 +103,7 @@ public class MultipleStrategyRunner {
      * @param args Input arguments (not used).
      * @throws Exception if no properties can be read.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
         final Properties properties = new Properties();
@@ -92,18 +131,15 @@ public class MultipleStrategyRunner {
      * fails
      * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
-     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
-     * fails
      * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
-     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
-     * fails
      */
-    public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static void run(final Properties properties)
+            throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         // get splits
         File splitsFolder = new File(properties.getProperty(SPLITS_FOLDER));
         String trainingSuffix = properties.getProperty(TRAINING_SUFFIX);
@@ -116,7 +152,12 @@ public class MultipleStrategyRunner {
         File rankingFolder = new File(properties.getProperty(OUTPUT_FOLDER));
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(StrategyRunner.OUTPUT_OVERWRITE, "true"));
         File groundtruthFolder = new File(properties.getProperty(GROUNDTRUTH_FOLDER));
-        EvaluationStrategy.OUTPUT_FORMAT format = properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        EvaluationStrategy.OUTPUT_FORMAT format = null;
+        if (properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString())) {
+            format = EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL;
+        } else {
+            format = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        }
         String[] thresholds = properties.getProperty(RELEVANCE_THRESHOLDS).split(",");
         String[] strategyClassNames = properties.getProperty(STRATEGIES).split(",");
         // process info for each split
@@ -153,12 +194,13 @@ public class MultipleStrategyRunner {
                         System.out.println("Generating " + strategyClassName + " with threshold " + threshold);
                         // get strategy and generate output
                         if (strategyClassName.contains("RelPlusN")) {
-                            String[] Ns = properties.getProperty(RELPLUSN_N).split(",");
+                            String[] numbers = properties.getProperty(RELPLUSN_N).split(",");
                             String[] seeds = properties.getProperty(RELPLUSN_SEED).split(",");
-                            for (String N : Ns) {
+                            for (String number : numbers) {
                                 for (String seed : seeds) {
-                                    EvaluationStrategy<Long, Long> strategy = new RelPlusN(trainingModel, testModel, Integer.parseInt(N), Double.parseDouble(threshold), Long.parseLong(seed));
-                                    generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFolder, groundtruthFolder, inputFileName, strategyClass.getSimpleName(), threshold, "__" + N + "__" + seed, overwrite);
+                                    EvaluationStrategy<Long, Long> strategy = new RelPlusN(trainingModel, testModel, Integer.parseInt(number), Double.parseDouble(threshold), Long.parseLong(seed));
+                                    generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFolder, groundtruthFolder,
+                                            inputFileName, strategyClass.getSimpleName(), threshold, "__" + number + "__" + seed, overwrite);
                                 }
                             }
                         } else {
@@ -166,7 +208,8 @@ public class MultipleStrategyRunner {
                             if (strategyObj instanceof EvaluationStrategy) {
                                 @SuppressWarnings("unchecked")
                                 EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyObj;
-                                generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFolder, groundtruthFolder, inputFileName, strategyClass.getSimpleName(), threshold, "", overwrite);
+                                generateOutput(testModel, mapUserRecommendations, strategy, format, rankingFolder, groundtruthFolder,
+                                        inputFileName, strategyClass.getSimpleName(), threshold, "", overwrite);
                             }
                         }
                     }
@@ -191,19 +234,16 @@ public class MultipleStrategyRunner {
      * fails
      * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
-     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
-     * fails
      * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
-     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
-     * fails
      */
     @SuppressWarnings("unchecked")
-    public static EvaluationStrategy<Long, Long>[] instantiateStrategies(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static EvaluationStrategy<Long, Long>[] instantiateStrategies(final Properties properties, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         List<EvaluationStrategy<Long, Long>> stratList = new ArrayList<EvaluationStrategy<Long, Long>>();
 
         String[] thresholds = properties.getProperty(RELEVANCE_THRESHOLDS).split(",");
@@ -213,11 +253,11 @@ public class MultipleStrategyRunner {
             for (String threshold : thresholds) {
                 // get strategy and generate output
                 if (strategyClassName.contains("RelPlusN")) {
-                    String[] Ns = properties.getProperty(RELPLUSN_N).split(",");
+                    String[] numbers = properties.getProperty(RELPLUSN_N).split(",");
                     String[] seeds = properties.getProperty(RELPLUSN_SEED).split(",");
-                    for (String N : Ns) {
+                    for (String number : numbers) {
                         for (String seed : seeds) {
-                            EvaluationStrategy<Long, Long> strategy = new RelPlusN(trainingModel, testModel, Integer.parseInt(N), Double.parseDouble(threshold), Long.parseLong(seed));
+                            EvaluationStrategy<Long, Long> strategy = new RelPlusN(trainingModel, testModel, Integer.parseInt(number), Double.parseDouble(threshold), Long.parseLong(seed));
                             stratList.add(strategy);
                         }
                     }
@@ -250,10 +290,18 @@ public class MultipleStrategyRunner {
      * @param threshold The relevance threshold.
      * @param suffix The file suffix.
      * @param overwrite Whether or not to overwrite the results file.
-     * @throws FileNotFoundException see {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy, net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
-     * @throws UnsupportedEncodingException see {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy, net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
+     * @throws FileNotFoundException see
+     * {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy,
+     * net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
+     * @throws UnsupportedEncodingException see
+     * {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy,
+     * net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFolder, File groundtruthFolder, String inputFileName, String strategyClassSimpleName, String threshold, String suffix, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations,
+            final EvaluationStrategy<Long, Long> strategy, final EvaluationStrategy.OUTPUT_FORMAT format,
+            final File rankingFolder, final File groundtruthFolder, final String inputFileName,
+            final String strategyClassSimpleName, final String threshold, final String suffix, final Boolean overwrite)
+            throws FileNotFoundException, UnsupportedEncodingException {
         File outRanking = new File(rankingFolder, "out" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
         File outGroundtruth = new File(groundtruthFolder, "gr" + "__" + inputFileName + "__" + strategyClassSimpleName + "__" + threshold + suffix);
         StrategyRunner.generateOutput(testModel, mapUserRecommendations, strategy, format, outRanking, outGroundtruth, overwrite);
@@ -267,7 +315,7 @@ public class MultipleStrategyRunner {
      * @param trainingSuffix The suffix of the training files.
      * @param testSuffix The suffix of the test files.
      */
-    public static void getAllSplits(Set<String> splits, File path, String trainingSuffix, String testSuffix) {
+    public static void getAllSplits(final Set<String> splits, final File path, final String trainingSuffix, final String testSuffix) {
         if (path == null) {
             return;
         }
@@ -294,7 +342,7 @@ public class MultipleStrategyRunner {
      * @param prefix The prefix of the recommendation files.
      * @param suffix The suffix of the recommendation files.
      */
-    public static void getAllRecommendationFiles(Set<String> recommendationFiles, File path, String prefix, String suffix) {
+    public static void getAllRecommendationFiles(final Set<String> recommendationFiles, final File path, final String prefix, final String suffix) {
         if (path == null) {
             return;
         }

@@ -37,23 +37,62 @@ import net.recommenders.rival.evaluation.strategy.EvaluationStrategy;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class EvaluationMetricRunner {
+public final class EvaluationMetricRunner {
 
     /**
-     * Variables that represent the name of several properties in the file.
+     * Variable that represent the name of a property in the file.
      */
     public static final String PREDICTION_FILE = "evaluation.pred.file";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String PREDICTION_FILE_FORMAT = "evaluation.pred.format";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String TEST_FILE = "evaluation.test.file";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String OUTPUT_OVERWRITE = "evaluation.output.overwrite";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String OUTPUT_APPEND = "evaluation.output.append";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String OUTPUT_FILE = "evaluation.output.file";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String METRIC = "evaluation.class";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String RELEVANCE_THRESHOLD = "evaluation.relevance.threshold";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String RANKING_CUTOFFS = "evaluation.ranking.cutoffs";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String NDCG_TYPE = "evaluation.ndcg.type";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String ERROR_STRATEGY = "evaluation.error.strategy";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String METRIC_PER_USER = "evaluation.peruser";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private EvaluationMetricRunner() {
+    }
 
     /**
      * Main method for running a single evaluation metric.
@@ -61,7 +100,7 @@ public class EvaluationMetricRunner {
      * @param args the arguments.
      * @throws Exception see {@link #run(java.util.Properties)}
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
         final Properties properties = new Properties();
@@ -81,21 +120,26 @@ public class EvaluationMetricRunner {
      *
      * @param properties The properties of the strategy.
      * @throws IOException if recommendation file is not found or output cannot
-     * be written (see {@link #generateOutput(net.recommenders.rival.core.DataModel, int[], net.recommenders.rival.evaluation.metric.EvaluationMetric, java.lang.String, java.lang.Boolean, java.io.File, java.lang.Boolean, java.lang.Boolean)})
+     * be written (see {@link #generateOutput(net.recommenders.rival.core.DataModel, int[],
+     * net.recommenders.rival.evaluation.metric.EvaluationMetric, java.lang.String, java.lang.Boolean, java.io.File, java.lang.Boolean, java.lang.Boolean)})
      * @throws ClassNotFoundException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws IllegalAccessException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalArgumentException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws InstantiationException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws InvocationTargetException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws NoSuchMethodException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws SecurityException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
     @SuppressWarnings("unchecked")
-    public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static void run(final Properties properties)
+            throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         System.out.println("Parsing started: recommendation file");
         File recommendationFile = new File(properties.getProperty(PREDICTION_FILE));
-        DataModel<Long, Long> predictions;// = null;
-        EvaluationStrategy.OUTPUT_FORMAT recFormat = properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        DataModel<Long, Long> predictions = null;
+        EvaluationStrategy.OUTPUT_FORMAT recFormat = null;
+        if (properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString())) {
+            recFormat = EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL;
+        } else {
+            recFormat = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        }
         switch (recFormat) {
             case SIMPLE:
                 predictions = new SimpleParser().parseData(recommendationFile);
@@ -131,7 +175,7 @@ public class EvaluationMetricRunner {
      * @param properties the properties mapping to be parsed.
      * @return an array with the ranking cutoffs (if available).
      */
-    public static int[] getRankingCutoffs(Properties properties) {
+    public static int[] getRankingCutoffs(final Properties properties) {
         int[] rankingCutoffs = new int[0];
         String metricClassName = properties.getProperty(METRIC);
         if (metricClassName.contains(".ranking.")) {
@@ -156,19 +200,16 @@ public class EvaluationMetricRunner {
      * fails
      * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
-     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
-     * fails
      * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
-     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
-     * fails
      */
     @SuppressWarnings("unchecked")
-    public static EvaluationMetric<Long> instantiateEvaluationMetric(Properties properties, DataModel<Long, Long> predictions, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static EvaluationMetric<Long> instantiateEvaluationMetric(final Properties properties, final DataModel<Long, Long> predictions, final DataModel<Long, Long> testModel)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         int[] rankingCutoffs = getRankingCutoffs(properties);
         String metricClassName = properties.getProperty(METRIC);
@@ -177,10 +218,17 @@ public class EvaluationMetricRunner {
         if (metricClassName.contains(".ranking.")) {
             if (metricClassName.endsWith("NDCG")) {
                 String ndcgType = properties.getProperty(NDCG_TYPE, "exp");
-                NDCG.TYPE nt = ndcgType.equalsIgnoreCase(NDCG.TYPE.EXP.toString()) ? NDCG.TYPE.EXP : NDCG.TYPE.LIN;
-                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class, NDCG.TYPE.class).newInstance(predictions, testModel, threshold, rankingCutoffs, nt);
+                NDCG.TYPE nt = null;
+                if (ndcgType.equalsIgnoreCase(NDCG.TYPE.EXP.toString())) {
+                    nt = NDCG.TYPE.EXP;
+                } else {
+                    nt = NDCG.TYPE.LIN;
+                }
+                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class, NDCG.TYPE.class).
+                        newInstance(predictions, testModel, threshold, rankingCutoffs, nt);
             } else {
-                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class).newInstance(predictions, testModel, threshold, rankingCutoffs);
+                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class).
+                        newInstance(predictions, testModel, threshold, rankingCutoffs);
             }
         } else {
             String strategy = properties.getProperty(ERROR_STRATEGY);
@@ -212,14 +260,16 @@ public class EvaluationMetricRunner {
      * @param overwrite Whether or not to overwrite results file.
      * @param append Whether or not to append results in an existing file.
      * @throws FileNotFoundException If file not found or cannot be created.
-     * @throws UnsupportedOperationException If default encoding (UTF-8) is not
+     * @throws UnsupportedEncodingException If default encoding (UTF-8) is not
      * available.
      *
      * @param <U> generic type for users.
      * @param <I> generic type for items.
      */
     @SuppressWarnings("unchecked")
-    public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs, EvaluationMetric<U> metric, String metricName, Boolean perUser, File resultsFile, Boolean overwrite, Boolean append) throws FileNotFoundException, UnsupportedEncodingException {
+    public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs,
+            final EvaluationMetric<U> metric, final String metricName,
+            final Boolean perUser, final File resultsFile, final Boolean overwrite, final Boolean append) throws FileNotFoundException, UnsupportedEncodingException {
         PrintStream out = null;
         if (overwrite && append) {
             System.out.println("Incompatible arguments: overwrite && append!!!");

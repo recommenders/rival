@@ -23,7 +23,7 @@ import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
 
 /**
- * A parser based on the format of Movielens files
+ * A parser based on the format of Movielens files.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -47,10 +47,10 @@ public class MovielensParser implements Parser<Long, Long> {
     public static final int TIME_TOK = 3;
 
     /**
-     * @see Parser#parseData(java.io.File)
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(File f) throws IOException {
+    public DataModel<Long, Long> parseData(final File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
@@ -70,8 +70,13 @@ public class MovielensParser implements Parser<Long, Long> {
      * @param dataset the dataset where the information parsed from the line
      * will be stored into.
      */
-    private void parseLine(String line, DataModel<Long, Long> dataset) {
-        String[] toks = line.contains("::") ? line.split("::") : line.split("\t");
+    private void parseLine(final String line, final DataModel<Long, Long> dataset) {
+        String[] toks = null;
+        if (line.contains("::")) {
+            toks = line.split("::");
+        } else {
+            toks = line.split("\t");
+        }
         // user
         long userId = Long.parseLong(toks[USER_TOK]);
         // item

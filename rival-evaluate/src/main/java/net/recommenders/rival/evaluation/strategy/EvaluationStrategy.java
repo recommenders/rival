@@ -36,7 +36,13 @@ public interface EvaluationStrategy<U, I> {
      */
     public enum OUTPUT_FORMAT {
 
+        /**
+         * Tab-separated format.
+         */
         SIMPLE,
+        /**
+         * Format as followed by the trec_eval program.
+         */
         TRECEVAL;
     }
 
@@ -46,7 +52,7 @@ public interface EvaluationStrategy<U, I> {
      * @param user The user.
      * @return The items to rank.
      */
-    public Set<I> getCandidateItemsToRank(U user);
+    Set<I> getCandidateItemsToRank(U user);
 
     /**
      * Print rankings for a user.
@@ -56,7 +62,7 @@ public interface EvaluationStrategy<U, I> {
      * @param out Where to print.
      * @param format The format of the printer (see {@link OUTPUT_FORMAT}).
      */
-    public void printRanking(U user, List<Pair<I, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format);
+    void printRanking(U user, List<Pair<I, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format);
 
     /**
      * Print the ground truth.
@@ -65,5 +71,5 @@ public interface EvaluationStrategy<U, I> {
      * @param out Where to print.
      * @param format The format of the printer (see {@link OUTPUT_FORMAT}).
      */
-    public void printGroundtruth(U user, PrintStream out, OUTPUT_FORMAT format);
+    void printGroundtruth(U user, PrintStream out, OUTPUT_FORMAT format);
 }

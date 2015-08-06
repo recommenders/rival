@@ -31,27 +31,27 @@ import org.apache.mahout.cf.taste.model.Preference;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 
 /**
- * Mahout's DataModel wrapper for {@link net.recommenders.rival.core.DataModel}
+ * Mahout's DataModel wrapper for {@link net.recommenders.rival.core.DataModel}.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
 public class DataModelWrapper implements DataModel {
 
     /**
-     * Serial version UID
+     * Serial version UID.
      */
     private static final long serialVersionUID = 220150729L;
     /**
-     * Mahout's datamodel that will be used as wrapper
+     * Mahout's datamodel that will be used as wrapper.
      */
     private GenericDataModel wrapper;
 
     /**
-     * Constructs the wrapper using the provided model
+     * Constructs the wrapper using the provided model.
      *
      * @param model the model to be used to create the wrapped model
      */
-    public DataModelWrapper(net.recommenders.rival.core.DataModel<Long, Long> model) {
+    public DataModelWrapper(final net.recommenders.rival.core.DataModel<Long, Long> model) {
         FastByIDMap<Collection<Preference>> data = new FastByIDMap<Collection<Preference>>();
         FastByIDMap<FastByIDMap<Long>> timestampData = new FastByIDMap<FastByIDMap<Long>>();
         for (Long u : model.getUserItemPreferences().keySet()) {
@@ -89,7 +89,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public PreferenceArray getPreferencesFromUser(long l) throws TasteException {
+    public PreferenceArray getPreferencesFromUser(final long l) throws TasteException {
         return wrapper.getPreferencesFromUser(l);
     }
 
@@ -97,7 +97,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public FastIDSet getItemIDsFromUser(long l) throws TasteException {
+    public FastIDSet getItemIDsFromUser(final long l) throws TasteException {
         return wrapper.getItemIDsFromUser(l);
     }
 
@@ -113,7 +113,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public PreferenceArray getPreferencesForItem(long l) throws TasteException {
+    public PreferenceArray getPreferencesForItem(final long l) throws TasteException {
         return wrapper.getPreferencesForItem(l);
     }
 
@@ -121,7 +121,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public Float getPreferenceValue(long l, long l1) throws TasteException {
+    public Float getPreferenceValue(final long l, final long l1) throws TasteException {
         return wrapper.getPreferenceValue(l, l1);
     }
 
@@ -129,7 +129,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public Long getPreferenceTime(long l, long l1) throws TasteException {
+    public Long getPreferenceTime(final long l, final long l1) throws TasteException {
         return wrapper.getPreferenceTime(l, l1);
     }
 
@@ -153,7 +153,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public int getNumUsersWithPreferenceFor(long l) throws TasteException {
+    public int getNumUsersWithPreferenceFor(final long l) throws TasteException {
         return wrapper.getNumUsersWithPreferenceFor(l);
     }
 
@@ -161,7 +161,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public int getNumUsersWithPreferenceFor(long l, long l1) throws TasteException {
+    public int getNumUsersWithPreferenceFor(final long l, final long l1) throws TasteException {
         return wrapper.getNumUsersWithPreferenceFor(l, l1);
     }
 
@@ -169,7 +169,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public void setPreference(long l, long l1, float f) throws TasteException {
+    public void setPreference(final long l, final long l1, final float f) throws TasteException {
         wrapper.setPreference(l, l1, f);
     }
 
@@ -177,7 +177,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public void removePreference(long l, long l1) throws TasteException {
+    public void removePreference(final long l, final long l1) throws TasteException {
         wrapper.removePreference(l, l1);
     }
 
@@ -209,7 +209,7 @@ public class DataModelWrapper implements DataModel {
      * {@inheritDoc}
      */
     @Override
-    public void refresh(Collection<Refreshable> clctn) {
+    public void refresh(final Collection<Refreshable> clctn) {
         wrapper.refresh(clctn);
     }
 }

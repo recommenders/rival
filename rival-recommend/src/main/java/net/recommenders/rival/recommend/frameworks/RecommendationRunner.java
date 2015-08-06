@@ -31,71 +31,77 @@ import java.util.Properties;
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
-public class RecommendationRunner {
+public final class RecommendationRunner {
 
     /**
-     * The property key for the recommender
+     * The property key for the recommender.
      */
-    public static final String recommender = "recommender";
+    public static final String RECOMMENDER = "recommender";
     /**
-     * The property key for the similarity
+     * The property key for the similarity.
      */
-    public static final String similarity = "similarity";
+    public static final String SIMILARITY = "similarity";
     /**
-     * The property key for the factorizer
+     * The property key for the factorizer.
      */
-    public static final String factorizer = "factorizer";
+    public static final String FACTORIZER = "factorizer";
     /**
-     * The property key for the neighborhood
+     * The property key for the neighborhood.
      */
-    public static final String neighborhood = "neighborhood";
+    public static final String NEIGHBORHOOD = "neighborhood";
     /**
-     * The property key for the factors
+     * The property key for the factors.
      */
-    public static final String factors = "factors";
+    public static final String FACTORS = "factors";
     /**
-     * The property key for the iterations
+     * The property key for the iterations.
      */
-    public static final String iterations = "iterations";
+    public static final String ITERATIONS = "iterations";
     /**
-     * The property key for the training set
+     * The property key for the training set.
      */
-    public static final String trainingSet = "training";
+    public static final String TRAINING_SET = "training";
     /**
-     * The property key for the test set
+     * The property key for the test set.
      */
-    public static final String testSet = "test";
+    public static final String TEST_SET = "test";
     /**
-     * The property key for the output
+     * The property key for the output.
      */
-    public static final String output = "output";
+    public static final String OUTPUT = "output";
     /**
-     * The property key for the framework
+     * The property key for the framework.
      */
-    public static final String framework = "framework";
+    public static final String FRAMEWORK = "framework";
     /**
-     * The property key for Mahout
+     * The property key for Mahout.
      */
     public static final String MAHOUT = "mahout";
     /**
-     * The property key for LensKit
+     * The property key for LensKit.
      */
     public static final String LENSKIT = "lenskit";
     /**
-     * The canonical path
+     * The canonical path.
      */
     private static String statPath;
     /**
-     * The execution time
+     * The execution time.
      */
     private static long time;
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private RecommendationRunner() {
+    }
 
     /**
      * Main method for running a recommendation.
      *
      * @param args CLI arguments
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         String propertyFile = System.getProperty("file");
         if (propertyFile == null) {
             System.out.println("Property file not given, exiting.");
@@ -113,25 +119,25 @@ public class RecommendationRunner {
     }
 
     /**
-     * Run recommendations based on properties
+     * Run recommendations based on properties.
      *
      * @param properties the properties
      */
-    public static void recommend(Properties properties) {
+    public static void recommend(final Properties properties) {
         AbstractRunner rr = instantiateRecommender(properties);
         run(rr);
     }
 
     /**
-     * Run recommendations based on an already instantiated recommender
+     * Run recommendations based on an already instantiated recommender.
      *
      * @param rr abstract recommender already initialized
      */
-    public static void run(AbstractRunner rr) {
+    public static void run(final AbstractRunner rr) {
         time = System.currentTimeMillis();
         boolean statsExist = false;
         statPath = rr.getCanonicalFileName();
-        statsExist = rr.getAlreadyRecommended();
+        statsExist = rr.isAlreadyRecommended();
         try {
             rr.run(AbstractRunner.RUN_OPTIONS.OUTPUT_RECS);
         } catch (Exception e) {
@@ -150,37 +156,37 @@ public class RecommendationRunner {
      * recommender
      * @return the recommender instantiated
      */
-    public static AbstractRunner<Long, Long> instantiateRecommender(Properties properties) {
-        if (properties.getProperty(recommender) == null) {
+    public static AbstractRunner<Long, Long> instantiateRecommender(final Properties properties) {
+        if (properties.getProperty(RECOMMENDER) == null) {
             System.out.println("No recommenderClass specified, exiting.");
             return null;
         }
-        if (properties.getProperty(trainingSet) == null) {
+        if (properties.getProperty(TRAINING_SET) == null) {
             System.out.println("No training set specified, exiting.");
             return null;
         }
-        if (properties.getProperty(testSet) == null) {
+        if (properties.getProperty(TEST_SET) == null) {
             System.out.println("No training set specified, exiting.");
             return null;
         }
 
         AbstractRunner<Long, Long> rr = null;
-        if (properties.getProperty(framework).equals(MAHOUT)) {
+        if (properties.getProperty(FRAMEWORK).equals(MAHOUT)) {
             rr = new MahoutRecommenderRunner(properties);
-        } else if (properties.getProperty(framework).equals(LENSKIT)) {
+        } else if (properties.getProperty(FRAMEWORK).equals(LENSKIT)) {
             rr = new LenskitRecommenderRunner(properties);
         }
         return rr;
     }
 
     /**
-     * Write the system stats to file
+     * Write the system stats to file.
      *
      * @param path the path to write to
      * @param statLabel what statistics is being written
      * @param stat the value
      */
-    public static void writeStats(String path, String statLabel, long stat) {
+    public static void writeStats(final String path, final String statLabel, final long stat) {
         BufferedWriter out = null;
         try {
             out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true), "UTF-8"));

@@ -21,11 +21,17 @@ import java.util.Map;
 import net.recommenders.rival.evaluation.Pair;
 
 /**
- * Methods related to input/output of strategies
+ * Methods related to input/output of strategies.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public class StrategyIO {
+public final class StrategyIO {
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private StrategyIO() {
+    }
 
     /**
      * Read a file from the recommended items file.
@@ -34,7 +40,7 @@ public class StrategyIO {
      * @param mapUserRecommendations The recommendations for the users where
      * information will be stored into.
      */
-    public static void readLine(String line, Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
+    public static void readLine(final String line, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations) {
         String[] toks = line.split("\t");
         // mymedialite format: user \t [item:score,item:score,...]
         if (line.contains(":") && line.contains(",")) {

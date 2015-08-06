@@ -47,14 +47,20 @@ import net.recommenders.rival.split.splitter.SplitterRunner;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class CompletePipelineInMemory {
+public final class CompletePipelineInMemory {
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private CompletePipelineInMemory() {
+    }
 
     /**
      * Fills a property mapping with default values.
      *
      * @param props mapping where the default properties will be set.
      */
-    private static void fillDefaultProperties(Properties props) {
+    private static void fillDefaultProperties(final Properties props) {
         System.out.println("Setting default properties...");
         // parser
         props.put(ParserRunner.DATASET_FILE, "./data/ml-100k/u.data");
@@ -68,7 +74,8 @@ public class CompletePipelineInMemory {
         props.put(SplitterRunner.SPLIT_SEED, "2015");
         // recommender
         props.put(MultipleRecommendationRunner.LENSKIT_ITEMBASED_RECS, "org.grouplens.lenskit.knn.item.ItemItemScorer");
-        props.put(MultipleRecommendationRunner.LENSKIT_SIMILARITIES, "org.grouplens.lenskit.vectors.similarity.CosineVectorSimilarity,org.grouplens.lenskit.vectors.similarity.PearsonCorrelation");
+        props.put(MultipleRecommendationRunner.LENSKIT_SIMILARITIES,
+                "org.grouplens.lenskit.vectors.similarity.CosineVectorSimilarity,org.grouplens.lenskit.vectors.similarity.PearsonCorrelation");
 //        props.put(MultipleRecommendationRunner.LENSKIT_SVD_RECS, "org.grouplens.lenskit.mf.funksvd.FunkSVDItemScorer");
         props.put(MultipleRecommendationRunner.LENSKIT_SVD_RECS, "");
 //        props.put(MultipleRecommendationRunner.LENSKIT_USERBASED_RECS, "org.grouplens.lenskit.knn.user.UserUserItemScorer");
@@ -81,12 +88,21 @@ public class CompletePipelineInMemory {
         props.put(MultipleRecommendationRunner.N, "-1,10,50");
         props.put(MultipleRecommendationRunner.SVD_ITER, "50");
         // strategy
-        props.put(MultipleStrategyRunner.STRATEGIES, "net.recommenders.rival.evaluation.strategy.RelPlusN,net.recommenders.rival.evaluation.strategy.TestItems,net.recommenders.rival.evaluation.strategy.AllItems,net.recommenders.rival.evaluation.strategy.TrainItems,net.recommenders.rival.evaluation.strategy.UserTest");
+        props.put(MultipleStrategyRunner.STRATEGIES,
+                "net.recommenders.rival.evaluation.strategy.RelPlusN,net.recommenders.rival.evaluation.strategy.TestItems,"
+                + "net.recommenders.rival.evaluation.strategy.AllItems,net.recommenders.rival.evaluation.strategy.TrainItems,"
+                + "net.recommenders.rival.evaluation.strategy.UserTest");
         props.put(MultipleStrategyRunner.RELEVANCE_THRESHOLDS, "5");
         props.put(MultipleStrategyRunner.RELPLUSN_N, "100");
         props.put(MultipleStrategyRunner.RELPLUSN_SEED, "2015");
         // evaluation
-        props.put(MultipleEvaluationMetricRunner.METRICS, "net.recommenders.rival.evaluation.metric.error.MAE,net.recommenders.rival.evaluation.metric.error.RMSE,net.recommenders.rival.evaluation.metric.ranking.MAP,net.recommenders.rival.evaluation.metric.ranking.NDCG,net.recommenders.rival.evaluation.metric.ranking.Precision,net.recommenders.rival.evaluation.metric.ranking.Recall");
+        props.put(MultipleEvaluationMetricRunner.METRICS,
+                "net.recommenders.rival.evaluation.metric.error.MAE,"
+                + "net.recommenders.rival.evaluation.metric.error.RMSE,"
+                + "net.recommenders.rival.evaluation.metric.ranking.MAP,"
+                + "net.recommenders.rival.evaluation.metric.ranking.NDCG,"
+                + "net.recommenders.rival.evaluation.metric.ranking.Precision,"
+                + "net.recommenders.rival.evaluation.metric.ranking.Recall");
         props.put(MultipleEvaluationMetricRunner.RELEVANCE_THRESHOLD, "5");
         props.put(MultipleEvaluationMetricRunner.RANKING_CUTOFFS, "1,5,10,50");
         props.put(MultipleEvaluationMetricRunner.NDCG_TYPE, "exp");
@@ -94,7 +110,15 @@ public class CompletePipelineInMemory {
         // statistics
         props.put(StatisticsRunner.ALPHA, "0.05");
         props.put(StatisticsRunner.AVOID_USERS, "all");
-        props.put(StatisticsRunner.STATISTICS, "confidence_interval,effect_size_d,effect_size_dLS,effect_size_pairedT,standard_error,statistical_significance_t,statistical_significance_pairedT,statistical_significance_wilcoxon");
+        props.put(StatisticsRunner.STATISTICS,
+                "confidence_interval,"
+                + "effect_size_d,"
+                + "effect_size_dLS,"
+                + "effect_size_pairedT,"
+                + "standard_error,"
+                + "statistical_significance_t,"
+                + "statistical_significance_pairedT,"
+                + "statistical_significance_wilcoxon");
         props.put(StatisticsRunner.INPUT_FORMAT, "default");
         //              we use simple names instead of files
         props.put(StatisticsRunner.BASELINE_FILE, "");
@@ -111,7 +135,7 @@ public class CompletePipelineInMemory {
      *
      * @param args not used.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         String propertyFile = System.getProperty("propertyFile");
 
         final Properties properties = new Properties();
@@ -143,7 +167,7 @@ public class CompletePipelineInMemory {
      * should contain properties for all steps: parsing, splitting,
      * recommendation, strategies, evaluation, statistics.
      */
-    public static void runExampleInMemory(Properties properties) {
+    public static void runExampleInMemory(final Properties properties) {
         try {
             DataModel<Long, Long>[] splits = prepareSplitsInMemory(properties);
             for (int i = 0; i < splits.length / 2; i++) {
@@ -151,7 +175,7 @@ public class CompletePipelineInMemory {
                 DataModel<Long, Long> training = splits[2 * i];
                 DataModel<Long, Long> test = splits[2 * i + 1];
                 Map<String, DataModel<Long, Long>> recModels = getRecommenderModels(properties, training, test);
-                Map<String, Map<String, Map<String, Map<String, Double>>>> mapStrategyRecommenderMetricUserValue = new HashMap();
+                Map<String, Map<String, Map<String, Map<String, Double>>>> mapStrategyRecommenderMetricUserValue = new HashMap<String, Map<String, Map<String, Map<String, Double>>>>();
                 for (Entry<String, DataModel<Long, Long>> e : recModels.entrySet()) {
                     String rec = e.getKey();
                     DataModel<Long, Long> recModel = e.getValue();
@@ -163,7 +187,7 @@ public class CompletePipelineInMemory {
                         // assign these results to a rec+strategy, at the end, compute statistics for all recs and one strategy
                         Map<String, Map<String, Map<String, Double>>> stratResults = mapStrategyRecommenderMetricUserValue.get(strat);
                         if (stratResults == null) {
-                            stratResults = new HashMap();
+                            stratResults = new HashMap<String, Map<String, Map<String, Double>>>();
                             mapStrategyRecommenderMetricUserValue.put(strat, stratResults);
                         }
                         stratResults.put(rec, results);
@@ -200,17 +224,17 @@ public class CompletePipelineInMemory {
      * @throws IOException see {@link Parser#parseData(java.io.File)}
      * @throws ClassNotFoundException see {@link ParserRunner#instantiateParser(java.util.Properties)}
      * @throws IllegalAccessException see {@link ParserRunner#instantiateParser(java.util.Properties)}
-     * @throws IllegalArgumentException see {@link ParserRunner#instantiateParser(java.util.Properties)}
      * @throws InstantiationException see {@link ParserRunner#instantiateParser(java.util.Properties)}
      * @throws InvocationTargetException see {@link ParserRunner#instantiateParser(java.util.Properties)}
      * @throws NoSuchMethodException see {@link ParserRunner#instantiateParser(java.util.Properties)}
-     * @throws SecurityException see {@link ParserRunner#instantiateParser(java.util.Properties)}
      */
-    public static DataModel<Long, Long>[] prepareSplitsInMemory(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static DataModel<Long, Long>[] prepareSplitsInMemory(final Properties properties)
+            throws IOException, ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException, NoSuchMethodException {
         // get parameters
         String inFile = properties.getProperty(ParserRunner.DATASET_FILE);
         // parse dataset
-        Parser parser = ParserRunner.instantiateParser(properties);
+        Parser<Long, Long> parser = ParserRunner.instantiateParser(properties);
         DataModel<Long, Long> data = parser.parseData(new File(inFile));
         // prepare splits
         Splitter<Long, Long> splitter = SplitterRunner.instantiateSplitter(properties);
@@ -228,9 +252,11 @@ public class CompletePipelineInMemory {
      * @param testModel model to test the recommenders.
      * @return a DataModel for every recommender generated assigned to its
      * corresponding name.
-     * @throws Exception see {@link AbstractRunner#run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws Exception see
+     * {@link AbstractRunner#run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
-    public static Map<String, DataModel<Long, Long>> getRecommenderModels(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws Exception {
+    public static Map<String, DataModel<Long, Long>> getRecommenderModels(final Properties properties, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel)
+            throws Exception {
         AbstractRunner<Long, Long>[] mahoutRecs = MultipleRecommendationRunner.instantiateMahoutRecommenders(new HashSet<String>() {
 
             {
@@ -244,7 +270,7 @@ public class CompletePipelineInMemory {
             }
         }, properties);
 
-        Map<String, DataModel<Long, Long>> recommenderModels = new HashMap();
+        Map<String, DataModel<Long, Long>> recommenderModels = new HashMap<String, DataModel<Long, Long>>();
 
         for (AbstractRunner<Long, Long> mahoutRec : mahoutRecs) {
             recommenderModels.put(mahoutRec.getCanonicalFileName(), mahoutRec.run(AbstractRunner.RUN_OPTIONS.RETURN_RECS, trainingModel, testModel));
@@ -266,17 +292,23 @@ public class CompletePipelineInMemory {
      * @param testModel test model used to generate strategies.
      * @param recModel a recommender model containing recommendations for users.
      * @return a datamodel for each strategy and its corresponding name.
-     * @throws ClassNotFoundException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalAccessException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalArgumentException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InstantiationException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InvocationTargetException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws NoSuchMethodException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws SecurityException see {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws ClassNotFoundException see
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalAccessException see
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InstantiationException see
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InvocationTargetException see
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws NoSuchMethodException see
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
-    public static Map<String, DataModel<Long, Long>> applyStrategiesToRecommender(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel, DataModel<Long, Long> recModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static Map<String, DataModel<Long, Long>> applyStrategiesToRecommender(final Properties properties,
+            final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel, final DataModel<Long, Long> recModel)
+            throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException, NoSuchMethodException {
         // apply all strategies
-        Map<String, DataModel<Long, Long>> modelToEvals = new HashMap();
+        Map<String, DataModel<Long, Long>> modelToEvals = new HashMap<String, DataModel<Long, Long>>();
         for (EvaluationStrategy<Long, Long> strategy : MultipleStrategyRunner.instantiateStrategies(properties, trainingModel, testModel)) {
             // apply strategy
             DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
@@ -303,20 +335,25 @@ public class CompletePipelineInMemory {
      * the strategies) to be evaluated.
      * @return the evaluation results for every metric included in the
      * properties mapping.
-     * @throws ClassNotFoundException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalAccessException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalArgumentException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InstantiationException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InvocationTargetException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws NoSuchMethodException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws SecurityException see {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws ClassNotFoundException see
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws IllegalAccessException see
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InstantiationException see
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws InvocationTargetException see
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws NoSuchMethodException see
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
-    private static Map<String, Map<String, Double>> evaluateStrategy(Properties properties, DataModel<Long, Long> test, DataModel<Long, Long> modelToEvaluate) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        Map<String, Map<String, Double>> mapMetricResults = new HashMap();
+    @SuppressWarnings("unchecked")
+    private static Map<String, Map<String, Double>> evaluateStrategy(final Properties properties, final DataModel<Long, Long> test, final DataModel<Long, Long> modelToEvaluate)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+        Map<String, Map<String, Double>> mapMetricResults = new HashMap<String, Map<String, Double>>();
         for (EvaluationMetric<Long> metric : MultipleEvaluationMetricRunner.instantiateEvaluationMetrics(properties, modelToEvaluate, test)) {
             metric.compute();
             Double all = metric.getValue();
-            Map<String, Double> results = new HashMap();
+            Map<String, Double> results = new HashMap<String, Double>();
             mapMetricResults.put(metric.toString(), results);
             results.put("all", all);
             Map<Long, Double> perUser = metric.getValuePerUser();
@@ -329,7 +366,7 @@ public class CompletePipelineInMemory {
                 AbstractRankingMetric<Long, Long> rankingMetric = (AbstractRankingMetric<Long, Long>) metric;
                 for (int n : rankingMetric.getCutoffs()) {
                     all = rankingMetric.getValueAt(n);
-                    results = new HashMap();
+                    results = new HashMap<String, Double>();
                     mapMetricResults.put(metric.toString() + "@" + n, results);
                     results.put("all", all);
                     perUser = rankingMetric.getValuePerUser();
@@ -352,7 +389,7 @@ public class CompletePipelineInMemory {
      * recommender (one map for every metric).
      * @param out where the statistical analysis should be printed.
      */
-    private static void computeStatistics(Properties properties, Map<String, Map<String, Map<String, Double>>> strategyResults, PrintStream out) {
+    private static void computeStatistics(final Properties properties, final Map<String, Map<String, Map<String, Double>>> strategyResults, final PrintStream out) {
         // extract baseline from map
         String baselineName = properties.getProperty(StatisticsRunner.BASELINE_FILE);
         if (baselineName == null) {
@@ -360,7 +397,7 @@ public class CompletePipelineInMemory {
             return;
         }
         Map<String, Map<String, Double>> baselineResults = null;
-        Map<String, Map<String, Map<String, Double>>> methodsResults = new HashMap();
+        Map<String, Map<String, Map<String, Double>>> methodsResults = new HashMap<String, Map<String, Map<String, Double>>>();
         for (Entry<String, Map<String, Map<String, Double>>> e : strategyResults.entrySet()) {
             String n = e.getKey();
             if (n.equals(baselineName)) {

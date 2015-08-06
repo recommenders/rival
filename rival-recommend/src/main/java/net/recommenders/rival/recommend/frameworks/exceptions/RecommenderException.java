@@ -28,7 +28,7 @@ public class RecommenderException extends Exception {
      *
      * @param msg the message to be shown later.
      */
-    public RecommenderException(String msg) {
+    public RecommenderException(final String msg) {
         super(msg);
     }
 
@@ -38,7 +38,7 @@ public class RecommenderException extends Exception {
      * @param msg the message to be shown later.
      * @param t the cause of the exception.
      */
-    public RecommenderException(String msg, Throwable t) {
+    public RecommenderException(final String msg, final Throwable t) {
         super(msg, t);
     }
 }

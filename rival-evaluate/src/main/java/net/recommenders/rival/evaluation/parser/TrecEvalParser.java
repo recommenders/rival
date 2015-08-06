@@ -44,10 +44,10 @@ public class TrecEvalParser implements Parser<Long, Long> {
     public static final int RATING_TOK = 4;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(File f) throws IOException {
+    public DataModel<Long, Long> parseData(final File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
@@ -70,7 +70,7 @@ public class TrecEvalParser implements Parser<Long, Long> {
      * @param dataset the dataset where the information parsed from the line
      * will be stored into.
      */
-    private void parseLine(String line, DataModel<Long, Long> dataset) {
+    private void parseLine(final String line, final DataModel<Long, Long> dataset) {
         String[] toks = line.split("\t");
         // user
         long userId = Long.parseLong(toks[USER_TOK]);

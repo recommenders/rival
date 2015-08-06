@@ -29,31 +29,73 @@ import java.util.Set;
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
-public class MultipleRecommendationRunner {
+public final class MultipleRecommendationRunner {
 
     /**
-     * Property keys.
+     * Property key.
      */
     public static final String INPUT = "input";
+    /**
+     * Property key.
+     */
     public static final String MAHOUT_ITEMBASED_RECS = "mahout.rec.ib";
+    /**
+     * Property key.
+     */
     public static final String MAHOUT_USERBASED_RECS = "mahout.rec.ub";
+    /**
+     * Property key.
+     */
     public static final String MAHOUT_SIMILARITIES = "mahout.sim";
+    /**
+     * Property key.
+     */
     public static final String MAHOUT_SVD_RECS = "mahout.rec.svd";
+    /**
+     * Property key.
+     */
     public static final String MAHOUT_SVD_FACTORIZER = "mahout.svd.factorizer";
+    /**
+     * Property key.
+     */
     public static final String LENSKIT_ITEMBASED_RECS = "lenskit.rec.ib";
+    /**
+     * Property key.
+     */
     public static final String LENSKIT_USERBASED_RECS = "lenskit.rec.ub";
+    /**
+     * Property key.
+     */
     public static final String LENSKIT_SIMILARITIES = "lenskit.sim";
+    /**
+     * Property key.
+     */
     public static final String LENSKIT_SVD_RECS = "lenskit.rec.svd";
+    /**
+     * Property key.
+     */
     public static final String N = "neighborhood"; //also factors
+    /**
+     * Property key.
+     */
     public static final String SVD_ITER = "svd.iterations";
+    /**
+     * Property key.
+     */
     public static final String OUTPUT = "output";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private MultipleRecommendationRunner() {
+    }
 
     /**
      * Instantiates and runs the runners based on input (property) files.
      *
      * @param args not used.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         final Set<String> paths = new HashSet<String>();
         final String propertyFile = System.getProperty("file");
         Properties properties = new Properties();
@@ -79,7 +121,7 @@ public class MultipleRecommendationRunner {
      * @param paths the input and output paths.
      * @param properties the properties.
      */
-    public static void runLenskitRecommenders(Set<String> paths, Properties properties) {
+    public static void runLenskitRecommenders(final Set<String> paths, final Properties properties) {
         for (AbstractRunner<Long, Long> rec : instantiateLenskitRecommenders(paths, properties)) {
             RecommendationRunner.run(rec);
         }
@@ -94,7 +136,7 @@ public class MultipleRecommendationRunner {
      * @return an array of recommenders, prepared to be run.
      */
     @SuppressWarnings("unchecked")
-    public static AbstractRunner<Long, Long>[] instantiateLenskitRecommenders(Set<String> paths, Properties properties) {
+    public static AbstractRunner<Long, Long>[] instantiateLenskitRecommenders(final Set<String> paths, final Properties properties) {
         List<AbstractRunner<Long, Long>> recList = new ArrayList<AbstractRunner<Long, Long>>();
         try {
             String[] ibRecs = properties.getProperty(LENSKIT_ITEMBASED_RECS).split(",");
@@ -105,23 +147,23 @@ public class MultipleRecommendationRunner {
 
             for (String path : paths) {
                 Properties prop = new Properties();
-                prop.setProperty(RecommendationRunner.trainingSet, path + "_train.dat");
-                prop.setProperty(RecommendationRunner.testSet, path + "_test.dat");
-                prop.setProperty(RecommendationRunner.output, properties.getProperty(OUTPUT, ""));
-                prop.setProperty(RecommendationRunner.framework, "lenskit");
+                prop.setProperty(RecommendationRunner.TRAINING_SET, path + "_train.dat");
+                prop.setProperty(RecommendationRunner.TEST_SET, path + "_test.dat");
+                prop.setProperty(RecommendationRunner.OUTPUT, properties.getProperty(OUTPUT, ""));
+                prop.setProperty(RecommendationRunner.FRAMEWORK, "lenskit");
                 for (String ubRec : ubRecs) {
                     if (ubRec.trim().isEmpty()) {
                         continue;
                     }
-                    prop.setProperty(RecommendationRunner.recommender, ubRec);
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, ubRec);
                     for (String sim : similarities) {
-                        prop.setProperty(RecommendationRunner.similarity, sim);
+                        prop.setProperty(RecommendationRunner.SIMILARITY, sim);
                         for (String n : neighborhoods) {
-                            prop.setProperty(RecommendationRunner.neighborhood, n);
+                            prop.setProperty(RecommendationRunner.NEIGHBORHOOD, n);
                             AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
                             recList.add(ar);
                         }
-                        prop.remove(RecommendationRunner.similarity);
+                        prop.remove(RecommendationRunner.SIMILARITY);
 //                    prop.remove(RecommendationRunner.neighborhood);
                     }
                 }
@@ -129,25 +171,25 @@ public class MultipleRecommendationRunner {
                     if (ibRec.trim().isEmpty()) {
                         continue;
                     }
-                    prop.setProperty(RecommendationRunner.recommender, ibRec);
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, ibRec);
                     for (String sim : similarities) {
-                        prop.setProperty(RecommendationRunner.similarity, sim);
+                        prop.setProperty(RecommendationRunner.SIMILARITY, sim);
                         AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
                         recList.add(ar);
-                        prop.remove(RecommendationRunner.similarity);
+                        prop.remove(RecommendationRunner.SIMILARITY);
                     }
                 }
                 for (String svdRec : svdRecs) {
                     if (svdRec.trim().isEmpty()) {
                         continue;
                     }
-                    prop.setProperty(RecommendationRunner.recommender, svdRec);
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, svdRec);
                     for (String f : neighborhoods) {
-                        prop.setProperty(RecommendationRunner.factors, f);
+                        prop.setProperty(RecommendationRunner.FACTORS, f);
                         AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
                         recList.add(ar);
                     }
-                    prop.remove(RecommendationRunner.factorizer);
+                    prop.remove(RecommendationRunner.FACTORIZER);
                 }
             }
         } catch (NullPointerException e) {
@@ -163,7 +205,7 @@ public class MultipleRecommendationRunner {
      * @param paths the input and output paths.
      * @param properties the properties.
      */
-    public static void runMahoutRecommenders(Set<String> paths, Properties properties) {
+    public static void runMahoutRecommenders(final Set<String> paths, final Properties properties) {
         for (AbstractRunner<Long, Long> rec : instantiateMahoutRecommenders(paths, properties)) {
             RecommendationRunner.run(rec);
         }
@@ -178,7 +220,7 @@ public class MultipleRecommendationRunner {
      * @return an array of recommenders, prepared to be run.
      */
     @SuppressWarnings("unchecked")
-    public static AbstractRunner<Long, Long>[] instantiateMahoutRecommenders(Set<String> paths, Properties properties) {
+    public static AbstractRunner<Long, Long>[] instantiateMahoutRecommenders(final Set<String> paths, final Properties properties) {
         List<AbstractRunner<Long, Long>> recList = new ArrayList<AbstractRunner<Long, Long>>();
         try {
             String[] ibRecs = properties.getProperty(MAHOUT_ITEMBASED_RECS).split(",");
@@ -191,36 +233,36 @@ public class MultipleRecommendationRunner {
 
             for (String path : paths) {
                 Properties prop = new Properties();
-                prop.setProperty(RecommendationRunner.trainingSet, path + "_train.dat");
-                prop.setProperty(RecommendationRunner.testSet, path + "_test.dat");
-                prop.setProperty(RecommendationRunner.output, properties.getProperty(OUTPUT, ""));
-                prop.setProperty(RecommendationRunner.framework, "mahout");
+                prop.setProperty(RecommendationRunner.TRAINING_SET, path + "_train.dat");
+                prop.setProperty(RecommendationRunner.TEST_SET, path + "_test.dat");
+                prop.setProperty(RecommendationRunner.OUTPUT, properties.getProperty(OUTPUT, ""));
+                prop.setProperty(RecommendationRunner.FRAMEWORK, "mahout");
                 // first IB because it (should) does not have neighborhood
                 for (String ibRec : ibRecs) {
                     if (ibRec.trim().isEmpty()) {
                         continue;
                     }
-                    prop.setProperty(RecommendationRunner.recommender, ibRec);
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, ibRec);
                     for (String sim : similarities) {
-                        prop.setProperty(RecommendationRunner.similarity, sim);
+                        prop.setProperty(RecommendationRunner.SIMILARITY, sim);
                         AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
                         recList.add(ar);
-                        prop.remove(RecommendationRunner.similarity);
+                        prop.remove(RecommendationRunner.SIMILARITY);
                     }
                 }
                 for (String ubRec : ubRecs) {
                     if (ubRec.trim().isEmpty()) {
                         continue;
                     }
-                    prop.setProperty(RecommendationRunner.recommender, ubRec);
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, ubRec);
                     for (String sim : similarities) {
-                        prop.setProperty(RecommendationRunner.similarity, sim);
+                        prop.setProperty(RecommendationRunner.SIMILARITY, sim);
                         for (String n : neighborhoods) {
-                            prop.setProperty(RecommendationRunner.neighborhood, n);
+                            prop.setProperty(RecommendationRunner.NEIGHBORHOOD, n);
                             AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
                             recList.add(ar);
                         }
-                        prop.remove(RecommendationRunner.similarity);
+                        prop.remove(RecommendationRunner.SIMILARITY);
 //                    prop.remove(RecommendationRunner.neighborhood);
                     }
                 }
@@ -228,15 +270,15 @@ public class MultipleRecommendationRunner {
                     if (svdRec.trim().isEmpty()) {
                         continue;
                     }
-                    prop.setProperty(RecommendationRunner.recommender, svdRec);
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, svdRec);
                     for (String fact : factorizers) {
-                        prop.setProperty(RecommendationRunner.factorizer, fact);
+                        prop.setProperty(RecommendationRunner.FACTORIZER, fact);
                         for (String f : neighborhoods) {
-                            prop.setProperty(RecommendationRunner.factors, f);
+                            prop.setProperty(RecommendationRunner.FACTORS, f);
                             AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
                             recList.add(ar);
                         }
-                        prop.remove(RecommendationRunner.factorizer);
+                        prop.remove(RecommendationRunner.FACTORIZER);
 
                     }
                 }
@@ -254,7 +296,7 @@ public class MultipleRecommendationRunner {
      * @param setOfPaths the set of files at a certain path
      * @param inputPath the path to check
      */
-    public static void listAllFiles(Set<String> setOfPaths, String inputPath) {
+    public static void listAllFiles(final Set<String> setOfPaths, final String inputPath) {
         if (inputPath == null) {
             return;
         }

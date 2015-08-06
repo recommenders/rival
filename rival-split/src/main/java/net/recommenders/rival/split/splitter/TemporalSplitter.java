@@ -47,25 +47,25 @@ public class TemporalSplitter implements Splitter<Long, Long> {
     private boolean doSplitPerItems;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param percentageTraining percentage of training data to be split
-     * @param perUser flag to do the split in a per user basis
-     * @param doSplitPerItems if true, every interaction between a user and an
-     * item will be kept in the test set if at least one interaction belongs to
-     * the corresponding timestamp (according to the rest of the parameters)
+     * @param percentageTrainingRatio percentage of training data to be split
+     * @param perUserFlag flag to do the split in a per user basis
+     * @param doSplitPerItemsFlag if true, every interaction between a user and
+     * an item will be kept in the test set if at least one interaction belongs
+     * to the corresponding timestamp (according to the rest of the parameters)
      */
-    public TemporalSplitter(float percentageTraining, boolean perUser, boolean doSplitPerItems) {
-        this.percentageTraining = percentageTraining;
-        this.perUser = perUser;
-        this.doSplitPerItems = doSplitPerItems;
+    public TemporalSplitter(final float percentageTrainingRatio, final boolean perUserFlag, final boolean doSplitPerItemsFlag) {
+        this.percentageTraining = percentageTrainingRatio;
+        this.perUser = perUserFlag;
+        this.doSplitPerItems = doSplitPerItemsFlag;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
+    public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
         @SuppressWarnings("unchecked")
         final DataModel<Long, Long>[] splits = new DataModel[2];
         splits[0] = new DataModel<Long, Long>(); // training

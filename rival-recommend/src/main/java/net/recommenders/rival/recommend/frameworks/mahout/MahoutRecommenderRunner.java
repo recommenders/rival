@@ -47,27 +47,32 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
     /**
      * Default constructor.
      *
-     * @param _properties the properties.
+     * @param props the properties.
      */
-    public MahoutRecommenderRunner(Properties _properties) {
-        super(_properties);
+    public MahoutRecommenderRunner(final Properties props) {
+        super(props);
     }
 
     /**
      * Runs the recommender using models from file.
      *
      * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @return see
+     * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
+     *
+     * @throws RecommenderException when the recommender is instantiated
+     * incorrectly.
      * @throws IOException when paths in property object are incorrect..
      * @throws TasteException when the recommender is instantiated incorrectly
      * or breaks otherwise.
      */
     @Override
-    public net.recommenders.rival.core.DataModel<Long, Long> run(RUN_OPTIONS opts) throws RecommenderException, TasteException, IOException {
-        if (alreadyRecommended) {
+    public net.recommenders.rival.core.DataModel<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException, TasteException, IOException {
+        if (isAlreadyRecommended()) {
             return null;
         }
-        DataModel trainingModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.trainingSet)));
-        DataModel testModel = new FileDataModel(new File(properties.getProperty(RecommendationRunner.testSet)));
+        DataModel trainingModel = new FileDataModel(new File(getProperties().getProperty(RecommendationRunner.TRAINING_SET)));
+        DataModel testModel = new FileDataModel(new File(getProperties().getProperty(RecommendationRunner.TEST_SET)));
         return runMahoutRecommender(opts, trainingModel, testModel);
     }
 
@@ -77,7 +82,8 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
      * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
      * @param testModel model to be used to test the recommender.
-     * @return see {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
+     * @return see
+     * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
      * @throws RecommenderException see
      * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS,
      * org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
@@ -86,8 +92,11 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
      * org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
      */
     @Override
-    public net.recommenders.rival.core.DataModel<Long, Long> run(RUN_OPTIONS opts, net.recommenders.rival.core.DataModel<Long, Long> trainingModel, net.recommenders.rival.core.DataModel<Long, Long> testModel) throws RecommenderException, TasteException {
-        if (alreadyRecommended) {
+    public net.recommenders.rival.core.DataModel<Long, Long> run(final RUN_OPTIONS opts,
+            final net.recommenders.rival.core.DataModel<Long, Long> trainingModel,
+            final net.recommenders.rival.core.DataModel<Long, Long> testModel)
+            throws RecommenderException, TasteException {
+        if (isAlreadyRecommended()) {
             return null;
         }
         // transform from core's DataModels to Mahout's DataModels
@@ -113,27 +122,37 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
      * @throws RecommenderException when recommender cannot be instantiated
      * properly
      */
-    public net.recommenders.rival.core.DataModel<Long, Long> runMahoutRecommender(RUN_OPTIONS opts, DataModel trainingModel, DataModel testModel) throws RecommenderException, TasteException {
-        if (alreadyRecommended) {
+    public net.recommenders.rival.core.DataModel<Long, Long> runMahoutRecommender(final RUN_OPTIONS opts, final DataModel trainingModel, final DataModel testModel)
+            throws RecommenderException, TasteException {
+        if (isAlreadyRecommended()) {
             return null;
         }
 
         GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
 
-        if (properties.containsKey(RecommendationRunner.neighborhood) && properties.getProperty(RecommendationRunner.neighborhood).equals("-1")) {
-            properties.setProperty(RecommendationRunner.neighborhood, Math.round(Math.sqrt(trainingModel.getNumItems())) + "");
+        if (getProperties().containsKey(RecommendationRunner.NEIGHBORHOOD) && getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD).equals("-1")) {
+            getProperties().setProperty(RecommendationRunner.NEIGHBORHOOD, Math.round(Math.sqrt(trainingModel.getNumItems())) + "");
         }
-        if (properties.containsKey(RecommendationRunner.factors) && properties.getProperty(RecommendationRunner.factors).equals("-1")) {
-            properties.setProperty(RecommendationRunner.factors, Math.round(Math.sqrt(trainingModel.getNumItems())) + "");
+        if (getProperties().containsKey(RecommendationRunner.FACTORS) && getProperties().getProperty(RecommendationRunner.FACTORS).equals("-1")) {
+            getProperties().setProperty(RecommendationRunner.FACTORS, Math.round(Math.sqrt(trainingModel.getNumItems())) + "");
         }
 
 
         Recommender recommender = null;
-        if (properties.getProperty(RecommendationRunner.factors) == null) {
-            recommender = grb.buildRecommender(trainingModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.similarity), Integer.parseInt(properties.getProperty(RecommendationRunner.neighborhood)));
+        if (getProperties().getProperty(RecommendationRunner.FACTORS) == null) {
+            recommender = grb.buildRecommender(
+                    trainingModel,
+                    getProperties().getProperty(RecommendationRunner.RECOMMENDER),
+                    getProperties().getProperty(RecommendationRunner.SIMILARITY),
+                    Integer.parseInt(getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD)));
         }
-        if (properties.getProperty(RecommendationRunner.factors) != null) {
-            recommender = grb.buildRecommender(trainingModel, properties.getProperty(RecommendationRunner.recommender), properties.getProperty(RecommendationRunner.factorizer), DEFAULT_ITERATIONS, Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
+        if (getProperties().getProperty(RecommendationRunner.FACTORS) != null) {
+            recommender = grb.buildRecommender(
+                    trainingModel,
+                    getProperties().getProperty(RecommendationRunner.RECOMMENDER),
+                    getProperties().getProperty(RecommendationRunner.FACTORIZER),
+                    DEFAULT_ITERATIONS,
+                    Integer.parseInt(getProperties().getProperty(RecommendationRunner.FACTORS)));
         }
 
         LongPrimitiveIterator users = testModel.getUserIDs();
@@ -151,7 +170,7 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case OUTPUT_RECS:
-                name = fileName;
+                name = getFileName();
                 break;
             default:
                 name = null;
@@ -161,7 +180,7 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
             long u = users.nextLong();
             try {
                 List<RecommendedItem> items = recommender.recommend(u, trainingModel.getNumItems());
-                RecommenderIO.writeData(u, items, path, name, !createFile, model);
+                RecommenderIO.writeData(u, items, getPath(), name, !createFile, model);
                 createFile = false;
             } catch (TasteException e) {
                 e.printStackTrace();

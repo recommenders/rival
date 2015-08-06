@@ -46,7 +46,7 @@ public class DataModel<U, I> {
     private Map<U, Map<I, Set<Long>>> userItemTimestamps;
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public DataModel() {
         this(new HashMap<U, Map<I, Double>>(), new HashMap<I, Map<U, Double>>(), new HashMap<U, Map<I, Set<Long>>>());
@@ -55,15 +55,16 @@ public class DataModel<U, I> {
     /**
      * Constructor with parameters.
      *
-     * @param userItemPreferences The preference map between users and items.
-     * @param itemUserPreferences The preference map between items and users.
-     * @param userItemTimestamps The map with the timestamps between users and
+     * @param userItemPreference The preference map between users and items.
+     * @param itemUserPreference The preference map between items and users.
+     * @param userItemTimestamp The map with the timestamps between users and
      * items
      */
-    public DataModel(Map<U, Map<I, Double>> userItemPreferences, Map<I, Map<U, Double>> itemUserPreferences, Map<U, Map<I, Set<Long>>> userItemTimestamps) {
-        this.userItemPreferences = userItemPreferences;
-        this.itemUserPreferences = itemUserPreferences;
-        this.userItemTimestamps = userItemTimestamps;
+    public DataModel(final Map<U, Map<I, Double>> userItemPreference, final Map<I, Map<U, Double>> itemUserPreference,
+            final Map<U, Map<I, Set<Long>>> userItemTimestamp) {
+        this.userItemPreferences = userItemPreference;
+        this.itemUserPreferences = itemUserPreference;
+        this.userItemTimestamps = userItemTimestamp;
     }
 
     /**
@@ -100,7 +101,7 @@ public class DataModel<U, I> {
      * @param i the item.
      * @param d the preference.
      */
-    public void addPreference(U u, I i, Double d) {
+    public void addPreference(final U u, final I i, final Double d) {
         // update direct map
         Map<I, Double> userPreferences = userItemPreferences.get(u);
         if (userPreferences == null) {
@@ -129,7 +130,7 @@ public class DataModel<U, I> {
      * @param i the item.
      * @param t the timestamp.
      */
-    public void addTimestamp(U u, I i, Long t) {
+    public void addTimestamp(final U u, final I i, final Long t) {
         Map<I, Set<Long>> userTimestamps = userItemTimestamps.get(u);
         if (userTimestamps == null) {
             userTimestamps = new HashMap<I, Set<Long>>();

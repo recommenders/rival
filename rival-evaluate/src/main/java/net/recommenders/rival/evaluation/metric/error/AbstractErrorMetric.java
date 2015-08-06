@@ -36,56 +36,76 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
 
     /**
      * Type of error strategy: what to do when there is no predicted rating but
-     * there is groundtruth information
+     * there is groundtruth information.
      */
     public static enum ErrorStrategy {
 
+        /**
+         * Consider every rating (also those with no prediction).
+         */
         CONSIDER_EVERYTHING,
+        /**
+         * Only consider valid predictions.
+         */
         NOT_CONSIDER_NAN,
+        /**
+         * Take unpredicted values as 0.
+         */
         CONSIDER_NAN_AS_0,
+        /**
+         * Take unpredicted values as 1.
+         */
         CONSIDER_NAN_AS_1,
+        /**
+         * Take unpredicted values as 3.
+         */
         CONSIDER_NAN_AS_3;
     }
     /**
-     * Global value
+     * For coverage.
      */
-    protected double value;
+    private int emptyUsers;
     /**
-     * For coverage
+     * For coverage.
      */
-    protected int emptyUsers;
-    /**
-     * For coverage
-     */
-    protected int emptyItems;
+    private int emptyItems;
     /**
      * Strategy to decide what to do when there is no predicted value for a user
-     * and item contained in the test set
+     * and item contained in the test set.
      */
-    protected ErrorStrategy strategy;
+    private ErrorStrategy strategy;
 
     /**
-     * Default constructor with predictions and groundtruth information
+     * Default constructor with predictions and groundtruth information.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public AbstractErrorMetric(DataModel<U, I> predictions, DataModel<U, I> test) {
+    public AbstractErrorMetric(final DataModel<U, I> predictions, final DataModel<U, I> test) {
         this(predictions, test, ErrorStrategy.NOT_CONSIDER_NAN);
     }
 
     /**
-     * Constructor where the error strategy can be initialized
+     * Constructor where the error strategy can be initialized.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
-     * @param strategy the error strategy
+     * @param errorStrategy the error strategy
      */
-    public AbstractErrorMetric(DataModel<U, I> predictions, DataModel<U, I> test, ErrorStrategy strategy) {
+    public AbstractErrorMetric(final DataModel<U, I> predictions, final DataModel<U, I> test, final ErrorStrategy errorStrategy) {
         super(predictions, test);
 
-        this.value = Double.NaN;
-        this.strategy = strategy;
+        setValue(Double.NaN);
+        this.strategy = errorStrategy;
+    }
+
+    /**
+     * Gets the error strategy. See {@link ErrorStrategy}.
+     *
+     * @return the error strategy
+     */
+    protected ErrorStrategy getStrategy() {
+        return strategy;
     }
 
     /**
@@ -96,13 +116,13 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
      */
     public Map<U, List<Double>> processDataAsPredictedDifferencesToTest() {
         Map<U, List<Double>> data = new HashMap<U, List<Double>>();
-        Map<U, Map<I, Double>> actualRatings = test.getUserItemPreferences();
-        Map<U, Map<I, Double>> predictedRatings = predictions.getUserItemPreferences();
+        Map<U, Map<I, Double>> actualRatings = getTest().getUserItemPreferences();
+        Map<U, Map<I, Double>> predictedRatings = getPredictions().getUserItemPreferences();
 
         emptyItems = 0;
         emptyUsers = 0;
 
-        for (U testUser : test.getUsers()) {
+        for (U testUser : getTest().getUsers()) {
             Map<I, Double> ratings = actualRatings.get(testUser);
             List<Double> userData = data.get(testUser);
             if (userData == null) {
@@ -136,15 +156,17 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
 
     /**
      * Method that returns an estimated preference according to a given value
-     * and an error strategy
+     * and an error strategy.
      *
-     * @param strategy the error strategy
+     * @param errorStrategy the error strategy
      * @param recValue the predicted value by the recommender
      * @return an estimated preference according to the provided strategy
      */
-    public static double considerEstimatedPreference(ErrorStrategy strategy, double recValue) {
+    public static double considerEstimatedPreference(final ErrorStrategy errorStrategy, final double recValue) {
         boolean consider = true;
-        switch (strategy) {
+        double v = recValue;
+        switch (errorStrategy) {
+            default:
             case CONSIDER_EVERYTHING:
                 break;
             case NOT_CONSIDER_NAN:
@@ -152,32 +174,24 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
                 break;
             case CONSIDER_NAN_AS_0:
                 if (Double.isNaN(recValue)) {
-                    recValue = 0.0;
+                    v = 0.0;
                 }
                 break;
             case CONSIDER_NAN_AS_1:
                 if (Double.isNaN(recValue)) {
-                    recValue = 1.0;
+                    v = 1.0;
                 }
                 break;
             case CONSIDER_NAN_AS_3:
                 if (Double.isNaN(recValue)) {
-                    recValue = 3.0;
+                    v = 3.0;
                 }
                 break;
         }
         if (consider) {
-            return recValue;
+            return v;
         } else {
             return Double.NaN;
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public double getValue() {
-        return value;
     }
 }

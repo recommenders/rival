@@ -45,7 +45,7 @@ public class ConfidenceInterval {
      * @return array with the confidence intervals: for each system provided, a
      * confidence interval is computed
      */
-    public <V> double[][] getConfidenceInterval(double alpha, Map<V, Double>[] metricValuesPerDimension) {
+    public <V> double[][] getConfidenceInterval(final double alpha, final Map<V, Double>[] metricValuesPerDimension) {
         Map<Integer, Double> systemMeans = new HashMap<Integer, Double>();
         Map<V, Double> dimensionSum = new HashMap<V, Double>();
         Map<V, Integer> dimensionN = new HashMap<V, Integer>();
@@ -122,7 +122,7 @@ public class ConfidenceInterval {
      * @return array with the confidence interval: [mean - margin of error, mean
      * + margin of error]
      */
-    public <V> double[] getConfidenceInterval(double alpha, Map<V, Double> baselineMetricPerDimension, Map<V, Double> testMetricPerDimension, boolean pairedSamples) {
+    public <V> double[] getConfidenceInterval(final double alpha, final Map<V, Double> baselineMetricPerDimension, final Map<V, Double> testMetricPerDimension, final boolean pairedSamples) {
         if (pairedSamples) {
             Set<V> overlap = new HashSet<V>(baselineMetricPerDimension.keySet());
             overlap.retainAll(testMetricPerDimension.keySet());
@@ -145,7 +145,10 @@ public class ConfidenceInterval {
                 statsTest.addValue(d);
             }
             long dfT = statsBaseline.getN() + statsTest.getN() - 2;
-            double sDif = Math.sqrt((1.0 / statsBaseline.getN() + 1.0 / statsTest.getN()) * (statsBaseline.getVariance() * (statsBaseline.getN() - 1) + statsTest.getVariance() * (statsTest.getN() - 1)));
+            double sDif = Math.sqrt((1.0 / statsBaseline.getN() + 1.0 / statsTest.getN())
+                    * (statsBaseline.getVariance()
+                    * (statsBaseline.getN() - 1) + statsTest.getVariance()
+                    * (statsTest.getN() - 1)));
             double mDif = Math.abs(statsTest.getMean() - statsBaseline.getMean());
             return getConfidenceInterval(alpha, (int) dfT, (int) dfT, sDif, mDif);
         }
@@ -163,7 +166,7 @@ public class ConfidenceInterval {
      * @return array with the confidence interval: [mean - margin of error, mean
      * + margin of error]
      */
-    public double[] getConfidenceInterval(double alpha, Map<?, Double> metricValuesPerDimension) {
+    public double[] getConfidenceInterval(final double alpha, final Map<?, Double> metricValuesPerDimension) {
         SummaryStatistics differences = new SummaryStatistics();
         for (Double d : metricValuesPerDimension.values()) {
             differences.addValue(d);
@@ -172,17 +175,18 @@ public class ConfidenceInterval {
     }
 
     /**
-     * Adapted from https://gist.github.com/gcardone/5536578
+     * Adapted from https://gist.github.com/gcardone/5536578.
      *
      * @param alpha probability of incorrectly rejecting the null hypothesis (1
      * - confidence_level)
+     * @param df degrees of freedom
      * @param n number of observations
      * @param std standard deviation
      * @param mean mean
      * @return array with the confidence interval: [mean - margin of error, mean
      * + margin of error]
      */
-    public static double[] getConfidenceInterval(double alpha, int df, int n, double std, double mean) {
+    public static double[] getConfidenceInterval(final double alpha, final int df, final int n, final double std, final double mean) {
         // Create T Distribution with df degrees of freedom
         TDistribution tDist = new TDistribution(df);
         // Calculate critical value
@@ -196,7 +200,7 @@ public class ConfidenceInterval {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

@@ -29,25 +29,25 @@ import org.apache.commons.math3.stat.inference.WilcoxonSignedRankTest;
 public class StatisticalSignificance {
 
     /**
-     * Baseline metric for each dimension (users)
+     * Baseline metric for each dimension (users).
      */
     private Map<?, Double> baselineMetricPerDimension;
     /**
-     * Test metric for each dimension (users)
+     * Test metric for each dimension (users).
      */
     private Map<?, Double> testMetricPerDimension;
 
     /**
-     * Default constructor
+     * Default constructor.
      *
-     * @param baselineMetricPerDimension map for the baseline method, one value
-     * for each user (dimension)
-     * @param testMetricPerDimension map for the test method, one value for each
-     * user (dimension)
+     * @param theBaselineMetricPerDimension map for the baseline method, one
+     * value for each user (dimension)
+     * @param theTestMetricPerDimension map for the test method, one value for
+     * each user (dimension)
      */
-    public StatisticalSignificance(Map<?, Double> baselineMetricPerDimension, Map<?, Double> testMetricPerDimension) {
-        this.baselineMetricPerDimension = baselineMetricPerDimension;
-        this.testMetricPerDimension = testMetricPerDimension;
+    public StatisticalSignificance(final Map<?, Double> theBaselineMetricPerDimension, final Map<?, Double> theTestMetricPerDimension) {
+        this.baselineMetricPerDimension = theBaselineMetricPerDimension;
+        this.testMetricPerDimension = theTestMetricPerDimension;
     }
 
     /**
@@ -56,7 +56,7 @@ public class StatisticalSignificance {
      * @param method one of "t", "pairedT", "wilcoxon"
      * @return the p-value according to the requested method
      */
-    public double getPValue(String method) {
+    public double getPValue(final String method) {
         double p = Double.NaN;
 
         double[] baselineValues = new double[baselineMetricPerDimension.values().size()];
@@ -85,7 +85,7 @@ public class StatisticalSignificance {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

@@ -34,40 +34,40 @@ import net.recommenders.rival.evaluation.Pair;
 public class Precision<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
     /**
-     * Precision values per user at each cutoff level
+     * Precision values per user at each cutoff level.
      */
     private Map<Integer, Map<U, Double>> userPrecAtCutoff;
 
     /**
-     * Default constructor with predictions and groundtruth information
+     * Default constructor with predictions and groundtruth information.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public Precision(DataModel<U, I> predictions, DataModel<U, I> test) {
+    public Precision(final DataModel<U, I> predictions, final DataModel<U, I> test) {
         this(predictions, test, 1.0);
     }
 
     /**
-     * Constructor where the relevance threshold can be initialized
+     * Constructor where the relevance threshold can be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public Precision(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold) {
+    public Precision(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
     /**
-     * Constructor where the cutoff levels can be initialized
+     * Constructor where the cutoff levels can be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      * @param ats cutoffs
      */
-    public Precision(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats) {
+    public Precision(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final int[] ats) {
         super(predictions, test, relThreshold, ats);
     }
 
@@ -77,14 +77,14 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
      */
     @Override
     public void compute() {
-        if (!Double.isNaN(value)) {
+        if (!Double.isNaN(getValue())) {
             // since the data cannot change, avoid re-doing the calculations
             return;
         }
-        value = 0.0;
+        iniCompute();
+
         Map<U, List<Pair<I, Double>>> data = processDataAsRankedTestRelevance();
         userPrecAtCutoff = new HashMap<Integer, Map<U, Double>>();
-        metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
         for (Map.Entry<U, List<Pair<I, Double>>> e : data.entrySet()) {
@@ -97,7 +97,7 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
                 rank++;
                 uprec += computeBinaryPrecision(rel);
                 // compute at a particular cutoff
-                for (int at : ats) {
+                for (int at : getCutoffs()) {
                     if (rank == at) {
                         Map<U, Double> m = userPrecAtCutoff.get(at);
                         if (m == null) {
@@ -110,7 +110,7 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
             }
             // DO NOT assign the precision of the whole list to those cutoffs larger than the list's size
             // instead, we fill with not relevant items until such cutoff
-            for (int at : ats) {
+            for (int at : getCutoffs()) {
                 if (rank <= at) {
                     Map<U, Double> m = userPrecAtCutoff.get(at);
                     if (m == null) {
@@ -123,12 +123,12 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
             // normalize by list size
             uprec /= rank;
             if (!Double.isNaN(uprec)) {
-                value += uprec;
-                metricPerUser.put(user, uprec);
+                setValue(getValue() + uprec);
+                getMetricPerUser().put(user, uprec);
                 nUsers++;
             }
         }
-        value = value / nUsers;
+        setValue(getValue() / nUsers);
     }
 
     /**
@@ -138,7 +138,7 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
      * @return the precision corresponding to the requested cutoff level
      */
     @Override
-    public double getValueAt(int at) {
+    public double getValueAt(final int at) {
         if (userPrecAtCutoff.containsKey(at)) {
             int n = 0;
             double prec = 0.0;
@@ -149,7 +149,11 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
                     n++;
                 }
             }
-            prec = (n == 0) ? 0.0 : prec / n;
+            if (n == 0) {
+                prec = 0.0;
+            } else {
+                prec = prec / n;
+            }
             return prec;
         }
         return Double.NaN;
@@ -165,7 +169,7 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
      * level
      */
     @Override
-    public double getValueAt(U user, int at) {
+    public double getValueAt(final U user, final int at) {
         if (userPrecAtCutoff.containsKey(at) && userPrecAtCutoff.get(at).containsKey(user)) {
             return userPrecAtCutoff.get(at).get(user);
         }
@@ -173,10 +177,10 @@ public class Precision<U, I> extends AbstractRankingMetric<U, I> implements Eval
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "Precision_" + relevanceThreshold;
+        return "Precision_" + getRelevanceThreshold();
     }
 }

@@ -42,20 +42,20 @@ public class DataDownloader {
     /**
      * Default constructor.
      *
-     * @param url the URL from where the file will be downloaded
-     * @param folder the folder where the file will be uncompressed
+     * @param theUrl the URL from where the file will be downloaded
+     * @param theFolder the folder where the file will be uncompressed
      */
-    public DataDownloader(String url, String folder) {
-        this.url = url;
-        this.folder = folder;
+    public DataDownloader(final String theUrl, final String theFolder) {
+        this.url = theUrl;
+        this.folder = theFolder;
     }
 
     /**
-     * Main method
+     * Main method.
      *
      * @param args argument (not used)
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
         String folder = "data3/ml-100k";
         DataDownloader dd = new DataDownloader(url, folder);

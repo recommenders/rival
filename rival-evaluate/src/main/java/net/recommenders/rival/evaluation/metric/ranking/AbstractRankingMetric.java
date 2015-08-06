@@ -39,52 +39,57 @@ import java.util.Map;
 public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> implements EvaluationMetric<U> {
 
     /**
-     * Global metric value
+     * Array of cutoff levels.
      */
-    protected double value;
+    private int[] ats;
     /**
-     * Array of cutoff levels
+     * Relevance threshold.
      */
-    protected int[] ats;
-    /**
-     * Relevance threshold
-     */
-    protected double relevanceThreshold;
+    private double relevanceThreshold;
 
     /**
-     * Default constructor with predictions and groundtruth information
+     * Default constructor with predictions and groundtruth information.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public AbstractRankingMetric(DataModel<U, I> predictions, DataModel<U, I> test) {
+    public AbstractRankingMetric(final DataModel<U, I> predictions, final DataModel<U, I> test) {
         this(predictions, test, 1.0);
     }
 
     /**
-     * Constructor where the relevance threshold can be initialized
+     * Constructor where the relevance threshold can be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public AbstractRankingMetric(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold) {
+    public AbstractRankingMetric(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
     /**
-     * Constructor where the cutoff levels can be initialized
+     * Constructor where the cutoff levels can be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
-     * @param ats cutoffs
+     * @param cutoffLevels cutoffs
      * @param relThreshold relevance threshold
      */
-    public AbstractRankingMetric(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats) {
+    public AbstractRankingMetric(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final int[] cutoffLevels) {
         super(predictions, test);
-        this.value = Double.NaN;
-        this.ats = Arrays.copyOf(ats, ats.length);
+        setValue(Double.NaN);
+        this.ats = Arrays.copyOf(cutoffLevels, cutoffLevels.length);
         this.relevanceThreshold = relThreshold;
+    }
+
+    /**
+     * Gets the relevance threshold.
+     *
+     * @return the relevance threshold
+     */
+    protected double getRelevanceThreshold() {
+        return relevanceThreshold;
     }
 
     /**
@@ -96,10 +101,10 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
     public Map<U, List<Pair<I, Double>>> processDataAsRankedTestRelevance() {
         Map<U, List<Pair<I, Double>>> data = new HashMap<U, List<Pair<I, Double>>>();
 
-        Map<U, Map<I, Double>> predictedRatings = predictions.getUserItemPreferences();
-        for (U testUser : test.getUsers()) {
+        Map<U, Map<I, Double>> predictedRatings = getPredictions().getUserItemPreferences();
+        for (U testUser : getTest().getUsers()) {
             Map<I, Double> userPredictedRatings = predictedRatings.get(testUser);
-            Map<I, Double> userRelevance = test.getUserItemPreferences().get(testUser);
+            Map<I, Double> userRelevance = getTest().getUserItemPreferences().get(testUser);
             if (userPredictedRatings != null) {
                 List<Pair<I, Double>> rankedTestRel = new ArrayList<Pair<I, Double>>();
                 for (I item : rankItems(userPredictedRatings)) {
@@ -117,15 +122,15 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
 
     /**
      * Method that computes the number of relevant items in the test set for a
-     * user
+     * user.
      *
      * @param user a user
      * @return the number of relevant items the user has in the test set
      */
-    protected double getNumberOfRelevantItems(U user) {
+    protected double getNumberOfRelevantItems(final U user) {
         int n = 0;
-        if (test.getUserItemPreferences().containsKey(user)) {
-            for (Map.Entry<I, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
+        if (getTest().getUserItemPreferences().containsKey(user)) {
+            for (Map.Entry<I, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
                 if (e.getValue() >= relevanceThreshold) {
                     n++;
                 }
@@ -141,7 +146,7 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      * @param rel the item's relevance
      * @return the binary precision of the item
      */
-    protected double computeBinaryPrecision(double rel) {
+    protected double computeBinaryPrecision(final double rel) {
         double prec = 0.0;
         if (rel >= relevanceThreshold) {
             prec = 1.0;
@@ -152,17 +157,11 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
     /**
      * Returns the array of cutoff levels where this metric has computed values
      * at.
+     *
+     * @return the array of cutoff levels
      */
     public int[] getCutoffs() {
         return ats;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public double getValue() {
-        return value;
     }
 
     /**
@@ -171,7 +170,7 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      * @param at cutoff level
      * @return the metric corresponding to the requested cutoff level
      */
-    public abstract double getValueAt(int at);
+    public abstract double getValueAt(final int at);
 
     /**
      * Method to return the metric value at a particular cutoff level for a
@@ -182,5 +181,5 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      * @return the metric corresponding to the requested user at the cutoff
      * level
      */
-    public abstract double getValueAt(U user, int at);
+    public abstract double getValueAt(final U user, final int at);
 }

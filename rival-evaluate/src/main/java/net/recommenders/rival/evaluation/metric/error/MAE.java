@@ -33,23 +33,23 @@ import java.util.Map;
 public class MAE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMetric<U> {
 
     /**
-     * Default constructor with predictions and groundtruth information
+     * Default constructor with predictions and groundtruth information.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public MAE(DataModel<U, I> predictions, DataModel<U, I> test) {
+    public MAE(final DataModel<U, I> predictions, final DataModel<U, I> test) {
         super(predictions, test);
     }
 
     /**
-     * Constructor where the error strategy can be initialized
+     * Constructor where the error strategy can be initialized.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      * @param errorStrategy the error strategy
      */
-    public MAE(DataModel<U, I> predictions, DataModel<U, I> test, ErrorStrategy errorStrategy) {
+    public MAE(final DataModel<U, I> predictions, final DataModel<U, I> test, final ErrorStrategy errorStrategy) {
         super(predictions, test, errorStrategy);
     }
 
@@ -60,14 +60,16 @@ public class MAE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMe
      */
     @Override
     public void compute() {
-        if (!Double.isNaN(value)) {
+        if (!Double.isNaN(getValue())) {
             // since the data cannot change, avoid re-doing the calculations
             return;
         }
+        iniCompute();
+
         Map<U, List<Double>> data = processDataAsPredictedDifferencesToTest();
-        value = 0.0;
+
         int testItems = 0;
-        for (U testUser : test.getUsers()) {
+        for (U testUser : getTest().getUsers()) {
             int userItems = 0;
             double ume = 0.0;
 
@@ -79,18 +81,26 @@ public class MAE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMe
             }
 
             testItems += userItems;
-            value += ume;
-            ume = (userItems == 0) ? Double.NaN : ume / userItems;
-            metricPerUser.put(testUser, ume);
+            setValue(getValue() + ume);
+            if (userItems == 0) {
+                ume = Double.NaN;
+            } else {
+                ume = ume / userItems;
+            }
+            getMetricPerUser().put(testUser, ume);
         }
-        value = (testItems == 0) ? Double.NaN : value / testItems;
+        if (testItems == 0) {
+            setValue(Double.NaN);
+        } else {
+            setValue(getValue() / testItems);
+        }
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "MAE_" + strategy;
+        return "MAE_" + getStrategy();
     }
 }

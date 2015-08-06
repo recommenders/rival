@@ -32,16 +32,16 @@ public class AbstractLastfmCelmaParser {
      * A flag that indicates if the artists should be considered as the items
      * (instead of tracks).
      */
-    protected boolean useArtists;
+    private boolean useArtists;
 
     /**
      * Default constructor.
      *
-     * @param useArtists Flag to consider artists as the items (instead of
+     * @param useTheArtists Flag to consider artists as the items (instead of
      * tracks).
      */
-    public AbstractLastfmCelmaParser(boolean useArtists) {
-        this.useArtists = useArtists;
+    public AbstractLastfmCelmaParser(final boolean useTheArtists) {
+        this.useArtists = useTheArtists;
     }
 
     /**
@@ -53,7 +53,7 @@ public class AbstractLastfmCelmaParser {
      * @return The largest id number.
      * @throws IOException if file does not exist.
      */
-    public static long getIndexMap(File in, Map<String, Long> map) throws IOException {
+    public static long getIndexMap(final File in, final Map<String, Long> map) throws IOException {
         long id = 0;
         if (in.exists()) {
             BufferedReader br = SimpleParser.getBufferedReader(in);
@@ -67,5 +67,15 @@ public class AbstractLastfmCelmaParser {
             br.close();
         }
         return id + 1;
+    }
+
+    /**
+     * Gets the value of the flag indicating if the artists should be considered
+     * as items (instead of tracks).
+     *
+     * @return the flag
+     */
+    protected boolean isUseArtists() {
+        return useArtists;
     }
 }

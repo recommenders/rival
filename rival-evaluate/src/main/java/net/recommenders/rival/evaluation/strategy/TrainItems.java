@@ -27,6 +27,8 @@ import net.recommenders.rival.core.DataModel;
 public class TrainItems extends AbstractStrategy {
 
     /**
+     * Default constructor.
+     *
      * @see
      * AbstractStrategy#AbstractStrategy(net.recommenders.rival.core.DataModel,
      * net.recommenders.rival.core.DataModel, double)
@@ -35,23 +37,23 @@ public class TrainItems extends AbstractStrategy {
      * @param test The test set.
      * @param threshold The relevance threshold.
      */
-    public TrainItems(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
+    public TrainItems(final DataModel<Long, Long> training, final DataModel<Long, Long> test, final double threshold) {
         super(training, test, threshold);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public Set<Long> getCandidateItemsToRank(Long user) {
-        return getModelTrainingDifference(training, user);
+    public Set<Long> getCandidateItemsToRank(final Long user) {
+        return getModelTrainingDifference(getTraining(), user);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "TrainItems_" + threshold;
+        return "TrainItems_" + getThreshold();
     }
 }

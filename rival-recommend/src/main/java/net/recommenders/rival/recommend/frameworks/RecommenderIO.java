@@ -31,7 +31,13 @@ import net.recommenders.rival.core.DataModel;
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public class RecommenderIO {
+public final class RecommenderIO {
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private RecommenderIO() {
+    }
 
     /**
      * Write recommendations to file.
@@ -46,7 +52,7 @@ public class RecommenderIO {
      * @param model if not null, recommendations will be saved here
      * @param <T> type of recommendations
      */
-    public static <T> void writeData(long user, List<T> recommendations, String path, String fileName, boolean append, DataModel<Long, Long> model) {
+    public static <T> void writeData(final long user, final List<T> recommendations, final String path, final String fileName, final boolean append, final DataModel<Long, Long> model) {
         BufferedWriter out = null;
         try {
             File dir = null;

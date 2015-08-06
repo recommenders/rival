@@ -40,43 +40,61 @@ public class RelPlusN extends AbstractStrategy {
      * The number of additional non-relevant items to be considered as
      * candidates.
      */
-    protected int N;
+    private int n;
     /**
      * An instance of the Random class.
      */
-    protected Random rnd;
+    private Random rnd;
 
     /**
      * Default constructor for the strategy.
      *
      * @param training The training data model.
      * @param test The test data model.
-     * @param N The N (as described by Cremonesi et al.)
+     * @param theN The N (as described by Cremonesi et al.)
      * @param threshold The relevance threshold.
      * @param seed Randomization seed.
      */
-    public RelPlusN(DataModel<Long, Long> training, DataModel<Long, Long> test, int N, double threshold, long seed) {
+    public RelPlusN(final DataModel<Long, Long> training, final DataModel<Long, Long> test, final int theN, final double threshold, final long seed) {
         super(training, test, threshold);
-        this.N = N;
+        this.n = theN;
 
         rnd = new Random(seed);
     }
 
     /**
-     * @inheritDoc
+     * Gets the number of additional non-relevant items to be considered.
+     *
+     * @return the number of additional non-relevant items
+     */
+    protected int getN() {
+        return n;
+    }
+
+    /**
+     * Gets the random class.
+     *
+     * @return the random class
+     */
+    protected Random getRnd() {
+        return rnd;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public Set<Long> getCandidateItemsToRank(Long user) {
-        final Set<Long> allItems = getModelTrainingDifference(training, user);
-        allItems.addAll(getModelTrainingDifference(test, user));
+    public Set<Long> getCandidateItemsToRank(final Long user) {
+        final Set<Long> allItems = getModelTrainingDifference(getTraining(), user);
+        allItems.addAll(getModelTrainingDifference(getTest(), user));
         // return only N not relevant items
         List<Long> shuffledItems = new ArrayList<Long>(allItems);
         Collections.shuffle(shuffledItems, rnd);
-        shuffledItems = shuffledItems.subList(0, Math.min(shuffledItems.size(), N));
+        shuffledItems = shuffledItems.subList(0, Math.min(shuffledItems.size(), n));
         final Set<Long> items = new HashSet<Long>(shuffledItems);
         // add relevant ones
-        for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
-            if (e.getValue() >= threshold) {
+        for (Entry<Long, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
+            if (e.getValue() >= getThreshold()) {
                 items.add(e.getKey());
             }
         }
@@ -84,13 +102,13 @@ public class RelPlusN extends AbstractStrategy {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public void printRanking(Long user, List<Pair<Long, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
+    public void printRanking(final Long user, final List<Pair<Long, Double>> scoredItems, final PrintStream out, final OUTPUT_FORMAT format) {
         final Set<Long> relItems = new HashSet<Long>();
-        for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
-            if (e.getValue() >= threshold) {
+        for (Entry<Long, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
+            if (e.getValue() >= getThreshold()) {
                 relItems.add(e.getKey());
             }
         }
@@ -112,12 +130,12 @@ public class RelPlusN extends AbstractStrategy {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public void printGroundtruth(Long user, PrintStream out, OUTPUT_FORMAT format) {
-        for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
-            if (e.getValue() >= threshold) {
+    public void printGroundtruth(final Long user, final PrintStream out, final OUTPUT_FORMAT format) {
+        for (Entry<Long, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
+            if (e.getValue() >= getThreshold()) {
                 final Map<Long, Double> tmp = new HashMap<Long, Double>();
                 tmp.put(e.getKey(), e.getValue());
                 printGroundtruth(user + "_" + e.getKey(), tmp, out, format);
@@ -126,10 +144,10 @@ public class RelPlusN extends AbstractStrategy {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "RelPlusN_" + N + "_" + threshold;
+        return "RelPlusN_" + n + "_" + getThreshold();
     }
 }

@@ -49,28 +49,28 @@ public class RandomSplitter implements Splitter<Long, Long> {
     private Random rnd;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param percentageTraining percentage of training data to be split
-     * @param perUser flag to do the split in a per user basis
+     * @param percentageTrainingRatio percentage of training data to be split
+     * @param perUserFlag flag to do the split in a per user basis
      * @param seed value to initialize a Random class
-     * @param doSplitPerItems if true, every interaction between a user and a
-     * specific item is considered as one, and hence all of them will be either
-     * on the training or on the test split
+     * @param doSplitPerItemsFlag if true, every interaction between a user and
+     * a specific item is considered as one, and hence all of them will be
+     * either on the training or on the test split
      */
-    public RandomSplitter(float percentageTraining, boolean perUser, long seed, boolean doSplitPerItems) {
-        this.percentageTraining = percentageTraining;
-        this.perUser = perUser;
-        this.doSplitPerItems = doSplitPerItems;
+    public RandomSplitter(final float percentageTrainingRatio, final boolean perUserFlag, final long seed, final boolean doSplitPerItemsFlag) {
+        this.percentageTraining = percentageTrainingRatio;
+        this.perUser = perUserFlag;
+        this.doSplitPerItems = doSplitPerItemsFlag;
 
         rnd = new Random(seed);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
+    public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
         @SuppressWarnings("unchecked")
         final DataModel<Long, Long>[] splits = new DataModel[2];
         splits[0] = new DataModel<Long, Long>(); // training

@@ -32,23 +32,50 @@ import java.util.Set;
 /**
  *
  * Runner of methods to compute whether the evaluation measures are
- * statistically significant
+ * statistically significant.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class StatisticsRunner {
+public final class StatisticsRunner {
 
     /**
-     * Variables that represent the name of several properties in the file.
+     * Variable that represents the name of a property in the file.
      */
     public static final String BASELINE_FILE = "algorithm.baseline.file";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String TEST_METHODS_FILES = "algorithm.methods.files";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String INPUT_FORMAT = "input.format.statistics";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_OVERWRITE = "output.overwrite.statistics";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_FILE = "output.file.statistics";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String STATISTICS = "statistics.functions";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String ALPHA = "statistics.alpha";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String AVOID_USERS = "statistics.users_to_avoid";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private StatisticsRunner() {
+    }
 
     /**
      * Main method for running a single evaluation strategy.
@@ -56,7 +83,7 @@ public class StatisticsRunner {
      * @param args Arguments.
      * @throws Exception If file not found.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
         final Properties properties = new Properties();
@@ -76,9 +103,8 @@ public class StatisticsRunner {
      *
      * @param properties The properties to be executed.
      * @throws IOException when a file cannot be parsed
-     * @throws IllegalArgumentException when some property cannot be parsed
      */
-    public static void run(Properties properties) throws IOException, IllegalArgumentException {
+    public static void run(final Properties properties) throws IOException {
         // read parameters for output (do this at the beginning to avoid unnecessary reading)
         File outputFile = new File(properties.getProperty(OUTPUT_FILE));
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "false"));
@@ -105,14 +131,15 @@ public class StatisticsRunner {
             if (methodFiles.length < 1) {
                 throw new IllegalArgumentException("At least one test file should be provided!");
             }
-            Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues = new HashMap();
+            Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues = new HashMap<String, Map<String, Map<String, Double>>>();
             for (String m : methodFiles) {
                 File file = new File(m);
                 Map<String, Map<String, Double>> mapMetricUserValues = readMetricFile(file, format, usersToAvoid);
                 methodsMapMetricUserValues.put(m, mapMetricUserValues);
             }
             run(properties, outStatistics, baselineFile.getName(), baselineMapMetricUserValues, methodsMapMetricUserValues);
-        } finally {// close files
+        } finally {
+            // close files
             outStatistics.close();
         }
     }
@@ -130,7 +157,8 @@ public class StatisticsRunner {
      * @param methodsMapMetricUserValues result values for each metric for each
      * recommender that should be compared against the baseline method.
      */
-    public static void run(Properties properties, PrintStream outStatistics, String baselineName, Map<String, Map<String, Double>> baselineMapMetricUserValues, Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues) {
+    public static void run(final Properties properties, final PrintStream outStatistics, final String baselineName,
+            final Map<String, Map<String, Double>> baselineMapMetricUserValues, final Map<String, Map<String, Map<String, Double>>> methodsMapMetricUserValues) {
         // read alpha
         Double alpha = Double.parseDouble(properties.getProperty(ALPHA));
         // for each statistic function, call a different method and produce a different output depending on the number of methods
@@ -208,7 +236,7 @@ public class StatisticsRunner {
      * corresponding metric value.
      * @throws IOException if file cannot be read
      */
-    private static Map<String, Map<String, Double>> readMetricFile(File input, String format, Set<String> usersToAvoid) throws IOException {
+    private static Map<String, Map<String, Double>> readMetricFile(final File input, final String format, final Set<String> usersToAvoid) throws IOException {
         Map<String, Map<String, Double>> mapMetricUserValue = new HashMap<String, Map<String, Double>>();
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(input), "UTF-8"));
         String line = null;
@@ -232,7 +260,7 @@ public class StatisticsRunner {
      * @param usersToAvoid User ids to be avoided in the subsequent significance
      * testing (e.g., 'all')
      */
-    public static void readLine(String format, String line, Map<String, Map<String, Double>> mapMetricUserValue, Set<String> usersToAvoid) {
+    public static void readLine(final String format, final String line, final Map<String, Map<String, Double>> mapMetricUserValue, final Set<String> usersToAvoid) {
         String[] toks = line.split("\t");
         // default (also trec_eval) format: metric \t user|all \t value
         if (format.equals("default")) {

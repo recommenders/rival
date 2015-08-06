@@ -31,14 +31,14 @@ public interface EvaluationMetric<V> {
      *
      * @return The overall value of the metric.
      */
-    public double getValue();
+    double getValue();
 
     /**
      * Get the value of the metric on a per-user basis.
      *
      * @return Map containing the values per user.
      */
-    public Map<V, Double> getValuePerUser();
+    Map<V, Double> getValuePerUser();
 
     /**
      * Get the value of the metric for a specific user.
@@ -47,11 +47,11 @@ public interface EvaluationMetric<V> {
      *
      * @return a value for user u.
      */
-    public double getValue(V u);
+    double getValue(V u);
 
     /**
      * Computes the evaluation metric. This method should be called
      * <b>before</b> asking for the values of the metric.
      */
-    public void compute();
+    void compute();
 }

@@ -39,22 +39,58 @@ import net.recommenders.rival.evaluation.Pair;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class StrategyRunnerInfile {
+public final class StrategyRunnerInfile {
 
     /**
-     * Variables that represent the name of several properties in the file.
+     * Variable that represents the name of a property in the file.
      */
     public static final String TRAINING_FILE = "split.training.file";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String TEST_FILE = "split.test.file";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String INPUT_FILE = "recommendation.file";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_FORMAT = "output.format";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_OVERWRITE = "output.overwrite";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_FILE = "output.file.ranking";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String GROUNDTRUTH_FILE = "output.file.groundtruth";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String STRATEGY = "strategy.class";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELEVANCE_THRESHOLD = "strategy.relevance.threshold";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELPLUSN_N = "strategy.relplusn.N";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELPLUSN_SEED = "strategy.relplusn.seed";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private StrategyRunnerInfile() {
+    }
 
     /**
      * Main function. It receives the property file using a system property
@@ -63,7 +99,7 @@ public class StrategyRunnerInfile {
      * @param args (not used)
      * @throws Exception when something goes wrong
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
         final Properties properties = new Properties();
@@ -87,18 +123,15 @@ public class StrategyRunnerInfile {
      * fails
      * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
-     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
-     * fails
      * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
-     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
-     * fails
      */
-    public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static void run(final Properties properties)
+            throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         // read splits
         System.out.println("Parsing started: training file");
         File trainingFile = new File(properties.getProperty(TRAINING_FILE));
@@ -113,16 +146,21 @@ public class StrategyRunnerInfile {
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "false"));
         File rankingFile = new File(properties.getProperty(OUTPUT_FILE));
         File groundtruthFile = new File(properties.getProperty(GROUNDTRUTH_FILE));
-        EvaluationStrategy.OUTPUT_FORMAT format = properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        EvaluationStrategy.OUTPUT_FORMAT format = null;
+        if (properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString())) {
+            format = EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL;
+        } else {
+            format = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        }
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         String strategyClassName = properties.getProperty(STRATEGY);
         Class<?> strategyClass = Class.forName(strategyClassName);
         // get strategy
         EvaluationStrategy<Long, Long> strategy = null;
         if (strategyClassName.contains("RelPlusN")) {
-            Integer N = Integer.parseInt(properties.getProperty(RELPLUSN_N));
+            Integer number = Integer.parseInt(properties.getProperty(RELPLUSN_N));
             Long seed = Long.parseLong(properties.getProperty(RELPLUSN_SEED));
-            strategy = new RelPlusN(trainingModel, testModel, N, threshold, seed);
+            strategy = new RelPlusN(trainingModel, testModel, number, threshold, seed);
         } else {
             Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
             if (strategyObj instanceof EvaluationStrategy) {
@@ -147,10 +185,12 @@ public class StrategyRunnerInfile {
      * @param groundtruthFile The file where the ground truth will be printed
      * @param overwrite The flag that specifies what to do if rankingFile or
      * groundtruthFile already exists
-     * @throws FileNotFoundException when the file cannot be opened
      * @throws IOException when the file cannot be opened
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, IOException {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile,
+            final EvaluationStrategy<Long, Long> strategy, final EvaluationStrategy.OUTPUT_FORMAT format,
+            final File rankingFile, final File groundtruthFile, final Boolean overwrite)
+            throws IOException {
         PrintStream outRanking = null;
         if (rankingFile.exists() && !overwrite) {
             System.out.println("Ignoring " + rankingFile);
@@ -200,7 +240,7 @@ public class StrategyRunnerInfile {
      * @throws IOException when the file cannot be opened
      * @see StrategyIO#readLine(java.lang.String, java.util.Map)
      */
-    public static List<Pair<Long, Double>> readScoredItems(File userRecommendationFile, Long user) throws IOException {
+    public static List<Pair<Long, Double>> readScoredItems(final File userRecommendationFile, final Long user) throws IOException {
         final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations = new HashMap<Long, List<Pair<Long, Double>>>();
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(userRecommendationFile), "UTF-8"));
         try {

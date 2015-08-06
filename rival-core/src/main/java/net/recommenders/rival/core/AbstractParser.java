@@ -23,41 +23,57 @@ package net.recommenders.rival.core;
 public abstract class AbstractParser {
 
     /**
-     * The column index for the user id in the file.
+     * Default for the column index for the user id in the file.
      */
     public static final int USER_TOK = 0;
     /**
-     * The column index for the item id in the file.
+     * Default for the column index for the item id in the file.
      */
     public static final int ITEM_TOK = 1;
     /**
-     * The column index for the interaction value (e.g. rating) in the file.
+     * Default for the column index for the interaction value (e.g. rating) in
+     * the file.
      */
     public static final int PREFERENCE_TOK = 2;
     /**
-     * The column index for the timestamp in the file.
+     * Default for the column index for the timestamp in the file.
      */
     public static final int TIME_TOK = 3;
     /**
-     * Whether the file contains a column header.
+     * Default for whether the file contains a column header.
      */
     public static final boolean HAS_HEADER = false;
     /**
-     * The column delimiter.
+     * Default for the column delimiter.
      */
     public static final char DELIMITER = ',';
     /**
-     * Protected variables
+     * The column index for the user id in the file.
      */
-    protected int userTok;
-    protected int itemTok;
-    protected int prefTok;
-    protected int timeTok;
-    protected boolean hasHeader;
-    protected char delimiter;
+    private int userTok;
+    /**
+     * The column index for the item id in the file.
+     */
+    private int itemTok;
+    /**
+     * The column index for the interaction value (e.g. rating) in the file.
+     */
+    private int prefTok;
+    /**
+     * The column index for the timestamp in the file.
+     */
+    private int timeTok;
+    /**
+     * Whether the file contains a column header.
+     */
+    private boolean hasHeader;
+    /**
+     * The column delimiter.
+     */
+    private char delimiter;
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public AbstractParser() {
         this.userTok = USER_TOK;
@@ -69,7 +85,7 @@ public abstract class AbstractParser {
     }
 
     /**
-     * Gets the delimiter
+     * Gets the delimiter.
      *
      * @return the delimiter
      */
@@ -78,7 +94,7 @@ public abstract class AbstractParser {
     }
 
     /**
-     * Checks if this parser has a header
+     * Checks if this parser has a header.
      *
      * @return true if it has a header
      */
@@ -87,7 +103,7 @@ public abstract class AbstractParser {
     }
 
     /**
-     * Gets the column index for items
+     * Gets the column index for items.
      *
      * @return the column index for items
      */
@@ -96,7 +112,7 @@ public abstract class AbstractParser {
     }
 
     /**
-     * Gets the column index for preferences
+     * Gets the column index for preferences.
      *
      * @return the column index for preferences
      */
@@ -105,7 +121,7 @@ public abstract class AbstractParser {
     }
 
     /**
-     * Gets the column index for time
+     * Gets the column index for time.
      *
      * @return the column index for time
      */
@@ -114,7 +130,7 @@ public abstract class AbstractParser {
     }
 
     /**
-     * Gets the column index for users
+     * Gets the column index for users.
      *
      * @return the column index for users
      */
@@ -123,56 +139,56 @@ public abstract class AbstractParser {
     }
 
     /**
-     * Sets the field delimiter
+     * Sets the field delimiter.
      *
-     * @param delimiter the delimiter between fields
+     * @param del the delimiter between fields
      */
-    public void setDelimiter(char delimiter) {
-        this.delimiter = delimiter;
+    public void setDelimiter(final char del) {
+        this.delimiter = del;
     }
 
     /**
-     * Sets the flag indicating whether the file has a header
+     * Sets the flag indicating whether the file has a header.
      *
-     * @param hasHeader flag indicating whether the file has a header
+     * @param header flag indicating whether the file has a header
      */
-    public void setHasHeader(boolean hasHeader) {
-        this.hasHeader = hasHeader;
+    public void setHasHeader(final boolean header) {
+        this.hasHeader = header;
     }
 
     /**
-     * Sets the column index for items
+     * Sets the column index for items.
      *
-     * @param itemTok the column index for items
+     * @param itemToken the column index for items
      */
-    public void setItemTok(int itemTok) {
-        this.itemTok = itemTok;
+    public void setItemTok(final int itemToken) {
+        this.itemTok = itemToken;
     }
 
     /**
-     * Sets the column index for preferences
+     * Sets the column index for preferences.
      *
-     * @param prefTok the column index for preferences
+     * @param prefToken the column index for preferences
      */
-    public void setPrefTok(int prefTok) {
-        this.prefTok = prefTok;
+    public void setPrefTok(final int prefToken) {
+        this.prefTok = prefToken;
     }
 
     /**
-     * Sets the column index for time
+     * Sets the column index for time.
      *
-     * @param timeTok the column index for time
+     * @param timeToken the column index for time
      */
-    public void setTimeTok(int timeTok) {
-        this.timeTok = timeTok;
+    public void setTimeTok(final int timeToken) {
+        this.timeTok = timeToken;
     }
 
     /**
-     * Sets the column index for users
+     * Sets the column index for users.
      *
-     * @param userTok the column index for users
+     * @param userToken the column index for users
      */
-    public void setUserTok(int userTok) {
-        this.userTok = userTok;
+    public void setUserTok(final int userToken) {
+        this.userTok = userToken;
     }
 }

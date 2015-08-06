@@ -37,27 +37,54 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     /**
      * The training set.
      */
-    protected DataModel<Long, Long> training;
+    private DataModel<Long, Long> training;
     /**
      * The test set.
      */
-    protected DataModel<Long, Long> test;
+    private DataModel<Long, Long> test;
     /**
      * The relevance threshold.
      */
-    protected double threshold;
+    private double threshold;
 
     /**
      * Default constructor for the evaluation strategy.
      *
-     * @param training The training set.
-     * @param test The test set.
-     * @param threshold The relevance threshold.
+     * @param theTraining The training set.
+     * @param theTest The test set.
+     * @param theThreshold The relevance threshold.
      */
-    public AbstractStrategy(DataModel<Long, Long> training, DataModel<Long, Long> test, double threshold) {
-        this.training = training;
-        this.test = test;
-        this.threshold = threshold;
+    public AbstractStrategy(final DataModel<Long, Long> theTraining, final DataModel<Long, Long> theTest, final double theThreshold) {
+        this.training = theTraining;
+        this.test = theTest;
+        this.threshold = theThreshold;
+    }
+
+    /**
+     * Gets the training set.
+     *
+     * @return the training set
+     */
+    protected DataModel<Long, Long> getTraining() {
+        return training;
+    }
+
+    /**
+     * Gets the test set.
+     *
+     * @return the test set
+     */
+    protected DataModel<Long, Long> getTest() {
+        return test;
+    }
+
+    /**
+     * Gets the relevance threshold.
+     *
+     * @return the relevance threshold
+     */
+    protected double getThreshold() {
+        return threshold;
     }
 
     /**
@@ -67,7 +94,7 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      * @param user The user.
      * @return The items not appearing in the training set.
      */
-    protected Set<Long> getModelTrainingDifference(DataModel<Long, Long> model, Long user) {
+    protected Set<Long> getModelTrainingDifference(final DataModel<Long, Long> model, final Long user) {
         final Set<Long> items = new HashSet<Long>();
         if (training.getUserItemPreferences().containsKey(user)) {
             final Set<Long> trainingItems = training.getUserItemPreferences().get(user).keySet();
@@ -81,10 +108,10 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public void printRanking(Long user, List<Pair<Long, Double>> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
+    public void printRanking(final Long user, final List<Pair<Long, Double>> scoredItems, final PrintStream out, final OUTPUT_FORMAT format) {
         final Map<Long, Double> scores = new HashMap<Long, Double>();
         for (Pair<Long, Double> p : scoredItems) {
             scores.put(p.getFirst(), p.getSecond());
@@ -100,7 +127,7 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      * @param out Where to direct the print.
      * @param format The format of the printer.
      */
-    protected void printRanking(String user, Map<Long, Double> scoredItems, PrintStream out, OUTPUT_FORMAT format) {
+    protected void printRanking(final String user, final Map<Long, Double> scoredItems, final PrintStream out, final OUTPUT_FORMAT format) {
         final Map<Double, Set<Long>> preferenceMap = new HashMap<Double, Set<Long>>();
         for (Map.Entry<Long, Double> e : scoredItems.entrySet()) {
             long item = e.getKey();
@@ -126,6 +153,7 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
                     case TRECEVAL:
                         out.println(user + "\tQ0\t" + itemID + "\t" + pos + "\t" + pref + "\t" + "r");
                         break;
+                    default:
                     case SIMPLE:
                         out.println(user + "\t" + itemID + "\t" + pref);
                         break;
@@ -136,10 +164,10 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public void printGroundtruth(Long user, PrintStream out, OUTPUT_FORMAT format) {
+    public void printGroundtruth(final Long user, final PrintStream out, final OUTPUT_FORMAT format) {
         final Map<Long, Double> relItems = new HashMap<Long, Double>();
         for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
             if (e.getValue() >= threshold) {
@@ -157,12 +185,13 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      * @param out Where to print.
      * @param format The format of the printer.
      */
-    protected void printGroundtruth(String user, Map<Long, Double> groundtruthItems, PrintStream out, OUTPUT_FORMAT format) {
+    protected void printGroundtruth(final String user, final Map<Long, Double> groundtruthItems, final PrintStream out, final OUTPUT_FORMAT format) {
         for (Entry<Long, Double> e : groundtruthItems.entrySet()) {
             switch (format) {
                 case TRECEVAL:
                     out.println(user + "\tQ0\t" + e.getKey() + "\t" + e.getValue());
                     break;
+                default:
                 case SIMPLE:
                     out.println(user + "\t" + e.getKey() + "\t" + e.getValue());
                     break;

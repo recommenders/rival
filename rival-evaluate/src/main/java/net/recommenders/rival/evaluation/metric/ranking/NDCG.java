@@ -37,61 +37,70 @@ import net.recommenders.rival.evaluation.Pair;
 public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements EvaluationMetric<U> {
 
     /**
-     * Type of nDCG computation (linear or exponential)
+     * Type of nDCG computation (linear or exponential).
      */
     public static enum TYPE {
 
+        /**
+         * Linear.
+         */
         LIN,
+        /**
+         * Exponential.
+         */
         EXP,
+        /**
+         * As implemented in trec_eval.
+         */
         TREC_EVAL;
     }
     /**
-     * Type of nDCG computation (linear or exponential)
+     * Type of nDCG computation (linear or exponential).
      */
     private TYPE type;
     /**
-     * DCG values per user at each cutoff level
+     * DCG values per user at each cutoff level.
      */
     private Map<Integer, Map<U, Double>> userDcgAtCutoff;
     /**
-     * Ideal DCG values per user at each cutoff level
+     * Ideal DCG values per user at each cutoff level.
      */
     private Map<Integer, Map<U, Double>> userIdcgAtCutoff;
 
     /**
-     * Default constructor with predictions and groundtruth information
+     * Default constructor with predictions and groundtruth information.
      *
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public NDCG(DataModel<U, I> predictions, DataModel<U, I> test) {
+    public NDCG(final DataModel<U, I> predictions, final DataModel<U, I> test) {
         this(predictions, test, new int[]{});
     }
 
     /**
-     * Constructor where the cutoff levels can be initialized
+     * Constructor where the cutoff levels can be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param ats cutoffs
      */
-    public NDCG(DataModel<U, I> predictions, DataModel<U, I> test, int[] ats) {
+    public NDCG(final DataModel<U, I> predictions, final DataModel<U, I> test, final int[] ats) {
         this(predictions, test, 1.0, ats, TYPE.EXP);
     }
 
     /**
      * Constructor where the cutoff levels and the type of NDCG computation can
-     * be initialized
+     * be initialized.
      *
      * @param predictions predicted ratings
      * @param test groundtruth ratings
      * @param relThreshold the relevance threshold
      * @param ats cutoffs
-     * @param type type of NDCG computation
+     * @param ndcgType type of NDCG computation
      */
-    public NDCG(DataModel<U, I> predictions, DataModel<U, I> test, double relThreshold, int[] ats, TYPE type) {
+    public NDCG(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final int[] ats, final TYPE ndcgType) {
         super(predictions, test, relThreshold, ats);
-        this.type = type;
+        this.type = ndcgType;
     }
 
     /**
@@ -100,15 +109,15 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      */
     @Override
     public void compute() {
-        if (!Double.isNaN(value)) {
+        if (!Double.isNaN(getValue())) {
             // since the data cannot change, avoid re-doing the calculations
             return;
         }
-        value = 0.0;
+        iniCompute();
+
         Map<U, List<Pair<I, Double>>> data = processDataAsRankedTestRelevance();
         userDcgAtCutoff = new HashMap<Integer, Map<U, Double>>();
         userIdcgAtCutoff = new HashMap<Integer, Map<U, Double>>();
-        metricPerUser = new HashMap<U, Double>();
 
         int nUsers = 0;
         for (Map.Entry<U, List<Pair<I, Double>>> e : data.entrySet()) {
@@ -121,7 +130,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
                 rank++;
                 dcg += computeDCG(rel, rank);
                 // compute at a particular cutoff
-                for (int at : ats) {
+                for (int at : getCutoffs()) {
                     if (rank == at) {
                         Map<U, Double> m = userDcgAtCutoff.get(at);
                         if (m == null) {
@@ -133,7 +142,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
                 }
             }
             // assign the ndcg of the whole list to those cutoffs larger than the list's size
-            for (int at : ats) {
+            for (int at : getCutoffs()) {
                 if (rank <= at) {
                     Map<U, Double> m = userDcgAtCutoff.get(at);
                     if (m == null) {
@@ -143,15 +152,15 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
                     m.put(user, dcg);
                 }
             }
-            double idcg = computeIDCG(user, test.getUserItemPreferences().get(user));
+            double idcg = computeIDCG(user, getTest().getUserItemPreferences().get(user));
             double undcg = dcg / idcg;
             if (!Double.isNaN(undcg)) {
-                value += undcg;
-                metricPerUser.put(user, undcg);
+                setValue(getValue() + undcg);
+                getMetricPerUser().put(user, undcg);
                 nUsers++;
             }
         }
-        value = value / nUsers;
+        setValue(getValue() / nUsers);
     }
 
     /**
@@ -162,25 +171,23 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      * @param rank the item's rank in a user's list (sorted by predicted rating)
      * @return the dcg of the item
      */
-    protected double computeDCG(double rel, int rank) {
+    protected double computeDCG(final double rel, final int rank) {
         double dcg = 0.0;
-        if (rel >= relevanceThreshold) {
+        if (rel >= getRelevanceThreshold()) {
             switch (type) {
-                case EXP: {
+                default:
+                case EXP:
                     dcg = (Math.pow(2.0, rel) - 1.0) / (Math.log(rank + 1) / Math.log(2));
-                }
-                break;
-                case LIN: {
+                    break;
+                case LIN:
                     dcg = rel;
                     if (rank > 1) {
                         dcg /= (Math.log(rank) / Math.log(2));
                     }
-                }
-                break;
-                case TREC_EVAL: {
+                    break;
+                case TREC_EVAL:
                     dcg = rel / (Math.log(rank + 1) / Math.log(2));
-                }
-                break;
+                    break;
             }
         }
         return dcg;
@@ -196,7 +203,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      * @param userTestItems the groundtruth items of a user.
      * @return the IDCG
      */
-    private double computeIDCG(U user, Map<I, Double> userTestItems) {
+    private double computeIDCG(final U user, final Map<I, Double> userTestItems) {
         double idcg = 0.0;
         // sort the items according to their relevance level
         List<Double> sortedList = rankScores(userTestItems);
@@ -204,7 +211,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
         for (double itemRel : sortedList) {
             idcg += computeDCG(itemRel, rank);
             // compute at a particular cutoff
-            for (int at : ats) {
+            for (int at : getCutoffs()) {
                 if (rank == at) {
                     Map<U, Double> m = userIdcgAtCutoff.get(at);
                     if (m == null) {
@@ -217,7 +224,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
             rank++;
         }
         // assign the ndcg of the whole list to those cutoffs larger than the list's size
-        for (int at : ats) {
+        for (int at : getCutoffs()) {
             if (rank <= at) {
                 Map<U, Double> m = userIdcgAtCutoff.get(at);
                 if (m == null) {
@@ -237,7 +244,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      * @return the NDCG corresponding to the requested cutoff level
      */
     @Override
-    public double getValueAt(int at) {
+    public double getValueAt(final int at) {
         if (userDcgAtCutoff.containsKey(at) && userIdcgAtCutoff.containsKey(at)) {
             int n = 0;
             double ndcg = 0.0;
@@ -248,7 +255,11 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
                     n++;
                 }
             }
-            ndcg = (n == 0) ? 0.0 : ndcg / n;
+            if (n == 0) {
+                ndcg = 0.0;
+            } else {
+                ndcg = ndcg / n;
+            }
             return ndcg;
         }
         return Double.NaN;
@@ -263,7 +274,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      * @return the NDCG corresponding to the requested user at the cutoff level
      */
     @Override
-    public double getValueAt(U user, int at) {
+    public double getValueAt(final U user, final int at) {
         if (userDcgAtCutoff.containsKey(at) && userDcgAtCutoff.get(at).containsKey(user)
                 && userIdcgAtCutoff.containsKey(at) && userIdcgAtCutoff.get(at).containsKey(user)) {
             double idcg = userIdcgAtCutoff.get(at).get(user);
@@ -274,10 +285,10 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "NDCG" + type + "_" + relevanceThreshold;
+        return "NDCG" + type + "_" + getRelevanceThreshold();
     }
 }

@@ -39,7 +39,7 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
      * @param dataModel the data model
      * @param candidateItemsStrategy the strategy
      */
-    public PopularityBasedRecommender(DataModel dataModel, CandidateItemsStrategy candidateItemsStrategy) {
+    public PopularityBasedRecommender(final DataModel dataModel, final CandidateItemsStrategy candidateItemsStrategy) {
         super(dataModel, candidateItemsStrategy);
     }
 
@@ -48,7 +48,7 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
      *
      * @param dataModel the data model.
      */
-    public PopularityBasedRecommender(DataModel dataModel) {
+    public PopularityBasedRecommender(final DataModel dataModel) {
         super(dataModel);
     }
 
@@ -62,7 +62,7 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
      * preference.
      */
     @Override
-    public float estimatePreference(long u, long i) throws TasteException {
+    public float estimatePreference(final long u, final long i) throws TasteException {
         return 1.0f * getDataModel().getPreferencesForItem(i).length();
     }
 
@@ -75,7 +75,7 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
      * @return the list of recommendations
      * @throws TasteException if something in the recommender breaks.
      */
-    public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer) throws TasteException {
+    public List<RecommendedItem> recommend(final long userID, final int howMany, final IDRescorer rescorer) throws TasteException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -85,6 +85,6 @@ public class PopularityBasedRecommender extends AbstractRecommender implements R
      * @param clctn the data.
      */
     @Override
-    public void refresh(Collection<Refreshable> clctn) {
+    public void refresh(final Collection<Refreshable> clctn) {
     }
 }

@@ -18,7 +18,6 @@ package net.recommenders.rival.split.parser;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
@@ -28,15 +27,30 @@ import net.recommenders.rival.core.Parser;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class ParserRunner {
+public final class ParserRunner {
 
     /**
-     * Variables that represent the name of several properties in the file.
+     * Variable that represent the name of a property in the file.
      */
     public static final String DATASET_FILE = "dataset.file";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String DATASET_PARSER = "dataset.parser";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String LASTFM_IDS_PREFIX = "dataset.parser.lastfm.idsprefix";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String LASTFM_USEARTISTS = "dataset.parser.lastfm.useartists";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private ParserRunner() {
+    }
 
     /**
      * Run the parser based on given properties.
@@ -45,21 +59,18 @@ public class ParserRunner {
      * @return The data model parsed by the parser.
      * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
      * fails
-     * @throws IllegalAccessException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
-     * fails
-     * @throws IllegalArgumentException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * @throws IllegalAccessException when {@link java.lang.reflect.Method#invoke(java.lang.Object, java.lang.Object[])}
      * fails
      * @throws InstantiationException when {@link Parser#parseData(java.io.File)}
      * fails
-     * @throws InvocationTargetException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * @throws InvocationTargetException when {@link java.lang.reflect.Method#invoke(java.lang.Object, java.lang.Object[])}
      * fails
      * @throws NoSuchMethodException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
      * fails
-     * @throws SecurityException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
-     * fails
      * @throws IOException when {@link Parser#parseData(java.io.File)} fails
      */
-    public static DataModel<Long, Long> run(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
+    public static DataModel<Long, Long> run(final Properties properties) throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException, NoSuchMethodException, IOException {
         System.out.println("Parsing started");
         DataModel<Long, Long> model = null;
         File file = new File(properties.getProperty(DATASET_FILE));
@@ -89,21 +100,18 @@ public class ParserRunner {
      * @return a parser according to the provided properties.
      * @throws ClassNotFoundException when {@link Class#forName(java.lang.String)}
      * fails
-     * @throws IllegalAccessException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
-     * fails
-     * @throws IllegalArgumentException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * @throws IllegalAccessException when {@link java.lang.reflect.Method#invoke(java.lang.Object, java.lang.Object[])}
      * fails
      * @throws InstantiationException when {@link Parser#parseData(java.io.File)
      * } fails
-     * @throws InvocationTargetException when {@link Method#invoke(java.lang.Object, java.lang.Object[])}
+     * @throws InvocationTargetException when {@link java.lang.reflect.Method#invoke(java.lang.Object, java.lang.Object[])}
      * fails
      * @throws NoSuchMethodException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
      * fails
-     * @throws SecurityException when {@link Class#getMethod(java.lang.String, java.lang.Class[])}
-     * fails
      */
     @SuppressWarnings("unchecked")
-    public static Parser<Long, Long> instantiateParser(Properties properties) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static Parser<Long, Long> instantiateParser(final Properties properties) throws ClassNotFoundException, IllegalAccessException,
+            InstantiationException, InvocationTargetException, NoSuchMethodException {
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
         Parser<Long, Long> parser = null;

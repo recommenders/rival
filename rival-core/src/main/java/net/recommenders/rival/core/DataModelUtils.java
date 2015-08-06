@@ -24,11 +24,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Utilities for datamodels
+ * Utilities for datamodels.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public class DataModelUtils {
+public final class DataModelUtils {
+
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private DataModelUtils() {
+    }
 
     /**
      * Method that saves a data model to a file.
@@ -42,7 +48,8 @@ public class DataModelUtils {
      * @throws UnsupportedEncodingException when the requested encoding (UTF-8)
      * is not available.
      */
-    public static <U, I> void saveDataModel(DataModel<U, I> dm, String outfile, boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
+    public static <U, I> void saveDataModel(final DataModel<U, I> dm, final String outfile, final boolean overwrite)
+            throws FileNotFoundException, UnsupportedEncodingException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);
         } else {
@@ -53,7 +60,10 @@ public class DataModelUtils {
                 for (Entry<I, Double> e : userPrefModel.entrySet()) {
                     I item = e.getKey();
                     Double pref = userPrefModel.get(item);
-                    Set<Long> time = userTimeModel != null ? userTimeModel.get(item) : null;
+                    Set<Long> time = null;
+                    if (userTimeModel != null) {
+                        time = userTimeModel.get(item);
+                    }
                     if (time == null) {
                         out.println(user + "\t" + item + "\t" + pref + "\t-1");
                     } else {

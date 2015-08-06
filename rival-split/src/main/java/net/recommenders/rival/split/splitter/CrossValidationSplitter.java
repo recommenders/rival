@@ -44,24 +44,24 @@ public class CrossValidationSplitter implements Splitter<Long, Long> {
     private Random rnd;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param nFolds number of folds that the data will be split into
-     * @param perUser flag to do the split in a per user basis
+     * @param nFold number of folds that the data will be split into
+     * @param perUsers flag to do the split in a per user basis
      * @param seed value to initialize a Random class
      */
-    public CrossValidationSplitter(int nFolds, boolean perUser, long seed) {
-        this.nFolds = nFolds;
-        this.perUser = perUser;
+    public CrossValidationSplitter(final int nFold, final boolean perUsers, final long seed) {
+        this.nFolds = nFold;
+        this.perUser = perUsers;
 
         rnd = new Random(seed);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long>[] split(DataModel<Long, Long> data) {
+    public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
         @SuppressWarnings("unchecked")
         final DataModel<Long, Long>[] splits = new DataModel[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {

@@ -59,34 +59,37 @@ import org.slf4j.LoggerFactory;
 public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
 
     /**
-     * Logger
+     * Logger.
      */
-    private final static Logger logger = LoggerFactory.getLogger(LenskitRecommenderRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LenskitRecommenderRunner.class);
 
     /**
-     * Default constructor
+     * Default constructor.
      *
-     * @param _properties properties
+     * @param props properties
      */
-    public LenskitRecommenderRunner(Properties _properties) {
-        super(_properties);
+    public LenskitRecommenderRunner(final Properties props) {
+        super(props);
     }
 
     /**
      * Runs the recommender.
      *
+     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @return see
+     * {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws RecommenderException when the recommender is instantiated
      * incorrectly or breaks otherwise.
      */
     @Override
     @SuppressWarnings("unchecked")
-    public DataModel<Long, Long> run(RUN_OPTIONS opts) throws RecommenderException {
-        if (alreadyRecommended) {
+    public DataModel<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException {
+        if (isAlreadyRecommended()) {
             return null;
         }
 
-        File trainingFile = new File(properties.getProperty(RecommendationRunner.trainingSet));
-        File testFile = new File(properties.getProperty(RecommendationRunner.testSet));
+        File trainingFile = new File(getProperties().getProperty(RecommendationRunner.TRAINING_SET));
+        File testFile = new File(getProperties().getProperty(RecommendationRunner.TEST_SET));
         EventDAO base = new SimpleFileRatingDAO(trainingFile, "\t");
         EventDAO test = new SimpleFileRatingDAO(testFile, "\t");
         return runLenskitRecommender(opts, base, test);
@@ -98,12 +101,14 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
      * @param testModel model to be used to test the recommender.
-     * @return see {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
-     * @throws RecommenderException see {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
+     * @return see
+     * {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
+     * @throws RecommenderException see
+     * {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
      */
     @Override
-    public DataModel<Long, Long> run(RUN_OPTIONS opts, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws RecommenderException {
-        if (alreadyRecommended) {
+    public DataModel<Long, Long> run(final RUN_OPTIONS opts, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel) throws RecommenderException {
+        if (isAlreadyRecommended()) {
             return null;
         }
         // transform from core's DataModels to Lenskit's EventDAO
@@ -128,8 +133,8 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * properly
      */
     @SuppressWarnings("unchecked")
-    public DataModel<Long, Long> runLenskitRecommender(RUN_OPTIONS opts, EventDAO trainingModel, EventDAO testModel) throws RecommenderException {
-        if (alreadyRecommended) {
+    public DataModel<Long, Long> runLenskitRecommender(final RUN_OPTIONS opts, final EventDAO trainingModel, final EventDAO testModel) throws RecommenderException {
+        if (isAlreadyRecommended()) {
             return null;
         }
         EventDAO dao = new EventCollectionDAO(Cursors.makeList(trainingModel.streamEvents()));
@@ -138,34 +143,36 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
 
 
         try {
-            config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(properties.getProperty(RecommendationRunner.recommender)));
+            config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(getProperties().getProperty(RecommendationRunner.RECOMMENDER)));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new RecommenderException("Problem with ItemScorer: " + e.getMessage());
         }
-        if (properties.getProperty(RecommendationRunner.recommender).contains(".user.")) {
+        if (getProperties().getProperty(RecommendationRunner.RECOMMENDER).contains(".user.")) {
             config.bind(NeighborhoodFinder.class).to(SimpleNeighborhoodFinder.class);
-            if (properties.getProperty(RecommendationRunner.neighborhood).equals("-1")) {
-                properties.setProperty(RecommendationRunner.neighborhood, Math.round(Math.sqrt(new PrefetchingItemDAO(trainingModel).getItemIds().size())) + "");
+            if (getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD).equals("-1")) {
+                getProperties().setProperty(RecommendationRunner.NEIGHBORHOOD, Math.round(Math.sqrt(new PrefetchingItemDAO(trainingModel).getItemIds().size())) + "");
             }
-            config.set(NeighborhoodSize.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.neighborhood)));
+            config.set(NeighborhoodSize.class).to(Integer.parseInt(getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD)));
         }
-        if (properties.containsKey(RecommendationRunner.similarity)) {
+        if (getProperties().containsKey(RecommendationRunner.SIMILARITY)) {
             try {
-                config.within(ItemSimilarity.class).bind(VectorSimilarity.class).to((Class<? extends VectorSimilarity>) Class.forName(properties.getProperty(RecommendationRunner.similarity)));
+                config.within(ItemSimilarity.class).
+                        bind(VectorSimilarity.class).
+                        to((Class<? extends VectorSimilarity>) Class.forName(getProperties().getProperty(RecommendationRunner.SIMILARITY)));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
                 throw new RecommenderException("Problem with ItemSimilarity: " + e.getMessage());
             }
         }
-        if (properties.containsKey(RecommendationRunner.factors)) {
+        if (getProperties().containsKey(RecommendationRunner.FACTORS)) {
             config.bind(BaselineScorer.class, ItemScorer.class).to(UserMeanItemScorer.class);
             config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
             config.set(IterationCount.class).to(DEFAULT_ITERATIONS);
-            if (properties.getProperty(RecommendationRunner.factors).equals("-1")) {
-                properties.setProperty(RecommendationRunner.factors, Math.round(Math.sqrt(new PrefetchingItemDAO(trainingModel).getItemIds().size())) + "");
+            if (getProperties().getProperty(RecommendationRunner.FACTORS).equals("-1")) {
+                getProperties().setProperty(RecommendationRunner.FACTORS, Math.round(Math.sqrt(new PrefetchingItemDAO(trainingModel).getItemIds().size())) + "");
             }
-            config.set(FeatureCount.class).to(Integer.parseInt(properties.getProperty(RecommendationRunner.factors)));
+            config.set(FeatureCount.class).to(Integer.parseInt(getProperties().getProperty(RecommendationRunner.FACTORS)));
         }
 
         UserDAO test = new PrefetchingUserDAO(testModel);
@@ -174,7 +181,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
             LenskitRecommenderEngine engine = LenskitRecommenderEngine.build(config);
             rec = engine.createRecommender();
         } catch (RecommenderBuildException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
             throw new RecommenderException("Problem with LenskitRecommenderEngine: " + e.getMessage());
         }
@@ -197,7 +204,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case OUTPUT_RECS:
-                name = fileName;
+                name = getFileName();
                 break;
             default:
                 name = null;
@@ -205,7 +212,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         boolean createFile = true;
         for (long user : test.getUserIds()) {
             List<ScoredId> recs = irec.recommend(user);
-            RecommenderIO.writeData(user, recs, path, name, !createFile, model);
+            RecommenderIO.writeData(user, recs, getPath(), name, !createFile, model);
             createFile = false;
         }
         return model;

@@ -37,31 +37,61 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
     /**
      * The predictions.
      */
-    protected DataModel<U, I> predictions;
+    private DataModel<U, I> predictions;
     /**
      * The test set.
      */
-    protected DataModel<U, I> test;
+    private DataModel<U, I> test;
     /**
-     * Metric per user
+     * Metric per user.
      */
-    protected Map<U, Double> metricPerUser;
+    private Map<U, Double> metricPerUser;
+    /**
+     * Global value.
+     */
+    private double value;
 
     /**
-     * Default constructor with predictions and groundtruth information
+     * Default constructor with predictions and groundtruth information.
      *
-     * @param predictions predicted scores for users and items
-     * @param test groundtruth information for users and items
+     * @param thePredictions predicted scores for users and items
+     * @param theTest groundtruth information for users and items
      */
-    public AbstractMetric(DataModel<U, I> predictions, DataModel<U, I> test) {
-        this.predictions = predictions;
-        this.test = test;
-
-        this.metricPerUser = new HashMap<U, Double>();
+    public AbstractMetric(final DataModel<U, I> thePredictions, final DataModel<U, I> theTest) {
+        this.predictions = thePredictions;
+        this.test = theTest;
+        this.metricPerUser = null;
     }
 
     /**
-     * @inheritDoc
+     * Gets the predictions.
+     *
+     * @return the predictions
+     */
+    protected DataModel<U, I> getPredictions() {
+        return predictions;
+    }
+
+    /**
+     * Gets the test set.
+     *
+     * @return the test set
+     */
+    protected DataModel<U, I> getTest() {
+        return test;
+    }
+
+    /**
+     * Gets the metric value per user.
+     *
+     * @return the metric value per user
+     */
+    protected Map<U, Double> getMetricPerUser() {
+        return metricPerUser;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Map<U, Double> getValuePerUser() {
@@ -69,14 +99,39 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public double getValue(U u) {
+    public double getValue(final U u) {
         if (metricPerUser.containsKey(u)) {
             return metricPerUser.get(u);
         }
         return Double.NaN;
+    }
+
+    /**
+     * Initialize private variables required for metric computation.
+     */
+    protected void iniCompute() {
+        value = 0.0;
+        metricPerUser = new HashMap<U, Double>();
+    }
+
+    /**
+     * Updates the global value of the metric.
+     *
+     * @param v new value of the metric
+     */
+    protected void setValue(final double v) {
+        this.value = v;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getValue() {
+        return value;
     }
 
     /**
@@ -85,7 +140,7 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      * @param userItems map with scores for each item
      * @return the ranked list
      */
-    protected List<I> rankItems(Map<I, Double> userItems) {
+    protected List<I> rankItems(final Map<I, Double> userItems) {
         List<I> sortedItems = new ArrayList<I>();
         if (userItems == null) {
             return sortedItems;
@@ -124,7 +179,7 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      * @param userItems map with scores for each item
      * @return the ranked list
      */
-    protected List<Double> rankScores(Map<I, Double> userItems) {
+    protected List<Double> rankScores(final Map<I, Double> userItems) {
         List<Double> sortedScores = new ArrayList<Double>();
         if (userItems == null) {
             return sortedScores;

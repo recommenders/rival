@@ -26,23 +26,62 @@ import net.recommenders.rival.core.DataModelUtils;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class SplitterRunner {
+public final class SplitterRunner {
 
     /**
-     * Variables that represent the name of several properties in the file.
+     * Variable that represent the name of a property in the file.
      */
     public static final String DATASET_SPLITTER = "dataset.splitter";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_PERUSER = "split.peruser";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_PERITEMS = "split.peritems";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_SEED = "split.seed";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_CV_NFOLDS = "split.cv.nfolds";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_RANDOM_PERCENTAGE = "split.random.percentage";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_OUTPUT_FOLDER = "split.output.folder";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_OUTPUT_OVERWRITE = "split.output.overwrite";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_TRAINING_PREFIX = "split.training.prefix";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_TRAINING_SUFFIX = "split.training.suffix";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_TEST_PREFIX = "split.test.prefix";
+    /**
+     * Variable that represent the name of a property in the file.
+     */
     public static final String SPLIT_TEST_SUFFIX = "split.test.suffix";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private SplitterRunner() {
+    }
 
     /**
      * Runs a Splitter instance based on the properties.
@@ -51,10 +90,13 @@ public class SplitterRunner {
      * @param data the data to be split
      * @param doDataClear flag to clear the memory used for the data before
      * saving the splits
-     * @throws FileNotFoundException see {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
-     * @throws UnsupportedOperationException see {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
+     * @throws FileNotFoundException see
+     * {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
+     * @throws UnsupportedEncodingException see
+     * {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
      */
-    public static void run(Properties properties, DataModel<Long, Long> data, boolean doDataClear) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void run(final Properties properties, final DataModel<Long, Long> data, final boolean doDataClear)
+            throws FileNotFoundException, UnsupportedEncodingException {
         System.out.println("Start splitting");
         DataModel<Long, Long>[] splits = null;
         // read parameters
@@ -89,7 +131,7 @@ public class SplitterRunner {
      * @param properties the properties to be used.
      * @return a splitter according to the properties mapping provided.
      */
-    public static Splitter<Long, Long> instantiateSplitter(Properties properties) {
+    public static Splitter<Long, Long> instantiateSplitter(final Properties properties) {
         // read parameters
         String splitterClassName = properties.getProperty(DATASET_SPLITTER);
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(SPLIT_PERUSER));

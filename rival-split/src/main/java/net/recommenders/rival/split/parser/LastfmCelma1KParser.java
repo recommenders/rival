@@ -54,20 +54,20 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
     public static final int TIME_TOK = 1;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param useArtists Flag to consider artists as the items (instead of
      * tracks).
      */
-    public LastfmCelma1KParser(boolean useArtists) {
+    public LastfmCelma1KParser(final boolean useArtists) {
         super(useArtists);
     }
 
     /**
-     * @see ParserWithIdMapping#parseData(java.io.File, java.lang.String)
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(File f, String mapIdsPrefix) throws IOException {
+    public DataModel<Long, Long> parseData(final File f, final String mapIdsPrefix) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         Map<String, Long> mapUserIds = new HashMap<String, Long>();
@@ -92,7 +92,7 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
             String artist = toks[ARTIST_TOK];
             String track = toks[TRACK_TOK];
             String item = null;
-            if (useArtists) {
+            if (isUseArtists()) {
                 item = artist;
             } else {
                 item = artist + "_" + track;

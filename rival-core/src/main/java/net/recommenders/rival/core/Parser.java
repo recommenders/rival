@@ -35,5 +35,5 @@ public interface Parser<U, I> {
      * @return A dataset created from the file.
      * @throws IOException if the file cannot be read.
      */
-    public DataModel<U, I> parseData(File f) throws IOException;
+    DataModel<U, I> parseData(File f) throws IOException;
 }

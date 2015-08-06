@@ -16,7 +16,7 @@
 package net.recommenders.rival.evaluation;
 
 /**
- * Bean class to store an element of type A and another of type B
+ * Bean class to store an element of type A and another of type B.
  *
  * @param <A> The type of the first element in the pair.
  * @param <B> The type of the second element in the pair.
@@ -26,27 +26,27 @@ package net.recommenders.rival.evaluation;
 public class Pair<A, B> {
 
     /**
-     * First element
+     * First element.
      */
     private A first;
     /**
-     * Second element
+     * Second element.
      */
     private B second;
 
     /**
-     * Default constructor
+     * Default constructor.
      *
-     * @param first first element to store
-     * @param second second element to store
+     * @param firstElement first element to store
+     * @param secondElement second element to store
      */
-    public Pair(A first, B second) {
-        this.first = first;
-        this.second = second;
+    public Pair(final A firstElement, final B secondElement) {
+        this.first = firstElement;
+        this.second = secondElement;
     }
 
     /**
-     * Gets the first element of the pair
+     * Gets the first element of the pair.
      *
      * @return the first element of the pair
      */
@@ -55,7 +55,7 @@ public class Pair<A, B> {
     }
 
     /**
-     * Gets the second element of the pair
+     * Gets the second element of the pair.
      *
      * @return the second element of the pair
      */

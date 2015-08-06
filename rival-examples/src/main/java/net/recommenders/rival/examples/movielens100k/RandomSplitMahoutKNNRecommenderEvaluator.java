@@ -43,23 +43,50 @@ import net.recommenders.rival.evaluation.metric.error.RMSE;
 import net.recommenders.rival.split.splitter.RandomSplitter;
 
 /**
- * RiVal Movielens100k Mahout Example, using 80-20 random splitting
+ * RiVal Movielens100k Mahout Example, using 80-20 random splitting.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>
  */
-public class RandomSplitMahoutKNNRecommenderEvaluator {
+public final class RandomSplitMahoutKNNRecommenderEvaluator {
+
+    /**
+     * Default percentage.
+     */
+    public static final float PERCENTAGE = 0.8f;
+    /**
+     * Default neighbohood size.
+     */
+    public static final int NEIGH_SIZE = 50;
+    /**
+     * Default cutoff for evaluation metrics.
+     */
+    public static final int AT = 10;
+    /**
+     * Default relevance threshold.
+     */
+    public static final double REL_TH = 3.0;
+    /**
+     * Default seed.
+     */
+    public static final long SEED = 2048L;
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private RandomSplitMahoutKNNRecommenderEvaluator() {
+    }
 
     /**
      * Main method. Parameter is not used.
      *
      * @param args the arguments (not used)
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         String url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip";
         String folder = "data/ml-100k";
         String modelPath = "data/ml-100k/model/";
         String recPath = "data/ml-100k/recommendations/";
-        float percentage = 0.8f;
+        float percentage = PERCENTAGE;
         prepareSplits(url, percentage, "data/ml-100k/u.data", folder, modelPath);
         recommend(modelPath, recPath);
         // the strategy files are (currently) being ignored
@@ -76,13 +103,13 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
      * @param folder folder where dataset will be stored
      * @param outPath path where the splits will be stored
      */
-    public static void prepareSplits(String url, float percentage, String inFile, String folder, String outPath) {
+    public static void prepareSplits(final String url, final float percentage, final String inFile, final String folder, final String outPath) {
         DataDownloader dd = new DataDownloader(url, folder);
         dd.downloadAndUnzip();
 
         boolean perUser = true;
         boolean perItem = false;
-        long seed = 2048;
+        long seed = SEED;
         Parser<Long, Long> parser = new MovielensParser();
 
         DataModel<Long, Long> data = null;
@@ -120,12 +147,12 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
     }
 
     /**
-     * Recommends using an UB algorithm
+     * Recommends using an UB algorithm.
      *
      * @param inPath path where training and test models have been stored
      * @param outPath path where recommendation files will be stored
      */
-    public static void recommend(String inPath, String outPath) {
+    public static void recommend(final String inPath, final String outPath) {
         int i = 0;
         org.apache.mahout.cf.taste.model.DataModel trainModel = null;
         org.apache.mahout.cf.taste.model.DataModel testModel = null;
@@ -140,7 +167,7 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
         GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
         String recommenderClass = "org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender";
         String similarityClass = "org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity";
-        int neighborhoodSize = 50;
+        int neighborhoodSize = NEIGH_SIZE;
         Recommender recommender = null;
         try {
             recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass, neighborhoodSize);
@@ -174,7 +201,7 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
      * @param outPath path where the filtered recommendations will be stored
      */
     @SuppressWarnings("unchecked")
-    public static void prepareStrategy(String splitPath, String recPath, String outPath) {
+    public static void prepareStrategy(final String splitPath, final String recPath, final String outPath) {
         int i = 0;
         File trainingFile = new File(splitPath + "train_" + i + ".csv");
         File testFile = new File(splitPath + "test_" + i + ".csv");
@@ -191,13 +218,12 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
             return;
         }
 
-        Double threshold = 2.0;
+        Double threshold = REL_TH;
         String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
         EvaluationStrategy<Long, Long> strategy = null;
         try {
-            strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
-            // Alternatively
-            // strategy = new UserTest(trainingModel,testModel,threshold);
+            strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).
+                    newInstance(trainingModel, testModel, threshold);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -233,7 +259,7 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
      * @param splitPath path where splits have been stored
      * @param recPath path where recommendation files have been stored
      */
-    public static void evaluate(String splitPath, String recPath) {
+    public static void evaluate(final String splitPath, final String recPath) {
         double ndcgRes = 0.0;
         double precisionRes = 0.0;
         double rmseRes = 0.0;
@@ -249,21 +275,20 @@ public class RandomSplitMahoutKNNRecommenderEvaluator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(recModel, testModel, new int[]{10});
+        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(recModel, testModel, new int[]{AT});
         ndcg.compute();
-        ndcgRes += ndcg.getValueAt(10);
+        ndcgRes += ndcg.getValueAt(AT);
 
         RMSE<Long, Long> rmse = new RMSE<Long, Long>(recModel, testModel);
         rmse.compute();
         rmseRes += rmse.getValue();
 
-        Precision<Long, Long> precision = new Precision<Long, Long>(recModel, testModel, 3.0, new int[]{10});
+        Precision<Long, Long> precision = new Precision<Long, Long>(recModel, testModel, REL_TH, new int[]{AT});
         precision.compute();
-        precisionRes += precision.getValueAt(10);
+        precisionRes += precision.getValueAt(AT);
 
-        System.out.println("NDCG@10: " + ndcgRes);
+        System.out.println("NDCG@" + AT + ": " + ndcgRes);
         System.out.println("RMSE: " + rmseRes);
-        System.out.println("P@10: " + precisionRes);
-
+        System.out.println("P@" + AT + ": " + precisionRes);
     }
 }

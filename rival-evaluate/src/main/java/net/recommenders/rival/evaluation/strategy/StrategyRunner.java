@@ -39,22 +39,58 @@ import net.recommenders.rival.evaluation.Pair;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class StrategyRunner {
+public final class StrategyRunner {
 
     /**
-     * Variables that represent the name of several properties in the file.
+     * Variable that represents the name of a property in the file.
      */
     public static final String TRAINING_FILE = "split.training.file";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String TEST_FILE = "split.test.file";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String INPUT_FILE = "recommendation.file";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_FORMAT = "output.format";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_OVERWRITE = "output.overwrite";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String OUTPUT_FILE = "output.file.ranking";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String GROUNDTRUTH_FILE = "output.file.groundtruth";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String STRATEGY = "strategy.class";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELEVANCE_THRESHOLD = "strategy.relevance.threshold";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELPLUSN_N = "strategy.relplusn.N";
+    /**
+     * Variable that represents the name of a property in the file.
+     */
     public static final String RELPLUSN_SEED = "strategy.relplusn.seed";
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private StrategyRunner() {
+    }
 
     /**
      * Main method for running a single evaluation strategy.
@@ -62,7 +98,7 @@ public class StrategyRunner {
      * @param args Arguments.
      * @throws Exception If file not found.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         String propertyFile = System.getProperty("propertyFile");
 
         final Properties properties = new Properties();
@@ -84,13 +120,12 @@ public class StrategyRunner {
      * @throws IOException when a file cannot be parsed
      * @throws ClassNotFoundException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws IllegalAccessException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalArgumentException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws InstantiationException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws InvocationTargetException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws NoSuchMethodException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws SecurityException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
-    public static void run(Properties properties) throws IOException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static void run(final Properties properties)
+            throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         // read splits
         System.out.println("Parsing started: training file");
         File trainingFile = new File(properties.getProperty(TRAINING_FILE));
@@ -105,7 +140,12 @@ public class StrategyRunner {
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "false"));
         File rankingFile = new File(properties.getProperty(OUTPUT_FILE));
         File groundtruthFile = new File(properties.getProperty(GROUNDTRUTH_FILE));
-        EvaluationStrategy.OUTPUT_FORMAT format = properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString()) ? EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL : EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        EvaluationStrategy.OUTPUT_FORMAT format = null;
+        if (properties.getProperty(OUTPUT_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString())) {
+            format = EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL;
+        } else {
+            format = EvaluationStrategy.OUTPUT_FORMAT.SIMPLE;
+        }
 
         // get strategy
         EvaluationStrategy<Long, Long> strategy = instantiateStrategy(properties, trainingModel, testModel);
@@ -138,27 +178,24 @@ public class StrategyRunner {
      * fails
      * @throws IllegalAccessException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
-     * @throws IllegalArgumentException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
-     * fails
      * @throws InstantiationException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws InvocationTargetException when {@link java.lang.reflect.Constructor#newInstance(java.lang.Object[])}
      * fails
      * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
-     * @throws SecurityException when {@link Class#getConstructor(java.lang.Class[])}
-     * fails
      */
-    public static EvaluationStrategy<Long, Long> instantiateStrategy(Properties properties, DataModel<Long, Long> trainingModel, DataModel<Long, Long> testModel) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static EvaluationStrategy<Long, Long> instantiateStrategy(final Properties properties, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         String strategyClassName = properties.getProperty(STRATEGY);
         Class<?> strategyClass = Class.forName(strategyClassName);
         // get strategy
         EvaluationStrategy<Long, Long> strategy = null;
         if (strategyClassName.contains("RelPlusN")) {
-            Integer N = Integer.parseInt(properties.getProperty(RELPLUSN_N));
+            Integer number = Integer.parseInt(properties.getProperty(RELPLUSN_N));
             Long seed = Long.parseLong(properties.getProperty(RELPLUSN_SEED));
-            strategy = new RelPlusN(trainingModel, testModel, N, threshold, seed);
+            strategy = new RelPlusN(trainingModel, testModel, number, threshold, seed);
         } else {
             Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
             if (strategyObj instanceof EvaluationStrategy) {
@@ -184,7 +221,10 @@ public class StrategyRunner {
      * @throws UnsupportedEncodingException If the default encoding (UTF-8) is
      * not supported.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations, EvaluationStrategy<Long, Long> strategy, EvaluationStrategy.OUTPUT_FORMAT format, File rankingFile, File groundtruthFile, Boolean overwrite) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations,
+            final EvaluationStrategy<Long, Long> strategy, final EvaluationStrategy.OUTPUT_FORMAT format,
+            final File rankingFile, final File groundtruthFile, final Boolean overwrite)
+            throws FileNotFoundException, UnsupportedEncodingException {
         PrintStream outRanking = null;
         if (rankingFile.exists() && !overwrite) {
             System.out.println("Ignoring " + rankingFile);

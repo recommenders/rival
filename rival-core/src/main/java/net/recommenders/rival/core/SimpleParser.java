@@ -18,7 +18,6 @@ package net.recommenders.rival.core;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
@@ -55,7 +54,7 @@ public class SimpleParser implements Parser<Long, Long> {
      * @throws IOException if the file cannot be read.
      */
     @Override
-    public DataModel<Long, Long> parseData(File f) throws IOException {
+    public DataModel<Long, Long> parseData(final File f) throws IOException {
         return parseData(f, "\t");
     }
 
@@ -67,7 +66,7 @@ public class SimpleParser implements Parser<Long, Long> {
      * @return A dataset created from the file.
      * @throws IOException if the file cannot be read.
      */
-    public DataModel<Long, Long> parseData(File f, String token) throws IOException {
+    public DataModel<Long, Long> parseData(final File f, final String token) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
@@ -90,11 +89,10 @@ public class SimpleParser implements Parser<Long, Long> {
      *
      * @param f The file to be opened.
      * @return An instance of BufferedReader or null if there is a problem
-     * @throws FileNotFoundException when the file does not exist.
      * @throws IOException when the file cannot be read.
      * @see BufferedReader
      */
-    public static BufferedReader getBufferedReader(File f) throws FileNotFoundException, IOException {
+    public static BufferedReader getBufferedReader(final File f) throws IOException {
         BufferedReader br = null;
         if ((f == null) || (!f.isFile())) {
             return br;
@@ -114,7 +112,7 @@ public class SimpleParser implements Parser<Long, Long> {
      * @param dataset The dataset to add data from line to.
      * @param token the token to split on
      */
-    private void parseLine(String line, DataModel<Long, Long> dataset, String token) {
+    private void parseLine(final String line, final DataModel<Long, Long> dataset, final String token) {
         if (line == null) {
             return;
         }
@@ -128,7 +126,7 @@ public class SimpleParser implements Parser<Long, Long> {
         // timestamp
         long timestamp = -1;
         // allow no timestamp information
-        if (toks.length > 3) {
+        if (toks.length > TIME_TOK) {
             timestamp = Long.parseLong(toks[TIME_TOK]);
         }
         //////

@@ -32,34 +32,34 @@ import java.io.InputStreamReader;
 public class UIPParser extends AbstractParser implements Parser<Long, Long> {
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public UIPParser() {
         super();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(File f) throws IOException {
+    public DataModel<Long, Long> parseData(final File f) throws IOException {
         DataModel<Long, Long> dataset = new DataModel<Long, Long>();
         Reader in = new InputStreamReader(new FileInputStream(f), "UTF-8");
 
         Iterable<CSVRecord> records;
-        if (hasHeader) {
-            records = CSVFormat.EXCEL.withDelimiter(delimiter).withHeader().parse(in);
+        if (isHasHeader()) {
+            records = CSVFormat.EXCEL.withDelimiter(getDelimiter()).withHeader().parse(in);
         } else {
-            records = CSVFormat.EXCEL.withDelimiter(delimiter).parse(in);
+            records = CSVFormat.EXCEL.withDelimiter(getDelimiter()).parse(in);
         }
         for (CSVRecord record : records) {
-            long userID = Long.parseLong(record.get(userTok));
-            long itemID = Long.parseLong(record.get(itemTok));
+            long userID = Long.parseLong(record.get(getUserTok()));
+            long itemID = Long.parseLong(record.get(getItemTok()));
             long timestamp = -1L;
-            if (timeTok != -1) {
-                timestamp = Long.parseLong(record.get(timeTok));
+            if (getTimeTok() != -1) {
+                timestamp = Long.parseLong(record.get(getTimeTok()));
             }
-            double preference = Double.parseDouble(record.get(prefTok));
+            double preference = Double.parseDouble(record.get(getPrefTok()));
             dataset.addPreference(userID, itemID, preference);
             dataset.addTimestamp(userID, itemID, timestamp);
         }

@@ -34,5 +34,5 @@ public interface EvaluationStrategyPerItem<U, I> {
      * @param item The item.
      * @return The items to rank.
      */
-    public Set<I> getCandidateItemsToRank(U user, I item);
+    Set<I> getCandidateItemsToRank(U user, I item);
 }

@@ -45,40 +45,67 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
-public class RandomMahoutIBRecommenderEvaluator {
+public final class RandomMahoutIBRecommenderEvaluator {
+
+    /**
+     * Default percentage.
+     */
+    public static final float PERCENTAGE = 0.2f;
+    /**
+     * Default neighbohood size.
+     */
+    public static final int NEIGH_SIZE = 50;
+    /**
+     * Default cutoff for evaluation metrics.
+     */
+    public static final int AT = 10;
+    /**
+     * Default relevance threshold.
+     */
+    public static final double REL_TH = 3.0;
+    /**
+     * Default seed.
+     */
+    public static final long SEED = 2048L;
+
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private RandomMahoutIBRecommenderEvaluator() {
+    }
 
     /**
      * Main method. Parameter is not used.
      *
      * @param args the arguments (not used)
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         String url = "https://raw.githubusercontent.com/sidooms/MovieTweetings/master/snapshots/10K/ratings.dat";
         String modelPath = "data/movietweeting/model/";
         String recPath = "data/movietweeting/recommendations/";
         String folder = "data/movietweeting";
-        int nFolds = 1;
-        prepareSplits(url, nFolds, "data/movietweeting/ratings.dat", folder, modelPath);
-        recommend(nFolds, modelPath, recPath);
-        prepareStrategy(nFolds, modelPath, recPath, modelPath);
-        evaluate(nFolds, modelPath, recPath);
+        float percentage = PERCENTAGE;
+        prepareSplits(url, percentage, "data/movietweeting/ratings.dat", folder, modelPath);
+        recommend(modelPath, recPath);
+        prepareStrategy(modelPath, recPath, modelPath);
+        evaluate(modelPath, recPath);
     }
 
     /**
      * Downloads a dataset and stores the splits generated from it.
      *
      * @param url url where dataset can be downloaded from
-     * @param nFolds number of folds
+     * @param percentage percentage to be used in the random split
      * @param inFile file to be used once the dataset has been downloaded
      * @param folder folder where dataset will be stored
      * @param outPath path where the splits will be stored
      */
-    public static void prepareSplits(String url, int nFolds, String inFile, String folder, String outPath) {
+    public static void prepareSplits(final String url, final float percentage, final String inFile, final String folder, final String outPath) {
         DataDownloader dd = new DataDownloader(url, folder);
         dd.download();
 
         boolean perUser = true;
-        long seed = 20;
+        long seed = SEED;
         UIPParser parser = new UIPParser();
 
         parser.setDelimiter(':');
@@ -94,7 +121,7 @@ public class RandomMahoutIBRecommenderEvaluator {
             e.printStackTrace();
         }
 
-        DataModel<Long, Long>[] splits = new RandomSplitter(0.2f, perUser, seed, false).split(data);
+        DataModel<Long, Long>[] splits = new RandomSplitter(percentage, perUser, seed, false).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
@@ -122,49 +149,47 @@ public class RandomMahoutIBRecommenderEvaluator {
     }
 
     /**
-     * Recommends using an IB algorithm
+     * Recommends using an IB algorithm.
      *
-     * @param nFolds number of folds
      * @param inPath path where training and test models have been stored
      * @param outPath path where recommendation files will be stored
      */
-    public static void recommend(int nFolds, String inPath, String outPath) {
-        for (int i = 0; i < nFolds; i++) {
-            org.apache.mahout.cf.taste.model.DataModel trainModel = null;
-            org.apache.mahout.cf.taste.model.DataModel testModel = null;
-            try {
-                trainModel = new FileDataModel(new File(inPath + "train_" + i + ".csv"));
-                testModel = new FileDataModel(new File(inPath + "test_" + i + ".csv"));
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
+    public static void recommend(final String inPath, final String outPath) {
+        int i = 0;
+        org.apache.mahout.cf.taste.model.DataModel trainModel = null;
+        org.apache.mahout.cf.taste.model.DataModel testModel = null;
+        try {
+            trainModel = new FileDataModel(new File(inPath + "train_" + i + ".csv"));
+            testModel = new FileDataModel(new File(inPath + "test_" + i + ".csv"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
-            GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
-            String recommenderClass = "org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender";
-            String similarityClass = "org.apache.mahout.cf.taste.impl.similarity.TanimotoCoefficientSimilarity";
-            Recommender recommender = null;
-            try {
-                recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass);
-            } catch (RecommenderException e) {
-                e.printStackTrace();
-            }
+        GenericRecommenderBuilder grb = new GenericRecommenderBuilder();
+        String recommenderClass = "org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender";
+        String similarityClass = "org.apache.mahout.cf.taste.impl.similarity.TanimotoCoefficientSimilarity";
+        Recommender recommender = null;
+        try {
+            recommender = grb.buildRecommender(trainModel, recommenderClass, similarityClass);
+        } catch (RecommenderException e) {
+            e.printStackTrace();
+        }
 
-            String fileName = "recs_" + i + ".csv";
+        String fileName = "recs_" + i + ".csv";
 
-            LongPrimitiveIterator users = null;
-            try {
-                users = testModel.getUserIDs();
-                boolean createFile = true;
-                while (users.hasNext()) {
-                    long u = users.nextLong();
-                    List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                    RecommenderIO.writeData(u, items, outPath, fileName, !createFile, null);
-                    createFile = false;
-                }
-            } catch (TasteException e) {
-                e.printStackTrace();
+        LongPrimitiveIterator users = null;
+        try {
+            users = testModel.getUserIDs();
+            boolean createFile = true;
+            while (users.hasNext()) {
+                long u = users.nextLong();
+                List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
+                RecommenderIO.writeData(u, items, outPath, fileName, !createFile, null);
+                createFile = false;
             }
+        } catch (TasteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -172,104 +197,99 @@ public class RandomMahoutIBRecommenderEvaluator {
      * Prepares the strategies to be evaluated with the recommenders already
      * generated.
      *
-     * @param nFolds number of folds
      * @param splitPath path where splits have been stored
      * @param recPath path where recommendation files have been stored
      * @param outPath path where the filtered recommendations will be stored
      */
     @SuppressWarnings("unchecked")
-    public static void prepareStrategy(int nFolds, String splitPath, String recPath, String outPath) {
-        for (int i = 0; i < nFolds; i++) {
-            File trainingFile = new File(splitPath + "train_" + i + ".csv");
-            File testFile = new File(splitPath + "test_" + i + ".csv");
-            File recFile = new File(recPath + "recs_" + i + ".csv");
-            DataModel<Long, Long> trainingModel = null;
-            DataModel<Long, Long> testModel = null;
-            DataModel<Long, Long> recModel = null;
-            try {
-                trainingModel = new SimpleParser().parseData(trainingFile);
-                testModel = new SimpleParser().parseData(testFile);
-                recModel = new SimpleParser().parseData(recFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
+    public static void prepareStrategy(final String splitPath, final String recPath, final String outPath) {
+        int i = 0;
+        File trainingFile = new File(splitPath + "train_" + i + ".csv");
+        File testFile = new File(splitPath + "test_" + i + ".csv");
+        File recFile = new File(recPath + "recs_" + i + ".csv");
+        DataModel<Long, Long> trainingModel = null;
+        DataModel<Long, Long> testModel = null;
+        DataModel<Long, Long> recModel = null;
+        try {
+            trainingModel = new SimpleParser().parseData(trainingFile);
+            testModel = new SimpleParser().parseData(testFile);
+            recModel = new SimpleParser().parseData(recFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
-            Double threshold = 2.0;
-            String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
-            EvaluationStrategy<Long, Long> strategy = null;
-            try {
-                strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
-                // Alternatively
-                // strategy = new UserTest(trainingModel,testModel,threshold);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+        Double threshold = REL_TH;
+        String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
+        EvaluationStrategy<Long, Long> strategy = null;
+        try {
+            strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).
+                    newInstance(trainingModel, testModel, threshold);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
-            DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
+        DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
 
-            for (Long user : recModel.getUsers()) {
-                for (Long item : strategy.getCandidateItemsToRank(user)) {
-                    if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
-                        modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
-                    }
+        for (Long user : recModel.getUsers()) {
+            for (Long item : strategy.getCandidateItemsToRank(user)) {
+                if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
+                    modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
                 }
             }
-            try {
-                DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        }
+        try {
+            DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
     /**
      * Evaluates the recommendations generated in previous steps.
      *
-     * @param nFolds number of folds
      * @param splitPath path where splits have been stored
      * @param recPath path where recommendation files have been stored
      */
-    public static void evaluate(int nFolds, String splitPath, String recPath) {
+    public static void evaluate(final String splitPath, final String recPath) {
         double ndcgRes = 0.0;
         double precisionRes = 0.0;
         double rmseRes = 0.0;
-        for (int i = 0; i < nFolds; i++) {
-            File testFile = new File(splitPath + "test_" + i + ".csv");
-            File recFile = new File(recPath + "recs_" + i + ".csv");
-            DataModel<Long, Long> testModel = null;
-            DataModel<Long, Long> recModel = null;
-            try {
-                testModel = new SimpleParser().parseData(testFile);
-                recModel = new SimpleParser().parseData(recFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            NDCG<Long, Long> ndcg = new NDCG<Long, Long>(recModel, testModel, new int[]{10});
-            ndcg.compute();
-            ndcgRes += ndcg.getValueAt(10);
-
-            RMSE<Long, Long> rmse = new RMSE<Long, Long>(recModel, testModel);
-            rmse.compute();
-            rmseRes += rmse.getValue();
-
-            Precision<Long, Long> precision = new Precision<Long, Long>(recModel, testModel, 3.0, new int[]{10});
-            precision.compute();
-            precisionRes += precision.getValueAt(10);
+        int i = 0;
+        File testFile = new File(splitPath + "test_" + i + ".csv");
+        File recFile = new File(recPath + "recs_" + i + ".csv");
+        DataModel<Long, Long> testModel = null;
+        DataModel<Long, Long> recModel = null;
+        try {
+            testModel = new SimpleParser().parseData(testFile);
+            recModel = new SimpleParser().parseData(recFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        System.out.println("NDCG@10: " + ndcgRes / nFolds);
-        System.out.println("RMSE: " + rmseRes / nFolds);
-        System.out.println("P@10: " + precisionRes / nFolds);
+        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(recModel, testModel, new int[]{AT});
+        ndcg.compute();
+        ndcgRes += ndcg.getValueAt(AT);
 
+        RMSE<Long, Long> rmse = new RMSE<Long, Long>(recModel, testModel);
+        rmse.compute();
+        rmseRes += rmse.getValue();
+
+        Precision<Long, Long> precision = new Precision<Long, Long>(recModel, testModel, REL_TH, new int[]{AT});
+        precision.compute();
+        precisionRes += precision.getValueAt(AT);
+
+        System.out.println("NDCG@" + AT + ": " + ndcgRes);
+        System.out.println("RMSE: " + rmseRes);
+        System.out.println("P@" + AT + ": " + precisionRes);
     }
 }

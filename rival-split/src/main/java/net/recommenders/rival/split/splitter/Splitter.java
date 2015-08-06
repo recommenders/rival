@@ -21,6 +21,9 @@ import net.recommenders.rival.core.DataModel;
  * Interface for the data splitter.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
+ *
+ * @param <U> generic type for users
+ * @param <I> generic type for items
  */
 public interface Splitter<U, I> {
 
@@ -30,5 +33,5 @@ public interface Splitter<U, I> {
      * @param data The data.
      * @return The split data model.
      */
-    public DataModel<U, I>[] split(DataModel<U, I> data);
+    DataModel<U, I>[] split(DataModel<U, I> data);
 }
