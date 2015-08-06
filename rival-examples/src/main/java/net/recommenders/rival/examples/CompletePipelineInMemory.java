@@ -121,8 +121,7 @@ public final class CompletePipelineInMemory {
                 + "statistical_significance_wilcoxon");
         props.put(StatisticsRunner.INPUT_FORMAT, "default");
         //              we use simple names instead of files
-        props.put(StatisticsRunner.BASELINE_FILE, "");
-        props.put(StatisticsRunner.TEST_METHODS_FILES, "");
+        props.put(StatisticsRunner.BASELINE_FILE, "/..lenskit.ItemItemScorer.CosineVectorSimilarity.tsv.stats");
         //
         System.out.println("Properties: " + props);
     }
@@ -411,6 +410,7 @@ public final class CompletePipelineInMemory {
             return;
         }
         // run statistical methods
+        properties.put(StatisticsRunner.TEST_METHODS_FILES, methodsResults.keySet());
         StatisticsRunner.run(properties, out, baselineName, baselineResults, methodsResults);
     }
 }
