@@ -28,7 +28,7 @@ import net.recommenders.rival.core.DataModel;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class CrossValidationSplitter<U,I> implements Splitter<U, I> {
+public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
 
     /**
      * The number of folds that the data will be split into.
@@ -61,11 +61,7 @@ public class CrossValidationSplitter<U,I> implements Splitter<U, I> {
      * {@inheritDoc}
      */
     @Override
-<<<<<<< HEAD
-    public DataModel<U, I>[] split(DataModel<U, I> data) {
-=======
-    public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
->>>>>>> 88000b7f831c2fd97217933ae41f7794b5ec8b6e
+    public DataModel<U, I>[] split(final DataModel<U, I> data) {
         @SuppressWarnings("unchecked")
         final DataModel<U, I>[] splits = new DataModel[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {
