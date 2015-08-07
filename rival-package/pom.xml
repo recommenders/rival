@@ -4,7 +4,7 @@
     <parent>
         <artifactId>rival</artifactId>
         <groupId>net.recommenders.rival</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>rival-package</artifactId>
