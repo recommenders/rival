@@ -128,7 +128,7 @@ public class EffectSize<V> {
 
     /**
      *
-     * Least squares estimator of Cohen's d as described in McGrath & Meyer,
+     * Least squares estimator of Cohen's d as described in McGrath and Meyer,
      * When effect sizes disagree: the case of r and d. 2006. Psychological
      * Methods, 11 (4)
      *

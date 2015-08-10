@@ -78,7 +78,7 @@ public class StatisticalSignificance {
         } else if ("pairedT".equals(method)) {
             p = TestUtils.pairedTTest(baselineValues, testValues);
         } else if ("wilcoxon".equals(method)) {
-            p = new WilcoxonSignedRankTest().wilcoxonSignedRankTest(baselineValues, testValues, true);
+            p = new WilcoxonSignedRankTest().wilcoxonSignedRankTest(baselineValues, testValues, false);
         }
 
         return p;
