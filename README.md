@@ -10,8 +10,7 @@ If you have not used RiVal before, do check out the [Getting Started][] guide.
 [wiki]: http://github.com/recommenders/rival/wiki/
 [Getting Started]: http://github.com/recommenders/rival/wiki/GettingStarted
 
-RiVal is made available under the GNU Lesser General Public License
-(LGPL), version 2.1 or later.
+RiVal is made available under Apache License, Version 2.0.
 
 ## Installation and Dependency Management
 
@@ -43,7 +42,7 @@ If you want to contribute, to it in the form of GitHub pull requests. To do this
 2. Push your changes to your fork
 3. Submit a pull request via the GitHub Web interface
 
-Note that all your contributions will be licensed under RiVal's copyright licences (LGPL).
+Note that all your contributions will be licensed under RiVal's copyright licences (Apache).
 
 ## Mailing list
 
