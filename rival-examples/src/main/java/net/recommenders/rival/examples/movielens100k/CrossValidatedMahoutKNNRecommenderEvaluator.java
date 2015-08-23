@@ -86,8 +86,9 @@ public final class CrossValidatedMahoutKNNRecommenderEvaluator {
         String folder = "data/ml-100k";
         String modelPath = "data/ml-100k/model/";
         String recPath = "data/ml-100k/recommendations/";
+        String dataFile = "data/ml-100k/ml-100k/u.data";
         int nFolds = N_FOLDS;
-        prepareSplits(url, nFolds, "data/ml-100k/u.data", folder, modelPath);
+        prepareSplits(url, nFolds, "dataFile, folder, modelPath);
         recommend(nFolds, modelPath, recPath);
         // the strategy files are (currently) being ignored
         prepareStrategy(nFolds, modelPath, recPath, modelPath);
