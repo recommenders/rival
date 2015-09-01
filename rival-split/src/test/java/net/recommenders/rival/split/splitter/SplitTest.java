@@ -51,7 +51,7 @@ public class SplitTest {
         int nFolds = 5;
 
         DataModel<Long, Long>[] splits = null;
-        splits = new CrossValidationSplitter(nFolds, false, 1L).split(dm);
+        splits = new CrossValidationSplitter<Long, Long>(nFolds, false, 1L).split(dm);
 
         assertTrue(splits.length == 2 * nFolds);
 

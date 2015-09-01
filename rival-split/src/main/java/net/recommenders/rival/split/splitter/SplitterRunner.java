@@ -141,7 +141,7 @@ public final class SplitterRunner {
         if (splitterClassName.contains("CrossValidation")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
-            splitter = new CrossValidationSplitter(nFolds, perUser, seed);
+            splitter = new CrossValidationSplitter<Long, Long>(nFolds, perUser, seed);
         } else if (splitterClassName.contains("Random")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
