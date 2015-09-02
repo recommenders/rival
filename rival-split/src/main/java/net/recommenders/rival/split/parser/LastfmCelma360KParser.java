@@ -66,16 +66,16 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
      */
     @Override
     public DataModel<Long, Long> parseData(final File f, final String mapIdsPrefix) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<Long, Long>();
+        DataModel<Long, Long> dataset = new DataModel<>();
 
-        Map<String, Long> mapUserIds = new HashMap<String, Long>();
-        Map<String, Long> mapItemIds = new HashMap<String, Long>();
+        Map<String, Long> mapUserIds = new HashMap<>();
+        Map<String, Long> mapItemIds = new HashMap<>();
 
         long curUser = getIndexMap(new File(mapIdsPrefix + "_userId.txt"), mapUserIds);
         long curItem = getIndexMap(new File(mapIdsPrefix + "_itemId.txt"), mapItemIds);
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
-        String line = null;
+        String line;
         while ((line = br.readLine()) != null) {
             String[] toks = line.split("\t");
             // user
@@ -88,7 +88,7 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
             // item
             String artist = toks[ARTIST_TOK];
             String track = toks[TRACK_TOK];
-            String item = null;
+            String item;
             if (isUseArtists()) {
                 item = artist;
             } else {

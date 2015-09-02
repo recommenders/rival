@@ -114,7 +114,7 @@ public final class ParserRunner {
             InstantiationException, InvocationTargetException, NoSuchMethodException {
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
-        Parser<Long, Long> parser = null;
+        Parser<Long, Long> parser;
         if (parserClassName.contains("LastfmCelma")) {
             Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
             parser = (Parser<Long, Long>) parserClass.getConstructor(boolean.class).newInstance(useArtists);

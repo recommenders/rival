@@ -51,13 +51,11 @@ public class MovielensParser implements Parser<Long, Long> {
      */
     @Override
     public DataModel<Long, Long> parseData(final File f) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<Long, Long>();
+        DataModel<Long, Long> dataset = new DataModel<>();
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            parseLine(line, dataset);
-        }
+        String line;
+        while ((line = br.readLine()) != null) parseLine(line, dataset);
         br.close();
 
         return dataset;
@@ -71,12 +69,9 @@ public class MovielensParser implements Parser<Long, Long> {
      * will be stored into.
      */
     private void parseLine(final String line, final DataModel<Long, Long> dataset) {
-        String[] toks = null;
-        if (line.contains("::")) {
-            toks = line.split("::");
-        } else {
-            toks = line.split("\t");
-        }
+        String[] toks;
+        if (line.contains("::")) toks = line.split("::");
+        else toks = line.split("\t");
         // user
         long userId = Long.parseLong(toks[USER_TOK]);
         // item

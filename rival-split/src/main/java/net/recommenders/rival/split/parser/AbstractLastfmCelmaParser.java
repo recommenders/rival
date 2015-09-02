@@ -57,7 +57,7 @@ public class AbstractLastfmCelmaParser {
         long id = 0;
         if (in.exists()) {
             BufferedReader br = SimpleParser.getBufferedReader(in);
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 String[] toks = line.split("\t");
                 long i = Long.parseLong(toks[1]);
