@@ -43,7 +43,7 @@ public class UIPParser extends AbstractParser implements Parser<Long, Long> {
      */
     @Override
     public DataModel<Long, Long> parseData(final File f) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<Long, Long>();
+        DataModel<Long, Long> dataset = new DataModel<>();
         Reader in = new InputStreamReader(new FileInputStream(f), "UTF-8");
 
         Iterable<CSVRecord> records;

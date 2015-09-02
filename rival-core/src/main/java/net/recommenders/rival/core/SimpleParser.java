@@ -67,7 +67,7 @@ public class SimpleParser implements Parser<Long, Long> {
      * @throws IOException if the file cannot be read.
      */
     public DataModel<Long, Long> parseData(final File f, final String token) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<Long, Long>();
+        DataModel<Long, Long> dataset = new DataModel<>();
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
         String line = br.readLine();

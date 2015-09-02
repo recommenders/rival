@@ -33,7 +33,7 @@ public class DataModelTest<U, I> {
     /**
      * The data model.
      */
-    private DataModel<Long, Long> dm = new DataModel<Long, Long>();
+    private DataModel<Long, Long> dm = new DataModel<>();
     /**
      * The number of users in the data model.
      */

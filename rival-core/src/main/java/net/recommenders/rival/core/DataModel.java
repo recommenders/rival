@@ -105,7 +105,7 @@ public class DataModel<U, I> {
         // update direct map
         Map<I, Double> userPreferences = userItemPreferences.get(u);
         if (userPreferences == null) {
-            userPreferences = new HashMap<I, Double>();
+            userPreferences = new HashMap<>();
             userItemPreferences.put(u, userPreferences);
         }
         Double preference = userPreferences.get(i);
@@ -117,7 +117,7 @@ public class DataModel<U, I> {
         // update inverse map
         Map<U, Double> itemPreferences = itemUserPreferences.get(i);
         if (itemPreferences == null) {
-            itemPreferences = new HashMap<U, Double>();
+            itemPreferences = new HashMap<>();
             itemUserPreferences.put(i, itemPreferences);
         }
         itemPreferences.put(u, preference);
@@ -133,12 +133,12 @@ public class DataModel<U, I> {
     public void addTimestamp(final U u, final I i, final Long t) {
         Map<I, Set<Long>> userTimestamps = userItemTimestamps.get(u);
         if (userTimestamps == null) {
-            userTimestamps = new HashMap<I, Set<Long>>();
+            userTimestamps = new HashMap<>();
             userItemTimestamps.put(u, userTimestamps);
         }
         Set<Long> timestamps = userTimestamps.get(i);
         if (timestamps == null) {
-            timestamps = new HashSet<Long>();
+            timestamps = new HashSet<>();
             userTimestamps.put(i, timestamps);
         }
         timestamps.add(t);
