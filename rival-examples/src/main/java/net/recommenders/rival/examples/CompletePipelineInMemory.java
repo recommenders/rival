@@ -144,9 +144,6 @@ public final class CompletePipelineInMemory {
             } else {
                 properties.load(new FileInputStream(propertyFile));
             }
-        } catch (FileNotFoundException e) {
-            fillDefaultProperties(properties);
-            e.printStackTrace();
         } catch (IOException ie) {
             fillDefaultProperties(properties);
             ie.printStackTrace();
@@ -174,7 +171,7 @@ public final class CompletePipelineInMemory {
                 DataModel<Long, Long> training = splits[2 * i];
                 DataModel<Long, Long> test = splits[2 * i + 1];
                 Map<String, DataModel<Long, Long>> recModels = getRecommenderModels(properties, training, test);
-                Map<String, Map<String, Map<String, Map<String, Double>>>> mapStrategyRecommenderMetricUserValue = new HashMap<String, Map<String, Map<String, Map<String, Double>>>>();
+                Map<String, Map<String, Map<String, Map<String, Double>>>> mapStrategyRecommenderMetricUserValue = new HashMap<>();
                 for (Entry<String, DataModel<Long, Long>> e : recModels.entrySet()) {
                     String rec = e.getKey();
                     DataModel<Long, Long> recModel = e.getValue();
@@ -186,7 +183,7 @@ public final class CompletePipelineInMemory {
                         // assign these results to a rec+strategy, at the end, compute statistics for all recs and one strategy
                         Map<String, Map<String, Map<String, Double>>> stratResults = mapStrategyRecommenderMetricUserValue.get(strat);
                         if (stratResults == null) {
-                            stratResults = new HashMap<String, Map<String, Map<String, Double>>>();
+                            stratResults = new HashMap<>();
                             mapStrategyRecommenderMetricUserValue.put(strat, stratResults);
                         }
                         stratResults.put(rec, results);
@@ -237,8 +234,7 @@ public final class CompletePipelineInMemory {
         DataModel<Long, Long> data = parser.parseData(new File(inFile));
         // prepare splits
         Splitter<Long, Long> splitter = SplitterRunner.instantiateSplitter(properties);
-        DataModel<Long, Long>[] splits = splitter.split(data);
-        return splits;
+        return splitter.split(data);
     }
 
     /**
@@ -269,7 +265,7 @@ public final class CompletePipelineInMemory {
             }
         }, properties);
 
-        Map<String, DataModel<Long, Long>> recommenderModels = new HashMap<String, DataModel<Long, Long>>();
+        Map<String, DataModel<Long, Long>> recommenderModels = new HashMap<>();
 
         for (AbstractRunner<Long, Long> mahoutRec : mahoutRecs) {
             recommenderModels.put(mahoutRec.getCanonicalFileName(), mahoutRec.run(AbstractRunner.RUN_OPTIONS.RETURN_RECS, trainingModel, testModel));
@@ -307,10 +303,10 @@ public final class CompletePipelineInMemory {
             throws ClassNotFoundException, IllegalAccessException,
             InstantiationException, InvocationTargetException, NoSuchMethodException {
         // apply all strategies
-        Map<String, DataModel<Long, Long>> modelToEvals = new HashMap<String, DataModel<Long, Long>>();
+        Map<String, DataModel<Long, Long>> modelToEvals = new HashMap<>();
         for (EvaluationStrategy<Long, Long> strategy : MultipleStrategyRunner.instantiateStrategies(properties, trainingModel, testModel)) {
             // apply strategy
-            DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
+            DataModel<Long, Long> modelToEval = new DataModel<>();
             for (Long user : recModel.getUsers()) {
                 for (Long item : strategy.getCandidateItemsToRank(user)) {
                     if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
@@ -348,11 +344,11 @@ public final class CompletePipelineInMemory {
     @SuppressWarnings("unchecked")
     private static Map<String, Map<String, Double>> evaluateStrategy(final Properties properties, final DataModel<Long, Long> test, final DataModel<Long, Long> modelToEvaluate)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-        Map<String, Map<String, Double>> mapMetricResults = new HashMap<String, Map<String, Double>>();
+        Map<String, Map<String, Double>> mapMetricResults = new HashMap<>();
         for (EvaluationMetric<Long> metric : MultipleEvaluationMetricRunner.instantiateEvaluationMetrics(properties, modelToEvaluate, test)) {
             metric.compute();
             Double all = metric.getValue();
-            Map<String, Double> results = new HashMap<String, Double>();
+            Map<String, Double> results = new HashMap<>();
             mapMetricResults.put(metric.toString(), results);
             results.put("all", all);
             Map<Long, Double> perUser = metric.getValuePerUser();
@@ -365,7 +361,7 @@ public final class CompletePipelineInMemory {
                 AbstractRankingMetric<Long, Long> rankingMetric = (AbstractRankingMetric<Long, Long>) metric;
                 for (int n : rankingMetric.getCutoffs()) {
                     all = rankingMetric.getValueAt(n);
-                    results = new HashMap<String, Double>();
+                    results = new HashMap<>();
                     mapMetricResults.put(metric.toString() + "@" + n, results);
                     results.put("all", all);
                     perUser = rankingMetric.getValuePerUser();
@@ -396,7 +392,7 @@ public final class CompletePipelineInMemory {
             return;
         }
         Map<String, Map<String, Double>> baselineResults = null;
-        Map<String, Map<String, Map<String, Double>>> methodsResults = new HashMap<String, Map<String, Map<String, Double>>>();
+        Map<String, Map<String, Map<String, Double>>> methodsResults = new HashMap<>();
         for (Entry<String, Map<String, Map<String, Double>>> e : strategyResults.entrySet()) {
             String n = e.getKey();
             if (n.equals(baselineName)) {

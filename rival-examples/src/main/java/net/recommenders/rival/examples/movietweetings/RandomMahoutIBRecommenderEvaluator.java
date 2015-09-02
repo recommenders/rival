@@ -140,9 +140,7 @@ public final class RandomMahoutIBRecommenderEvaluator {
             try {
                 DataModelUtils.saveDataModel(training, trainingFile, overwrite);
                 DataModelUtils.saveDataModel(test, testFile, overwrite);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
+            } catch (FileNotFoundException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
@@ -156,8 +154,8 @@ public final class RandomMahoutIBRecommenderEvaluator {
      */
     public static void recommend(final String inPath, final String outPath) {
         int i = 0;
-        org.apache.mahout.cf.taste.model.DataModel trainModel = null;
-        org.apache.mahout.cf.taste.model.DataModel testModel = null;
+        org.apache.mahout.cf.taste.model.DataModel trainModel;
+        org.apache.mahout.cf.taste.model.DataModel testModel;
         try {
             trainModel = new FileDataModel(new File(inPath + "train_" + i + ".csv"));
             testModel = new FileDataModel(new File(inPath + "test_" + i + ".csv"));
@@ -184,6 +182,7 @@ public final class RandomMahoutIBRecommenderEvaluator {
             boolean createFile = true;
             while (users.hasNext()) {
                 long u = users.nextLong();
+                assert recommender != null;
                 List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
                 RecommenderIO.writeData(u, items, outPath, fileName, !createFile, null);
                 createFile = false;
@@ -207,9 +206,9 @@ public final class RandomMahoutIBRecommenderEvaluator {
         File trainingFile = new File(splitPath + "train_" + i + ".csv");
         File testFile = new File(splitPath + "test_" + i + ".csv");
         File recFile = new File(recPath + "recs_" + i + ".csv");
-        DataModel<Long, Long> trainingModel = null;
-        DataModel<Long, Long> testModel = null;
-        DataModel<Long, Long> recModel = null;
+        DataModel<Long, Long> trainingModel;
+        DataModel<Long, Long> testModel;
+        DataModel<Long, Long> recModel;
         try {
             trainingModel = new SimpleParser().parseData(trainingFile);
             testModel = new SimpleParser().parseData(testFile);
@@ -225,21 +224,14 @@ public final class RandomMahoutIBRecommenderEvaluator {
         try {
             strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).
                     newInstance(trainingModel, testModel, threshold);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
+        DataModel<Long, Long> modelToEval = new DataModel<>();
 
         for (Long user : recModel.getUsers()) {
+            assert strategy != null;
             for (Long item : strategy.getCandidateItemsToRank(user)) {
                 if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
                     modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
@@ -248,9 +240,7 @@ public final class RandomMahoutIBRecommenderEvaluator {
         }
         try {
             DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -276,15 +266,15 @@ public final class RandomMahoutIBRecommenderEvaluator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        NDCG<Long, Long> ndcg = new NDCG<Long, Long>(recModel, testModel, new int[]{AT});
+        NDCG<Long, Long> ndcg = new NDCG<>(recModel, testModel, new int[]{AT});
         ndcg.compute();
         ndcgRes += ndcg.getValueAt(AT);
 
-        RMSE<Long, Long> rmse = new RMSE<Long, Long>(recModel, testModel);
+        RMSE<Long, Long> rmse = new RMSE<>(recModel, testModel);
         rmse.compute();
         rmseRes += rmse.getValue();
 
-        Precision<Long, Long> precision = new Precision<Long, Long>(recModel, testModel, REL_TH, new int[]{AT});
+        Precision<Long, Long> precision = new Precision<>(recModel, testModel, REL_TH, new int[]{AT});
         precision.compute();
         precisionRes += precision.getValueAt(AT);
 

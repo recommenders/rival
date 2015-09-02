@@ -79,6 +79,7 @@ public class DataDownloader {
 
         File downloadedData = new File(fileName);
         try {
+            assert dataURL != null;
             FileUtils.copyURLToFile(dataURL, downloadedData);
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,6 +101,7 @@ public class DataDownloader {
                 e.printStackTrace();
             }
             try {
+                assert dataURL != null;
                 FileUtils.copyURLToFile(dataURL, compressedData);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -109,9 +111,7 @@ public class DataDownloader {
             ZipFile zipFile = new ZipFile(compressedData);
             File dataFolder = new File(folder);
             zipFile.extractAll(dataFolder.getCanonicalPath());
-        } catch (ZipException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ZipException | IOException e) {
             e.printStackTrace();
         }
     }
