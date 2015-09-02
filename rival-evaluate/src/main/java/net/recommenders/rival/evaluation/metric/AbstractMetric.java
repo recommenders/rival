@@ -114,7 +114,7 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      */
     protected void iniCompute() {
         value = 0.0;
-        metricPerUser = new HashMap<U, Double>();
+        metricPerUser = new HashMap<>();
     }
 
     /**
@@ -141,11 +141,11 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      * @return the ranked list
      */
     protected List<I> rankItems(final Map<I, Double> userItems) {
-        List<I> sortedItems = new ArrayList<I>();
+        List<I> sortedItems = new ArrayList<>();
         if (userItems == null) {
             return sortedItems;
         }
-        Map<Double, Set<I>> itemsByRank = new HashMap<Double, Set<I>>();
+        Map<Double, Set<I>> itemsByRank = new HashMap<>();
         for (Map.Entry<I, Double> e : userItems.entrySet()) {
             I item = e.getKey();
             double pref = e.getValue();
@@ -155,15 +155,15 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
             }
             Set<I> items = itemsByRank.get(pref);
             if (items == null) {
-                items = new HashSet<I>();
+                items = new HashSet<>();
                 itemsByRank.put(pref, items);
             }
             items.add(item);
         }
-        List<Double> sortedScores = new ArrayList<Double>(itemsByRank.keySet());
+        List<Double> sortedScores = new ArrayList<>(itemsByRank.keySet());
         Collections.sort(sortedScores, Collections.reverseOrder());
         for (double pref : sortedScores) {
-            List<I> sortedPrefItems = new ArrayList<I>(itemsByRank.get(pref));
+            List<I> sortedPrefItems = new ArrayList<>(itemsByRank.get(pref));
             // deterministic output when ties in preferences: sort by item id
             Collections.sort(sortedPrefItems, Collections.reverseOrder());
             for (I itemID : sortedPrefItems) {
@@ -180,7 +180,7 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      * @return the ranked list
      */
     protected List<Double> rankScores(final Map<I, Double> userItems) {
-        List<Double> sortedScores = new ArrayList<Double>();
+        List<Double> sortedScores = new ArrayList<>();
         if (userItems == null) {
             return sortedScores;
         }

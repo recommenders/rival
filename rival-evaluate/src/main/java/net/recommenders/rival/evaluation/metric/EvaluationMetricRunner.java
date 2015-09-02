@@ -106,8 +106,6 @@ public final class EvaluationMetricRunner {
         final Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(propertyFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException ie) {
             ie.printStackTrace();
         }
@@ -133,8 +131,8 @@ public final class EvaluationMetricRunner {
             throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         System.out.println("Parsing started: recommendation file");
         File recommendationFile = new File(properties.getProperty(PREDICTION_FILE));
-        DataModel<Long, Long> predictions = null;
-        EvaluationStrategy.OUTPUT_FORMAT recFormat = null;
+        DataModel<Long, Long> predictions;
+        EvaluationStrategy.OUTPUT_FORMAT recFormat;
         if (properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString())) {
             recFormat = EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL;
         } else {
@@ -214,11 +212,11 @@ public final class EvaluationMetricRunner {
         int[] rankingCutoffs = getRankingCutoffs(properties);
         String metricClassName = properties.getProperty(METRIC);
         Class<?> metricClass = Class.forName(metricClassName);
-        EvaluationMetric<Long> metric = null;
+        EvaluationMetric<Long> metric;
         if (metricClassName.contains(".ranking.")) {
             if (metricClassName.endsWith("NDCG")) {
                 String ndcgType = properties.getProperty(NDCG_TYPE, "exp");
-                NDCG.TYPE nt = null;
+                NDCG.TYPE nt;
                 if (ndcgType.equalsIgnoreCase(NDCG.TYPE.EXP.toString())) {
                     nt = NDCG.TYPE.EXP;
                 } else {
@@ -270,7 +268,7 @@ public final class EvaluationMetricRunner {
     public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs,
             final EvaluationMetric<U> metric, final String metricName,
             final Boolean perUser, final File resultsFile, final Boolean overwrite, final Boolean append) throws FileNotFoundException, UnsupportedEncodingException {
-        PrintStream out = null;
+        PrintStream out;
         if (overwrite && append) {
             System.out.println("Incompatible arguments: overwrite && append!!!");
             return;

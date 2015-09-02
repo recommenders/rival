@@ -108,8 +108,6 @@ public final class MultipleEvaluationMetricRunner {
         final Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(propertyFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException ie) {
             ie.printStackTrace();
         }
@@ -139,7 +137,7 @@ public final class MultipleEvaluationMetricRunner {
     @SuppressWarnings("unchecked")
     public static void run(final Properties properties)
             throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-        EvaluationStrategy.OUTPUT_FORMAT recFormat = null;
+        EvaluationStrategy.OUTPUT_FORMAT recFormat;
         if (properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString())) {
             recFormat = EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL;
         } else {
@@ -153,7 +151,7 @@ public final class MultipleEvaluationMetricRunner {
 
         File predictionsFolder = new File(properties.getProperty(PREDICTION_FOLDER));
         String predictionsPrefix = properties.getProperty(PREDICTION_PREFIX);
-        Set<String> predictionFiles = new HashSet<String>();
+        Set<String> predictionFiles = new HashSet<>();
         getAllPredictionFiles(predictionFiles, predictionsFolder, predictionsPrefix);
 
         // read other parameters
@@ -166,7 +164,7 @@ public final class MultipleEvaluationMetricRunner {
         for (String file : predictionFiles) {
             File predictionFile = new File(predictionsPrefix + file);
             System.out.println("Parsing started: recommendation file");
-            DataModel<Long, Long> predictions = null;
+            DataModel<Long, Long> predictions;
             switch (recFormat) {
                 case SIMPLE:
                     predictions = new SimpleParser().parseData(predictionFile);
@@ -210,7 +208,7 @@ public final class MultipleEvaluationMetricRunner {
     @SuppressWarnings("unchecked")
     public static EvaluationMetric<Long>[] instantiateEvaluationMetrics(final Properties properties, final DataModel<Long, Long> predictions, final DataModel<Long, Long> testModel)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-        List<EvaluationMetric<Long>> metricList = new ArrayList<EvaluationMetric<Long>>();
+        List<EvaluationMetric<Long>> metricList = new ArrayList<>();
         String[] metricClassNames = properties.getProperty(METRICS).split(",");
         for (String metricClassName : metricClassNames) {
             // get metric
@@ -220,8 +218,7 @@ public final class MultipleEvaluationMetricRunner {
             properties.remove(EvaluationMetricRunner.METRIC);
         }
 
-        EvaluationMetric<Long>[] metrics = metricList.toArray(new EvaluationMetric[0]);
-        return metrics;
+        return metricList.toArray(new EvaluationMetric[0]);
     }
 
     /**
