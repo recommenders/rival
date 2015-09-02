@@ -47,8 +47,6 @@ public final class Split {
         final Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(propertyFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException ie) {
             ie.printStackTrace();
         }

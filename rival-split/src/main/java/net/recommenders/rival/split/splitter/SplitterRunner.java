@@ -98,7 +98,7 @@ public final class SplitterRunner {
     public static void run(final Properties properties, final DataModel<Long, Long> data, final boolean doDataClear)
             throws FileNotFoundException, UnsupportedEncodingException {
         System.out.println("Start splitting");
-        DataModel<Long, Long>[] splits = null;
+        DataModel<Long, Long>[] splits;
         // read parameters
         String outputFolder = properties.getProperty(SPLIT_OUTPUT_FOLDER);
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(SPLIT_OUTPUT_OVERWRITE, "false"));
@@ -141,7 +141,7 @@ public final class SplitterRunner {
         if (splitterClassName.contains("CrossValidation")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
-            splitter = new CrossValidationSplitter<Long, Long>(nFolds, perUser, seed);
+            splitter = new CrossValidationSplitter<>(nFolds, perUser, seed);
         } else if (splitterClassName.contains("Random")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));

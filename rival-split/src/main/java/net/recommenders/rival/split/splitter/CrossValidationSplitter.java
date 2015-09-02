@@ -65,13 +65,13 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
         @SuppressWarnings("unchecked")
         final DataModel<U, I>[] splits = new DataModel[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {
-            splits[2 * i] = new DataModel<U, I>(); // training
-            splits[2 * i + 1] = new DataModel<U, I>(); // test
+            splits[2 * i] = new DataModel<>(); // training
+            splits[2 * i + 1] = new DataModel<>(); // test
         }
         if (perUser) {
             int n = 0;
             for (U user : data.getUsers()) {
-                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
+                List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);
@@ -98,11 +98,11 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
                 }
             }
         } else {
-            List<U> users = new ArrayList<U>(data.getUsers());
+            List<U> users = new ArrayList<>(data.getUsers());
             Collections.shuffle(users, rnd);
             int n = 0;
             for (U user : users) {
-                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
+                List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);

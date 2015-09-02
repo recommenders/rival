@@ -73,12 +73,12 @@ public class RandomSplitter implements Splitter<Long, Long> {
     public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
         @SuppressWarnings("unchecked")
         final DataModel<Long, Long>[] splits = new DataModel[2];
-        splits[0] = new DataModel<Long, Long>(); // training
-        splits[1] = new DataModel<Long, Long>(); // test
+        splits[0] = new DataModel<>(); // training
+        splits[1] = new DataModel<>(); // test
         if (perUser) {
             for (Long user : data.getUsers()) {
                 if (doSplitPerItems) {
-                    List<Long> items = new ArrayList<Long>(data.getUserItemPreferences().get(user).keySet());
+                    List<Long> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
                     Collections.shuffle(items, rnd);
                     int splitPoint = Math.round(percentageTraining * items.size());
                     for (int i = 0; i < items.size(); i++) {
@@ -105,7 +105,7 @@ public class RandomSplitter implements Splitter<Long, Long> {
                     if (!data.getUserItemTimestamps().containsKey(user)) {
                         continue;
                     }
-                    List<String> itemsTime = new ArrayList<String>();
+                    List<String> itemsTime = new ArrayList<>();
                     for (Entry<Long, Set<Long>> e : data.getUserItemTimestamps().get(user).entrySet()) {
                         long i = e.getKey();
                         for (Long t : e.getValue()) {

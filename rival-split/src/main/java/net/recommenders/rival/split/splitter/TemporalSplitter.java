@@ -68,21 +68,21 @@ public class TemporalSplitter implements Splitter<Long, Long> {
     public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
         @SuppressWarnings("unchecked")
         final DataModel<Long, Long>[] splits = new DataModel[2];
-        splits[0] = new DataModel<Long, Long>(); // training
-        splits[1] = new DataModel<Long, Long>(); // test
+        splits[0] = new DataModel<>(); // training
+        splits[1] = new DataModel<>(); // test
         if (perUser) {
             for (Long user : data.getUsers()) {
                 if (!data.getUserItemTimestamps().containsKey(user)) {
                     continue;
                 }
-                Set<Long> userTimestamps = new HashSet<Long>();
+                Set<Long> userTimestamps = new HashSet<>();
                 for (Set<Long> timestamps : data.getUserItemTimestamps().get(user).values()) {
                     userTimestamps.addAll(timestamps);
                 }
-                List<Long> listTimestamps = new ArrayList<Long>(userTimestamps);
+                List<Long> listTimestamps = new ArrayList<>(userTimestamps);
                 Collections.sort(listTimestamps);
                 int splitPoint = Math.round(percentageTraining * listTimestamps.size());
-                Set<Long> testTimestamps = new HashSet<Long>();
+                Set<Long> testTimestamps = new HashSet<>();
                 int n = 0;
                 for (Long t : listTimestamps) {
                     if (n > splitPoint) {
@@ -134,16 +134,16 @@ public class TemporalSplitter implements Splitter<Long, Long> {
             }
         } else {
             // global temporal splitting
-            Set<Long> allTimestamps = new HashSet<Long>();
+            Set<Long> allTimestamps = new HashSet<>();
             for (Long user : data.getUserItemTimestamps().keySet()) {
                 for (Set<Long> timestamps : data.getUserItemTimestamps().get(user).values()) {
                     allTimestamps.addAll(timestamps);
                 }
             }
-            List<Long> listTimestamps = new ArrayList<Long>(allTimestamps);
+            List<Long> listTimestamps = new ArrayList<>(allTimestamps);
             Collections.sort(listTimestamps);
             int splitPoint = Math.round(percentageTraining * listTimestamps.size());
-            Set<Long> testTimestamps = new HashSet<Long>();
+            Set<Long> testTimestamps = new HashSet<>();
             int n = 0;
             for (Long t : listTimestamps) {
                 if (n > splitPoint) {
