@@ -82,8 +82,9 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
         String folder = "data/ml-100k";
         String modelPath = "data/ml-100k/model/";
         String recPath = "data/ml-100k/recommendations/";
+        String dataFile = "data/ml-100k/ml-100k/u.data";
         float percentage = PERCENTAGE;
-        prepareSplits(url, percentage, "data/ml-100k/u.data", folder, modelPath);
+        prepareSplits(url, percentage, dataFile, folder, modelPath);
         recommend(modelPath, recPath);
         // the strategy files are (currently) being ignored
         prepareStrategy(modelPath, recPath, modelPath);
