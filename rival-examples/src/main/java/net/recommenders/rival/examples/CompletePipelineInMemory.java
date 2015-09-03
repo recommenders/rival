@@ -63,7 +63,7 @@ public final class CompletePipelineInMemory {
     private static void fillDefaultProperties(final Properties props) {
         System.out.println("Setting default properties...");
         // parser
-        props.put(ParserRunner.DATASET_FILE, "./data/ml-100k/u.data");
+        props.put(ParserRunner.DATASET_FILE, "./data/ml-100k/ml-100k/u.data");
         props.put(ParserRunner.DATASET_PARSER, "net.recommenders.rival.split.parser.MovielensParser");
         // splits
         props.put(SplitterRunner.DATASET_SPLITTER, "net.recommenders.rival.split.splitter.RandomSplitter");
