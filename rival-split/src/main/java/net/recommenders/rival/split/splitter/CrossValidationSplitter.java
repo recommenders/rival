@@ -27,6 +27,9 @@ import net.recommenders.rival.core.DataModel;
  * interaction in the data only appears once in each test split).
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
+ * 
+ * @param <U> type of users
+ * @param <I> type of items
  */
 public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
 

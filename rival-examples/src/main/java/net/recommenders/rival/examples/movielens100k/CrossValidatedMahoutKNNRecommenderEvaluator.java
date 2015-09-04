@@ -119,7 +119,7 @@ public final class CrossValidatedMahoutKNNRecommenderEvaluator {
             e.printStackTrace();
         }
 
-        DataModel[] splits = new CrossValidationSplitter(nFolds, perUser, seed).split(data);
+        DataModel<Long, Long>[] splits = new CrossValidationSplitter<Long, Long>(nFolds, perUser, seed).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
@@ -128,8 +128,8 @@ public final class CrossValidatedMahoutKNNRecommenderEvaluator {
             }
         }
         for (int i = 0; i < splits.length / 2; i++) {
-            DataModel training = splits[2 * i];
-            DataModel test = splits[2 * i + 1];
+            DataModel<Long, Long> training = splits[2 * i];
+            DataModel<Long, Long> test = splits[2 * i + 1];
             String trainingFile = outPath + "train_" + i + ".csv";
             String testFile = outPath + "test_" + i + ".csv";
             System.out.println("train: " + trainingFile);

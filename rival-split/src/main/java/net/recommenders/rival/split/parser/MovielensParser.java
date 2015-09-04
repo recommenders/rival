@@ -55,7 +55,9 @@ public class MovielensParser implements Parser<Long, Long> {
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
         String line;
-        while ((line = br.readLine()) != null) parseLine(line, dataset);
+        while ((line = br.readLine()) != null) {
+            parseLine(line, dataset);
+        }
         br.close();
 
         return dataset;
@@ -70,8 +72,11 @@ public class MovielensParser implements Parser<Long, Long> {
      */
     private void parseLine(final String line, final DataModel<Long, Long> dataset) {
         String[] toks;
-        if (line.contains("::")) toks = line.split("::");
-        else toks = line.split("\t");
+        if (line.contains("::")) {
+            toks = line.split("::");
+        } else {
+            toks = line.split("\t");
+        }
         // user
         long userId = Long.parseLong(toks[USER_TOK]);
         // item

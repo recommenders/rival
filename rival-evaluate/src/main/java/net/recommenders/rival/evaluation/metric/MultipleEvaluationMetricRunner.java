@@ -17,7 +17,6 @@ package net.recommenders.rival.evaluation.metric;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -205,7 +204,6 @@ public final class MultipleEvaluationMetricRunner {
      * @throws NoSuchMethodException see
      * {@link EvaluationMetricRunner#instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
-    @SuppressWarnings("unchecked")
     public static EvaluationMetric<Long>[] instantiateEvaluationMetrics(final Properties properties, final DataModel<Long, Long> predictions, final DataModel<Long, Long> testModel)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         List<EvaluationMetric<Long>> metricList = new ArrayList<>();
@@ -218,7 +216,9 @@ public final class MultipleEvaluationMetricRunner {
             properties.remove(EvaluationMetricRunner.METRIC);
         }
 
-        return metricList.toArray(new EvaluationMetric[0]);
+    @SuppressWarnings("unchecked")
+        EvaluationMetric<Long>[] metrics = metricList.toArray(new EvaluationMetric[0]);
+        return metrics;
     }
 
     /**

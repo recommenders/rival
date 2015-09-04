@@ -67,6 +67,22 @@ public final class RandomMahoutIBRecommenderEvaluator {
      * Default seed.
      */
     public static final long SEED = 2048L;
+    /**
+     * Token position for user information in MovieTweetings.
+     */
+    private static final int USER_TOK = 0;
+    /**
+     * Token position for item information in MovieTweetings.
+     */
+    private static final int ITEM_TOK = 2;
+    /**
+     * Token position for preference information in MovieTweetings.
+     */
+    private static final int PREF_TOK = 4;
+    /**
+     * Token position for time information in MovieTweetings.
+     */
+    private static final int TIME_TOK = 6;
 
     /**
      * Utility classes should not have a public or default constructor.
@@ -109,10 +125,10 @@ public final class RandomMahoutIBRecommenderEvaluator {
         UIPParser parser = new UIPParser();
 
         parser.setDelimiter(':');
-        parser.setUserTok(0);
-        parser.setItemTok(2);
-        parser.setPrefTok(4);
-        parser.setTimeTok(6);
+        parser.setUserTok(USER_TOK);
+        parser.setItemTok(ITEM_TOK);
+        parser.setPrefTok(PREF_TOK);
+        parser.setTimeTok(TIME_TOK);
 
         DataModel<Long, Long> data = null;
         try {
