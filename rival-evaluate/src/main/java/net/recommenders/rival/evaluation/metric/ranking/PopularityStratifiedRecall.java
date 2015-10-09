@@ -26,7 +26,10 @@ import net.recommenders.rival.evaluation.Pair;
 /**
  * Popularity-stratified recall as defined in "A generalized probabilistic
  * framework and its variants for training top-k recommender systems", Harald
- * Steck and Yu Xin.
+ * Steck and Yu Xin. Compatible with definitions in "Item popularity and
+ * recommendation accuracy", Harald Steck and "Ranking with non-random missing
+ * ratings: influence of popularity and positivity on evaluation metrics", Bruno
+ * Padel, Nicolas Usunier, Patrick Gallinari.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  *
