@@ -44,24 +44,42 @@ public class DataModel<U, I> {
      * The map with the timestamps between users and items.
      */
     private Map<U, Map<I, Set<Long>>> userItemTimestamps;
+    /**
+     * Flag to indicate if duplicate preferences should be ignored or not.
+     * Default: false.
+     */
+    private boolean ignoreDuplicatePreferences;
 
     /**
      * Default constructor.
      */
     public DataModel() {
-        this(new HashMap<U, Map<I, Double>>(), new HashMap<I, Map<U, Double>>(), new HashMap<U, Map<I, Set<Long>>>());
+        this(false);
     }
 
     /**
      * Constructor with parameters.
      *
+     * @param ignoreDupPreferences The flag to indicate whether preferences
+     * should be ignored.
+     */
+    public DataModel(final boolean ignoreDupPreferences) {
+        this(ignoreDupPreferences, new HashMap<U, Map<I, Double>>(), new HashMap<I, Map<U, Double>>(), new HashMap<U, Map<I, Set<Long>>>());
+    }
+
+    /**
+     * Constructor with parameters.
+     *
+     * @param ignoreDupPreferences The flag to indicate whether preferences
+     * should be ignored.
      * @param userItemPreference The preference map between users and items.
      * @param itemUserPreference The preference map between items and users.
      * @param userItemTimestamp The map with the timestamps between users and
      * items
      */
-    public DataModel(final Map<U, Map<I, Double>> userItemPreference, final Map<I, Map<U, Double>> itemUserPreference,
+    public DataModel(final boolean ignoreDupPreferences, final Map<U, Map<I, Double>> userItemPreference, final Map<I, Map<U, Double>> itemUserPreference,
             final Map<U, Map<I, Set<Long>>> userItemTimestamp) {
+        this.ignoreDuplicatePreferences = ignoreDupPreferences;
         this.userItemPreferences = userItemPreference;
         this.itemUserPreferences = itemUserPreference;
         this.userItemTimestamps = userItemTimestamp;
@@ -111,16 +129,21 @@ public class DataModel<U, I> {
         Double preference = userPreferences.get(i);
         if (preference == null) {
             preference = 0.0;
+        } else if (ignoreDuplicatePreferences) {
+            // if duplicate preferences should be ignored, then we do not take into account the new value
+            preference = null;
         }
-        preference += d;
-        userPreferences.put(i, preference);
-        // update inverse map
-        Map<U, Double> itemPreferences = itemUserPreferences.get(i);
-        if (itemPreferences == null) {
-            itemPreferences = new HashMap<>();
-            itemUserPreferences.put(i, itemPreferences);
+        if (preference != null) {
+            preference += d;
+            userPreferences.put(i, preference);
+            // update inverse map
+            Map<U, Double> itemPreferences = itemUserPreferences.get(i);
+            if (itemPreferences == null) {
+                itemPreferences = new HashMap<>();
+                itemUserPreferences.put(i, itemPreferences);
+            }
+            itemPreferences.put(u, preference);
         }
-        itemPreferences.put(u, preference);
     }
 
     /**
