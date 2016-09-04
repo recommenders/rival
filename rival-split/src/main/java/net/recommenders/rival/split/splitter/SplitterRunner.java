@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelUtils;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Class that splits a dataset according to some properties.
@@ -95,10 +96,10 @@ public final class SplitterRunner {
      * @throws UnsupportedEncodingException see
      * {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
      */
-    public static void run(final Properties properties, final DataModel<Long, Long> data, final boolean doDataClear)
+    public static void run(final Properties properties, final TemporalDataModelIF<Long, Long> data, final boolean doDataClear)
             throws FileNotFoundException, UnsupportedEncodingException {
         System.out.println("Start splitting");
-        DataModel<Long, Long>[] splits;
+        TemporalDataModelIF<Long, Long>[] splits;
         // read parameters
         String outputFolder = properties.getProperty(SPLIT_OUTPUT_FOLDER);
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(SPLIT_OUTPUT_OVERWRITE, "false"));
@@ -115,8 +116,8 @@ public final class SplitterRunner {
         System.out.println("Saving splits");
         // save splits
         for (int i = 0; i < splits.length / 2; i++) {
-            DataModel<Long, Long> training = splits[2 * i];
-            DataModel<Long, Long> test = splits[2 * i + 1];
+            TemporalDataModelIF<Long, Long> training = splits[2 * i];
+            TemporalDataModelIF<Long, Long> test = splits[2 * i + 1];
             String trainingFile = outputFolder + splitTrainingPrefix + i + splitTrainingSuffix;
             String testFile = outputFolder + splitTestPrefix + i + splitTestSuffix;
             DataModelUtils.saveDataModel(training, trainingFile, overwrite);

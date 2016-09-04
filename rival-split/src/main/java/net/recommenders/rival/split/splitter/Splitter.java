@@ -15,7 +15,8 @@
  */
 package net.recommenders.rival.split.splitter;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Interface for the data splitter.
@@ -33,5 +34,13 @@ public interface Splitter<U, I> {
      * @param data The data.
      * @return The split data model.
      */
-    DataModel<U, I>[] split(DataModel<U, I> data);
+    DataModelIF<U, I>[] split(DataModelIF<U, I> data);
+
+    /**
+     * Splits temporal data.
+     *
+     * @param data The data.
+     * @return The split data model.
+     */
+    TemporalDataModelIF<U, I>[] split(TemporalDataModelIF<U, I> data);
 }

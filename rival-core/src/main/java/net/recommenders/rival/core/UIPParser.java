@@ -42,8 +42,8 @@ public class UIPParser extends AbstractParser implements Parser<Long, Long> {
      * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(final File f) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<>();
+    public TemporalDataModelIF<Long, Long> parseTemporalData(final File f) throws IOException {
+        TemporalDataModelIF<Long, Long> dataset = new TemporalDataModel<>();
         Reader in = new InputStreamReader(new FileInputStream(f), "UTF-8");
 
         Iterable<CSVRecord> records;
@@ -62,6 +62,30 @@ public class UIPParser extends AbstractParser implements Parser<Long, Long> {
             double preference = Double.parseDouble(record.get(getPrefTok()));
             dataset.addPreference(userID, itemID, preference);
             dataset.addTimestamp(userID, itemID, timestamp);
+        }
+        in.close();
+        return dataset;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataModelIF<Long, Long> parseData(final File f) throws IOException {
+        DataModelIF<Long, Long> dataset = new DataModel<>();
+        Reader in = new InputStreamReader(new FileInputStream(f), "UTF-8");
+
+        Iterable<CSVRecord> records;
+        if (isHasHeader()) {
+            records = CSVFormat.EXCEL.withDelimiter(getDelimiter()).withHeader().parse(in);
+        } else {
+            records = CSVFormat.EXCEL.withDelimiter(getDelimiter()).parse(in);
+        }
+        for (CSVRecord record : records) {
+            long userID = Long.parseLong(record.get(getUserTok()));
+            long itemID = Long.parseLong(record.get(getItemTok()));
+            double preference = Double.parseDouble(record.get(getPrefTok()));
+            dataset.addPreference(userID, itemID, preference);
         }
         in.close();
         return dataset;

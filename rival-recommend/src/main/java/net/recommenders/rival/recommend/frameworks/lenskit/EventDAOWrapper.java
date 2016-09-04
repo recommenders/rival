@@ -18,7 +18,7 @@ package net.recommenders.rival.recommend.frameworks.lenskit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 import org.grouplens.lenskit.cursors.Cursor;
 import org.grouplens.lenskit.data.dao.EventCollectionDAO;
 import org.grouplens.lenskit.data.dao.EventDAO;
@@ -48,7 +48,7 @@ public class EventDAOWrapper implements EventDAO {
      *
      * @param model the model to be used to create the wrapped model
      */
-    public EventDAOWrapper(final DataModel<Long, Long> model) {
+    public EventDAOWrapper(final TemporalDataModelIF<Long, Long> model) {
         List<Rating> events = new ArrayList<Rating>();
         RatingBuilder rb = new RatingBuilder();
         for (Long u : model.getUserItemPreferences().keySet()) {

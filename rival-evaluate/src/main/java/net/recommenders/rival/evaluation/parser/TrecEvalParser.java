@@ -21,7 +21,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.Parser;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * A parser based on the format of trec_eval output (no timestamp info).
@@ -47,8 +49,16 @@ public class TrecEvalParser implements Parser<Long, Long> {
      * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(final File f) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<Long, Long>();
+    public TemporalDataModelIF<Long, Long> parseTemporalData(final File f) throws IOException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataModelIF<Long, Long> parseData(final File f) throws IOException {
+        DataModelIF<Long, Long> dataset = new DataModel<Long, Long>();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         try {
@@ -70,7 +80,7 @@ public class TrecEvalParser implements Parser<Long, Long> {
      * @param dataset the dataset where the information parsed from the line
      * will be stored into.
      */
-    private void parseLine(final String line, final DataModel<Long, Long> dataset) {
+    private void parseLine(final String line, final DataModelIF<Long, Long> dataset) {
         String[] toks = line.split("\t");
         // user
         long userId = Long.parseLong(toks[USER_TOK]);

@@ -24,9 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.ParserWithIdMapping;
 import net.recommenders.rival.core.SimpleParser;
+import net.recommenders.rival.core.TemporalDataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Parser for the 1K Last.fm dataset by O. Celma. More information here
@@ -67,8 +69,29 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
      * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(final File f, final String mapIdsPrefix) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<>();
+    public DataModelIF<Long, Long> parseData(final File f) throws IOException {
+        return parseTemporalData(f);
+    }
+
+    @Override
+    public TemporalDataModelIF<Long, Long> parseTemporalData(File f) throws IOException {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataModelIF<Long, Long> parseData(final File f, final String mapIdsPrefix) throws IOException {
+        return parseTemporalData(f, mapIdsPrefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TemporalDataModelIF<Long, Long> parseTemporalData(final File f, final String mapIdsPrefix) throws IOException {
+        TemporalDataModelIF<Long, Long> dataset = new TemporalDataModel<>();
 
         Map<String, Long> mapUserIds = new HashMap<>();
         Map<String, Long> mapItemIds = new HashMap<>();
@@ -141,4 +164,5 @@ public class LastfmCelma1KParser extends AbstractLastfmCelmaParser implements Pa
 
         return dataset;
     }
+
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.Pair;
 
 /**
@@ -37,11 +37,11 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     /**
      * The training set.
      */
-    private DataModel<Long, Long> training;
+    private DataModelIF<Long, Long> training;
     /**
      * The test set.
      */
-    private DataModel<Long, Long> test;
+    private DataModelIF<Long, Long> test;
     /**
      * The relevance threshold.
      */
@@ -54,7 +54,7 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      * @param theTest The test set.
      * @param theThreshold The relevance threshold.
      */
-    public AbstractStrategy(final DataModel<Long, Long> theTraining, final DataModel<Long, Long> theTest, final double theThreshold) {
+    public AbstractStrategy(final DataModelIF<Long, Long> theTraining, final DataModelIF<Long, Long> theTest, final double theThreshold) {
         this.training = theTraining;
         this.test = theTest;
         this.threshold = theThreshold;
@@ -65,7 +65,7 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      *
      * @return the training set
      */
-    protected DataModel<Long, Long> getTraining() {
+    protected DataModelIF<Long, Long> getTraining() {
         return training;
     }
 
@@ -74,7 +74,7 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      *
      * @return the test set
      */
-    protected DataModel<Long, Long> getTest() {
+    protected DataModelIF<Long, Long> getTest() {
         return test;
     }
 
@@ -94,7 +94,7 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      * @param user The user.
      * @return The items not appearing in the training set.
      */
-    protected Set<Long> getModelTrainingDifference(final DataModel<Long, Long> model, final Long user) {
+    protected Set<Long> getModelTrainingDifference(final DataModelIF<Long, Long> model, final Long user) {
         final Set<Long> items = new HashSet<Long>();
         if (training.getUserItemPreferences().containsKey(user)) {
             final Set<Long> trainingItems = training.getUserItemPreferences().get(user).keySet();

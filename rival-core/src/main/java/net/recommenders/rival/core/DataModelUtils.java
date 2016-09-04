@@ -48,7 +48,7 @@ public final class DataModelUtils {
      * @throws UnsupportedEncodingException when the requested encoding (UTF-8)
      * is not available.
      */
-    public static <U, I> void saveDataModel(final DataModel<U, I> dm, final String outfile, final boolean overwrite)
+    public static <U, I> void saveDataModel(final TemporalDataModelIF<U, I> dm, final String outfile, final boolean overwrite)
             throws FileNotFoundException, UnsupportedEncodingException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);

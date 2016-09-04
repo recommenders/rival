@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.Pair;
 
 /**
@@ -55,7 +55,7 @@ public class RelPlusN extends AbstractStrategy {
      * @param threshold The relevance threshold.
      * @param seed Randomization seed.
      */
-    public RelPlusN(final DataModel<Long, Long> training, final DataModel<Long, Long> test, final int theN, final double threshold, final long seed) {
+    public RelPlusN(final DataModelIF<Long, Long> training, final DataModelIF<Long, Long> test, final int theN, final double threshold, final long seed) {
         super(training, test, threshold);
         this.n = theN;
 

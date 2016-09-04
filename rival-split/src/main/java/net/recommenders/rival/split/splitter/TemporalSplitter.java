@@ -15,14 +15,15 @@
  */
 package net.recommenders.rival.split.splitter;
 
-import net.recommenders.rival.core.DataModel;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import net.recommenders.rival.core.DataModelIF;
+import net.recommenders.rival.core.TemporalDataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Splitter that takes into account the timestamps in the data (older
@@ -65,11 +66,19 @@ public class TemporalSplitter implements Splitter<Long, Long> {
      * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
+    public DataModelIF<Long, Long>[] split(final DataModelIF<Long, Long> data) {
+        throw new IllegalArgumentException("Method not available");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TemporalDataModelIF<Long, Long>[] split(final TemporalDataModelIF<Long, Long> data) {
         @SuppressWarnings("unchecked")
-        final DataModel<Long, Long>[] splits = new DataModel[2];
-        splits[0] = new DataModel<>(); // training
-        splits[1] = new DataModel<>(); // test
+        final TemporalDataModelIF<Long, Long>[] splits = new TemporalDataModel[2];
+        splits[0] = new TemporalDataModel<>(); // training
+        splits[1] = new TemporalDataModel<>(); // test
         if (perUser) {
             for (Long user : data.getUsers()) {
                 if (!data.getUserItemTimestamps().containsKey(user)) {
@@ -101,7 +110,7 @@ public class TemporalSplitter implements Splitter<Long, Long> {
                                 break;
                             }
                         }
-                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                         if (inTest) {
                             datamodel = splits[1]; // test
                         }
@@ -120,7 +129,7 @@ public class TemporalSplitter implements Splitter<Long, Long> {
                         Long item = e.getKey();
                         Double pref = data.getUserItemPreferences().get(user).get(item);
                         for (Long time : e.getValue()) {
-                            DataModel<Long, Long> datamodel = splits[0]; // training
+                            TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                             if (testTimestamps.contains(time)) {
                                 datamodel = splits[1]; // test
                             }
@@ -166,7 +175,7 @@ public class TemporalSplitter implements Splitter<Long, Long> {
                                 break;
                             }
                         }
-                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                         if (inTest) {
                             datamodel = splits[1]; // test
                         }
@@ -178,7 +187,7 @@ public class TemporalSplitter implements Splitter<Long, Long> {
                         }
                     } else {
                         for (Long t : time) {
-                            DataModel<Long, Long> datamodel = splits[0]; // training
+                            TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                             if (testTimestamps.contains(t)) {
                                 datamodel = splits[1]; // test
                             }

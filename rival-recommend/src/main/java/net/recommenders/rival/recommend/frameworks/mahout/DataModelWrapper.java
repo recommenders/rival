@@ -51,7 +51,7 @@ public class DataModelWrapper implements DataModel {
      *
      * @param model the model to be used to create the wrapped model
      */
-    public DataModelWrapper(final net.recommenders.rival.core.DataModel<Long, Long> model) {
+    public DataModelWrapper(final net.recommenders.rival.core.TemporalDataModelIF<Long, Long> model) {
         FastByIDMap<Collection<Preference>> data = new FastByIDMap<Collection<Preference>>();
         FastByIDMap<FastByIDMap<Long>> timestampData = new FastByIDMap<FastByIDMap<Long>>();
         for (Long u : model.getUserItemPreferences().keySet()) {

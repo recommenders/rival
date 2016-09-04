@@ -22,6 +22,9 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
+import net.recommenders.rival.core.TemporalDataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Class that splits a dataset randomly.
@@ -70,11 +73,68 @@ public class RandomSplitter implements Splitter<Long, Long> {
      * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long>[] split(final DataModel<Long, Long> data) {
+    public DataModelIF<Long, Long>[] split(final DataModelIF<Long, Long> data) {
         @SuppressWarnings("unchecked")
-        final DataModel<Long, Long>[] splits = new DataModel[2];
+        final DataModelIF<Long, Long>[] splits = new DataModelIF[2];
         splits[0] = new DataModel<>(); // training
         splits[1] = new DataModel<>(); // test
+        if (perUser) {
+            for (Long user : data.getUsers()) {
+                if (doSplitPerItems) {
+                    List<Long> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                    Collections.shuffle(items, rnd);
+                    int splitPoint = Math.round(percentageTraining * items.size());
+                    for (int i = 0; i < items.size(); i++) {
+                        Long item = items.get(i);
+                        Double pref = data.getUserItemPreferences().get(user).get(item);
+                        DataModelIF<Long, Long> datamodel = splits[0]; // training
+                        if (i > splitPoint) {
+                            datamodel = splits[1]; // test
+                        }
+                        if (pref != null) {
+                            datamodel.addPreference(user, item, pref);
+                        }
+                    }
+                } else {
+                    // Combination not available
+                }
+            }
+        } else {
+            for (Long user : data.getUsers()) {
+                for (Long item : data.getUserItemPreferences().get(user).keySet()) {
+                    Double pref = data.getUserItemPreferences().get(user).get(item);
+                    if (doSplitPerItems) {
+                        DataModelIF<Long, Long> datamodel = splits[0]; // training
+                        if (rnd.nextDouble() > percentageTraining) {
+                            datamodel = splits[1]; // test
+                        }
+                        if (pref != null) {
+                            datamodel.addPreference(user, item, pref);
+                        }
+                    } else {
+                        DataModelIF<Long, Long> datamodel = splits[0]; // training
+                        if (rnd.nextDouble() > percentageTraining) {
+                            datamodel = splits[1]; // test
+                        }
+                        if (pref != null) {
+                            datamodel.addPreference(user, item, pref);
+                        }
+                    }
+                }
+            }
+        }
+        return splits;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TemporalDataModelIF<Long, Long>[] split(final TemporalDataModelIF<Long, Long> data) {
+        @SuppressWarnings("unchecked")
+        final TemporalDataModelIF<Long, Long>[] splits = new TemporalDataModelIF[2];
+        splits[0] = new TemporalDataModel<>(); // training
+        splits[1] = new TemporalDataModel<>(); // test
         if (perUser) {
             for (Long user : data.getUsers()) {
                 if (doSplitPerItems) {
@@ -88,7 +148,7 @@ public class RandomSplitter implements Splitter<Long, Long> {
                         if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
                             time = data.getUserItemTimestamps().get(user).get(item);
                         }
-                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
                         }
@@ -119,7 +179,7 @@ public class RandomSplitter implements Splitter<Long, Long> {
                         Long item = Long.parseLong(it.split("_")[0]);
                         Long time = Long.parseLong(it.split("_")[1]);
                         Double pref = data.getUserItemPreferences().get(user).get(item);
-                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
                         }
@@ -141,7 +201,7 @@ public class RandomSplitter implements Splitter<Long, Long> {
                         time = data.getUserItemTimestamps().get(user).get(item);
                     }
                     if (doSplitPerItems) {
-                        DataModel<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                         if (rnd.nextDouble() > percentageTraining) {
                             datamodel = splits[1]; // test
                         }
@@ -153,26 +213,24 @@ public class RandomSplitter implements Splitter<Long, Long> {
                                 datamodel.addTimestamp(user, item, t);
                             }
                         }
-                    } else {
-                        if (time != null) {
-                            for (Long t : time) {
-                                DataModel<Long, Long> datamodel = splits[0]; // training
-                                if (rnd.nextDouble() > percentageTraining) {
-                                    datamodel = splits[1]; // test
-                                }
-                                if (pref != null) {
-                                    datamodel.addPreference(user, item, pref);
-                                }
-                                datamodel.addTimestamp(user, item, t);
-                            }
-                        } else {
-                            DataModel<Long, Long> datamodel = splits[0]; // training
+                    } else if (time != null) {
+                        for (Long t : time) {
+                            TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
                             if (rnd.nextDouble() > percentageTraining) {
                                 datamodel = splits[1]; // test
                             }
                             if (pref != null) {
                                 datamodel.addPreference(user, item, pref);
                             }
+                            datamodel.addTimestamp(user, item, t);
+                        }
+                    } else {
+                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
+                        if (rnd.nextDouble() > percentageTraining) {
+                            datamodel = splits[1]; // test
+                        }
+                        if (pref != null) {
+                            datamodel.addPreference(user, item, pref);
                         }
                     }
                 }

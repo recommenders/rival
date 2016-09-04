@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Recommender-related IO operations.
@@ -52,7 +52,7 @@ public final class RecommenderIO {
      * @param model if not null, recommendations will be saved here
      * @param <T> type of recommendations
      */
-    public static <T> void writeData(final long user, final List<T> recommendations, final String path, final String fileName, final boolean append, final DataModel<Long, Long> model) {
+    public static <T> void writeData(final long user, final List<T> recommendations, final String path, final String fileName, final boolean append, final TemporalDataModelIF<Long, Long> model) {
         BufferedWriter out = null;
         try {
             File dir = null;

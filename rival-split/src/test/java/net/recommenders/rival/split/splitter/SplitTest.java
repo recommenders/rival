@@ -18,6 +18,7 @@ package net.recommenders.rival.split.splitter;
 import java.util.Map;
 import java.util.Map.Entry;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -41,7 +42,7 @@ public class SplitTest {
 
     @Test
     public void testCrossValidation() {
-        DataModel<Long, Long> dm = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> dm = new DataModel<Long, Long>();
         for (long u = 1L; u <= USERS; u++) {
             for (long i = 1L; i <= ITEMS; i++) {
                 dm.addPreference(u, i, 1.0 * u * i);
@@ -50,7 +51,7 @@ public class SplitTest {
 
         int nFolds = 5;
 
-        DataModel<Long, Long>[] splits = null;
+        DataModelIF<Long, Long>[] splits = null;
         splits = new CrossValidationSplitter<Long, Long>(nFolds, false, 1L).split(dm);
 
         assertTrue(splits.length == 2 * nFolds);
@@ -71,8 +72,8 @@ public class SplitTest {
         assertTrue(!splits[0].getUserItemPreferences().containsKey(userTest) || !splits[0].getUserItemPreferences().get(userTest).containsKey(itemTest));
 
         for (int i = 1; i < splits.length / 2; i++) {
-            DataModel<Long, Long> training = splits[2 * i];
-            DataModel<Long, Long> test = splits[2 * i + 1];
+            DataModelIF<Long, Long> training = splits[2 * i];
+            DataModelIF<Long, Long> test = splits[2 * i + 1];
             // Let's check this pair is not in any other test split
             assertTrue(!test.getUserItemPreferences().containsKey(userTest) || !test.getUserItemPreferences().get(userTest).containsKey(itemTest));
             // Let's check this pair is in every other training split
@@ -82,14 +83,14 @@ public class SplitTest {
 
     @Test
     public void testRandom() {
-        DataModel<Long, Long> dm = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> dm = new DataModel<Long, Long>();
         for (long u = 1L; u <= USERS; u++) {
             for (long i = 1L; i <= ITEMS; i++) {
                 dm.addPreference(u, i, 1.0 * u * i);
             }
         }
 
-        DataModel<Long, Long>[] splits = null;
+        DataModelIF<Long, Long>[] splits = null;
         splits = new RandomSplitter(0.8f, false, 1L, false).split(dm);
 
         assertTrue(splits.length == 2);

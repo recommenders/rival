@@ -29,11 +29,20 @@ import java.io.IOException;
 public interface Parser<U, I> {
 
     /**
-     * Parse data file.
+     * Parse a temporal data file.
      *
      * @param f The file to be parsed.
      * @return A dataset created from the file.
      * @throws IOException if the file cannot be read.
      */
-    DataModel<U, I> parseData(File f) throws IOException;
+    TemporalDataModelIF<U, I> parseTemporalData(File f) throws IOException;
+
+    /**
+     * Parse a data file.
+     *
+     * @param f The file to be parsed.
+     * @return A dataset created from the file.
+     * @throws IOException if the file cannot be read.
+     */
+    DataModelIF<U, I> parseData(File f) throws IOException;
 }
