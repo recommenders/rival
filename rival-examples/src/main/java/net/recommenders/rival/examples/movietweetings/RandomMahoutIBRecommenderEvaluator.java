@@ -138,7 +138,7 @@ public final class RandomMahoutIBRecommenderEvaluator {
             e.printStackTrace();
         }
 
-        DataModelIF<Long, Long>[] splits = new RandomSplitter(percentage, perUser, seed, false).split(data);
+        DataModelIF<Long, Long>[] splits = new RandomSplitter<Long, Long>(percentage, perUser, seed, false).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {

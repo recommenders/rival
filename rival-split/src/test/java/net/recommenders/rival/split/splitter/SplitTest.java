@@ -92,7 +92,7 @@ public class SplitTest {
         }
 
         DataModelIF<Long, Long>[] splits = null;
-        splits = new RandomSplitter(0.8f, false, 1L, false).split(dm);
+        splits = new RandomSplitter<Long, Long>(0.8f, false, 1L, false).split(dm);
 
         assertTrue(splits.length == 2);
 

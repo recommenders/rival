@@ -68,7 +68,7 @@ public abstract class CrossValidationRecSysEvaluator {
          if (delimiter == null)
             delimiter = this.delimiter;
 
-         DataModelIF<Long, Long>[] splits = new CrossValidationSplitter(this.numFolds, perUser, seed).split(
+         DataModelIF<Long, Long>[] splits = new CrossValidationSplitter<Long, Long>(this.numFolds, perUser, seed).split(
                  new SimpleParser().parseData(new File(inFile), delimiter, isTemporalData));
 
          File dir = new File(outPath);

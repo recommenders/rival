@@ -121,7 +121,7 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
             e.printStackTrace();
         }
 
-        DataModelIF<Long, Long>[] splits = new RandomSplitter(percentage, perUser, seed, perItem).split(data);
+        DataModelIF<Long, Long>[] splits = new RandomSplitter<Long, Long>(percentage, perUser, seed, perItem).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {

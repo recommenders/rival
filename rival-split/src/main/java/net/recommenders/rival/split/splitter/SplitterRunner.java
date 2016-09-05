@@ -141,14 +141,14 @@ public final class SplitterRunner {
         if (splitterClassName.contains("CrossValidation")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
-            splitter = new CrossValidationSplitter(nFolds, perUser, seed);
+            splitter = new CrossValidationSplitter<>(nFolds, perUser, seed);
         } else if (splitterClassName.contains("Random")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
-            splitter = new RandomSplitter(percentage, perUser, seed, doSplitPerItems);
+            splitter = new RandomSplitter<>(percentage, perUser, seed, doSplitPerItems);
         } else if (splitterClassName.contains("Temporal")) {
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
-            splitter = new TemporalSplitter(percentage, perUser, doSplitPerItems);
+            splitter = new TemporalSplitter<>(percentage, perUser, doSplitPerItems);
         }
         return splitter;
     }

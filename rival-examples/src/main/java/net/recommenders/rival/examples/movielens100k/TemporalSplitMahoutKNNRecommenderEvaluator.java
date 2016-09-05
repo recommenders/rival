@@ -116,7 +116,7 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
             e.printStackTrace();
         }
 
-        DataModelIF<Long, Long>[] splits = new TemporalSplitter(percentage, perUser, perItem).split(data);
+        DataModelIF<Long, Long>[] splits = new TemporalSplitter<Long, Long>(percentage, perUser, perItem).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
