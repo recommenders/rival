@@ -48,6 +48,36 @@ public final class DataModelUtils {
      * @throws UnsupportedEncodingException when the requested encoding (UTF-8)
      * is not available.
      */
+    public static <U, I> void saveDataModel(final DataModelIF<U, I> dm, final String outfile, final boolean overwrite)
+            throws FileNotFoundException, UnsupportedEncodingException {
+        if (new File(outfile).exists() && !overwrite) {
+            System.out.println("Ignoring " + outfile);
+        } else {
+            PrintStream out = new PrintStream(outfile, "UTF-8");
+            for (U user : dm.getUsers()) {
+                Map<I, Double> userPrefModel = dm.getUserItemPreferences().get(user);
+                for (Entry<I, Double> e : userPrefModel.entrySet()) {
+                    I item = e.getKey();
+                    Double pref = userPrefModel.get(item);
+                    out.println(user + "\t" + item + "\t" + pref + "\t-1");
+                }
+            }
+            out.close();
+        }
+    }
+
+    /**
+     * Method that saves a temporal data model to a file.
+     *
+     * @param dm the data model
+     * @param outfile file where the model will be saved
+     * @param overwrite flag that indicates if the file should be overwritten
+     * @param <U> type of users
+     * @param <I> type of items
+     * @throws FileNotFoundException when outfile cannot be used.
+     * @throws UnsupportedEncodingException when the requested encoding (UTF-8)
+     * is not available.
+     */
     public static <U, I> void saveDataModel(final TemporalDataModelIF<U, I> dm, final String outfile, final boolean overwrite)
             throws FileNotFoundException, UnsupportedEncodingException {
         if (new File(outfile).exists() && !overwrite) {

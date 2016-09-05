@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 import java.util.HashMap;
@@ -66,7 +66,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param theGamma smoothing parameter
      * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
+    public PopularityStratifiedRecall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
         this(predictions, test, 1.0, theGamma, theObservedItemRelevance);
     }
 
@@ -79,7 +79,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param theGamma smoothing parameter
      * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
+    public PopularityStratifiedRecall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
         this(predictions, test, relThreshold, new int[]{}, theGamma, theObservedItemRelevance);
     }
 
@@ -93,7 +93,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param theGamma smoothing parameter
      * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test,
+    public PopularityStratifiedRecall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test,
             final double relThreshold, final int[] ats,
             final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
         super(predictions, test, relThreshold, ats);

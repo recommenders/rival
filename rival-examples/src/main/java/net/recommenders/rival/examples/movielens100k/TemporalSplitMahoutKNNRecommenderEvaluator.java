@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.examples.movielens100k;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.DataModelUtils;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 import net.recommenders.rival.split.splitter.TemporalSplitter;
 
@@ -108,14 +109,14 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
         boolean perItem = false;
         Parser<Long, Long> parser = new MovielensParser();
 
-        DataModel<Long, Long> data = null;
+        DataModelIF<Long, Long> data = null;
         try {
             data = parser.parseData(new File(inFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        DataModel<Long, Long>[] splits = new TemporalSplitter(percentage, perUser, perItem).split(data);
+        DataModelIF<Long, Long>[] splits = new TemporalSplitter(percentage, perUser, perItem).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
@@ -124,8 +125,8 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
             }
         }
         for (int i = 0; i < splits.length / 2; i++) {
-            DataModel<Long, Long> training = splits[2 * i];
-            DataModel<Long, Long> test = splits[2 * i + 1];
+            DataModelIF<Long, Long> training = splits[2 * i];
+            DataModelIF<Long, Long> test = splits[2 * i + 1];
             String trainingFile = outPath + "train_" + i + ".csv";
             String testFile = outPath + "test_" + i + ".csv";
             System.out.println("train: " + trainingFile);
@@ -201,9 +202,9 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
         File trainingFile = new File(splitPath + "train_" + i + ".csv");
         File testFile = new File(splitPath + "test_" + i + ".csv");
         File recFile = new File(recPath + "recs_" + i + ".csv");
-        DataModel<Long, Long> trainingModel;
-        DataModel<Long, Long> testModel;
-        DataModel<Long, Long> recModel;
+        DataModelIF<Long, Long> trainingModel;
+        DataModelIF<Long, Long> testModel;
+        DataModelIF<Long, Long> recModel;
         try {
             trainingModel = new SimpleParser().parseData(trainingFile);
             testModel = new SimpleParser().parseData(testFile);
@@ -217,13 +218,13 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
         String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
         EvaluationStrategy<Long, Long> strategy = null;
         try {
-            strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).
+            strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModelIF.class, DataModelIF.class, double.class).
                     newInstance(trainingModel, testModel, threshold);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
         }
 
-        DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> modelToEval = DataModelFactory.getDefaultModel();
         for (Long user : recModel.getUsers()) {
             assert strategy != null;
             for (Long item : strategy.getCandidateItemsToRank(user)) {
@@ -253,8 +254,8 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
         int i = 0;
         File testFile = new File(splitPath + "test_" + i + ".csv");
         File recFile = new File(recPath + "recs_" + i + ".csv");
-        DataModel<Long, Long> testModel = null;
-        DataModel<Long, Long> recModel = null;
+        DataModelIF<Long, Long> testModel = null;
+        DataModelIF<Long, Long> recModel = null;
         try {
             testModel = new SimpleParser().parseData(testFile);
             recModel = new SimpleParser().parseData(recFile);

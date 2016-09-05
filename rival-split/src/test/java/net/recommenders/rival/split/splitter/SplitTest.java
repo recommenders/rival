@@ -18,6 +18,7 @@ package net.recommenders.rival.split.splitter;
 import java.util.Map;
 import java.util.Map.Entry;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public class SplitTest {
 
     @Test
     public void testCrossValidation() {
-        DataModelIF<Long, Long> dm = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> dm = DataModelFactory.getDefaultModel();
         for (long u = 1L; u <= USERS; u++) {
             for (long i = 1L; i <= ITEMS; i++) {
                 dm.addPreference(u, i, 1.0 * u * i);
@@ -83,7 +84,7 @@ public class SplitTest {
 
     @Test
     public void testRandom() {
-        DataModelIF<Long, Long> dm = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> dm = DataModelFactory.getDefaultModel();
         for (long u = 1L; u <= USERS; u++) {
             for (long i = 1L; i <= ITEMS; i++) {
                 dm.addPreference(u, i, 1.0 * u * i);

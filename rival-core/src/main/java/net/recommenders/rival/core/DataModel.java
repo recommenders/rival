@@ -49,7 +49,7 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
     /**
      * Default constructor.
      */
-    public DataModel() {
+    protected DataModel() {
         this(false);
     }
 
@@ -59,7 +59,7 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
      * @param ignoreDupPreferences The flag to indicate whether preferences
      * should be ignored.
      */
-    public DataModel(final boolean ignoreDupPreferences) {
+    protected DataModel(final boolean ignoreDupPreferences) {
         this(ignoreDupPreferences, new HashMap<U, Map<I, Double>>(), new HashSet<I>());
     }
 
@@ -71,7 +71,7 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
      * @param userItemPreference The preference map between users and items.
      * @param itemSet The items.
      */
-    public DataModel(final boolean ignoreDupPreferences, final Map<U, Map<I, Double>> userItemPreference, final Set<I> itemSet) {
+    protected DataModel(final boolean ignoreDupPreferences, final Map<U, Map<I, Double>> userItemPreference, final Set<I> itemSet) {
         this.ignoreDuplicatePreferences = ignoreDupPreferences;
         this.userItemPreferences = userItemPreference;
         this.items = itemSet;

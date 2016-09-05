@@ -1,6 +1,6 @@
 package net.recommenders.rival.examples.mdp;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.DataModelUtils;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.metric.error.MAE;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.FileSystemException;
 import java.nio.file.Paths;
+import net.recommenders.rival.core.DataModelFactory;
 
 /**
  * RiVal-based evaluation of recommender systems,
@@ -60,15 +61,15 @@ public abstract class CrossValidationRecSysEvaluator {
     * @param seed      seed for creating random split
     * @param delimiter dataset delimiter
     */
-   public void split(final String inFile, final String outPath, boolean perUser, long seed, String delimiter) {
+   public void split(final String inFile, final String outPath, boolean perUser, long seed, String delimiter, boolean isTemporalData) {
 
       try {
 
          if (delimiter == null)
             delimiter = this.delimiter;
 
-         DataModel<Long, Long>[] splits = new CrossValidationSplitter(this.numFolds, perUser, seed).split(
-                 new SimpleParser().parseData(new File(inFile), delimiter));
+         DataModelIF<Long, Long>[] splits = new CrossValidationSplitter(this.numFolds, perUser, seed).split(
+                 new SimpleParser().parseData(new File(inFile), delimiter, isTemporalData));
 
          File dir = new File(outPath);
          if (!dir.exists()) {
@@ -78,8 +79,8 @@ public abstract class CrossValidationRecSysEvaluator {
             }
          }
          for (int i = 0; i < splits.length / 2; i++) {
-            DataModel<Long, Long> training = splits[2 * i];
-            DataModel<Long, Long> test = splits[2 * i + 1];
+            DataModelIF<Long, Long> training = splits[2 * i];
+            DataModelIF<Long, Long> test = splits[2 * i + 1];
             String trainingFile = Paths.get(outPath, "train_" + i + FILE_EXT).toString();
             String testFile = Paths.get(outPath, "test_" + i + FILE_EXT).toString();
             log.info("train model fold {}: {}", (i + 1), trainingFile);
@@ -172,8 +173,8 @@ public abstract class CrossValidationRecSysEvaluator {
          File testFile = new File(Paths.get(splitPath, "test_" + i + FILE_EXT).toString());
          File predictionsFile = new File(Paths.get(predictionsPath, "recs_" + i + FILE_EXT).toString());
 
-         DataModel<Long, Long> trainingModel;
-         DataModel<Long, Long> testModel;
+         DataModelIF<Long, Long> trainingModel;
+         DataModelIF<Long, Long> testModel;
          org.apache.mahout.cf.taste.model.DataModel recModel;
 
          try {
@@ -198,7 +199,7 @@ public abstract class CrossValidationRecSysEvaluator {
          }
 
          EvaluationStrategy<Long, Long> strategy = new UserTest(trainingModel, testModel, this.relevanceThreshold);
-         DataModel<Long, Long> evaluationModel = new DataModel<>();
+         DataModelIF<Long, Long> evaluationModel = DataModelFactory.getDefaultModel();
          try {
             DataModelUtils.saveDataModel(evaluationModel, Paths.get(outPath, "strategymodel_" + i + FILE_EXT).toString(), true);
          } catch (FileNotFoundException | UnsupportedEncodingException e) {
@@ -248,8 +249,8 @@ public abstract class CrossValidationRecSysEvaluator {
          for (int i = 0; i < this.numFolds; i++) {
             File testFile = new File(Paths.get(splitPath, "test_" + i + FILE_EXT).toString());
             File strategyFile = new File(Paths.get(strategyModelPath, "strategymodel_" + i + FILE_EXT).toString());
-            DataModel<Long, Long> testModel = new SimpleParser().parseData(testFile);
-            DataModel<Long, Long> strategyModel = new SimpleParser().parseData(strategyFile);
+            DataModelIF<Long, Long> testModel = new SimpleParser().parseData(testFile);
+            DataModelIF<Long, Long> strategyModel = new SimpleParser().parseData(strategyFile);
 
             // Error metrics calculated only once per fold, using all predictions
             if (cutoff == this.cutoffs[0]) {

@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.evaluation.metric.error;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.AbstractMetric;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
@@ -81,7 +81,7 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public AbstractErrorMetric(final DataModel<U, I> predictions, final DataModel<U, I> test) {
+    public AbstractErrorMetric(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test) {
         this(predictions, test, ErrorStrategy.NOT_CONSIDER_NAN);
     }
 
@@ -92,7 +92,7 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
      * @param test groundtruth information for users and items
      * @param errorStrategy the error strategy
      */
-    public AbstractErrorMetric(final DataModel<U, I> predictions, final DataModel<U, I> test, final ErrorStrategy errorStrategy) {
+    public AbstractErrorMetric(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final ErrorStrategy errorStrategy) {
         super(predictions, test);
 
         setValue(Double.NaN);

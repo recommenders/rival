@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.TemporalDataModelIF;
@@ -58,7 +59,7 @@ public class TrecEvalParser implements Parser<Long, Long> {
      */
     @Override
     public DataModelIF<Long, Long> parseData(final File f) throws IOException {
-        DataModelIF<Long, Long> dataset = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> dataset = DataModelFactory.getDefaultModel();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         try {

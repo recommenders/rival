@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
@@ -76,8 +77,8 @@ public class RandomSplitter implements Splitter<Long, Long> {
     public DataModelIF<Long, Long>[] split(final DataModelIF<Long, Long> data) {
         @SuppressWarnings("unchecked")
         final DataModelIF<Long, Long>[] splits = new DataModelIF[2];
-        splits[0] = new DataModel<>(); // training
-        splits[1] = new DataModel<>(); // test
+        splits[0] = DataModelFactory.getDefaultModel(); // training
+        splits[1] = DataModelFactory.getDefaultModel(); // test
         if (perUser) {
             for (Long user : data.getUsers()) {
                 if (doSplitPerItems) {

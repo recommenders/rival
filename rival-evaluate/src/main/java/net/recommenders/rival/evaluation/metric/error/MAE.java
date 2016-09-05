@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.evaluation.metric.error;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class MAE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMe
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public MAE(final DataModel<U, I> predictions, final DataModel<U, I> test) {
+    public MAE(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test) {
         super(predictions, test);
     }
 
@@ -49,7 +49,7 @@ public class MAE<U, I> extends AbstractErrorMetric<U, I> implements EvaluationMe
      * @param test groundtruth information for users and items
      * @param errorStrategy the error strategy
      */
-    public MAE(final DataModel<U, I> predictions, final DataModel<U, I> test, final ErrorStrategy errorStrategy) {
+    public MAE(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final ErrorStrategy errorStrategy) {
         super(predictions, test, errorStrategy);
     }
 

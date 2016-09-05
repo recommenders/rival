@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 
 /**
  * Abstract class for evaluation metrics.
@@ -37,11 +37,11 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
     /**
      * The predictions.
      */
-    private DataModel<U, I> predictions;
+    private DataModelIF<U, I> predictions;
     /**
      * The test set.
      */
-    private DataModel<U, I> test;
+    private DataModelIF<U, I> test;
     /**
      * Metric per user.
      */
@@ -57,7 +57,7 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      * @param thePredictions predicted scores for users and items
      * @param theTest groundtruth information for users and items
      */
-    public AbstractMetric(final DataModel<U, I> thePredictions, final DataModel<U, I> theTest) {
+    public AbstractMetric(final DataModelIF<U, I> thePredictions, final DataModelIF<U, I> theTest) {
         this.predictions = thePredictions;
         this.test = theTest;
         this.metricPerUser = null;
@@ -68,7 +68,7 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      *
      * @return the predictions
      */
-    protected DataModel<U, I> getPredictions() {
+    protected DataModelIF<U, I> getPredictions() {
         return predictions;
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractMetric<U, I> implements EvaluationMetric<U> {
      *
      * @return the test set
      */
-    protected DataModel<U, I> getTest() {
+    protected DataModelIF<U, I> getTest() {
         return test;
     }
 

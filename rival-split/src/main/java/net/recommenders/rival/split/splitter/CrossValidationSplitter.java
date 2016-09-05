@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
@@ -71,8 +72,8 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
         @SuppressWarnings("unchecked")
         final DataModelIF<U, I>[] splits = new DataModelIF[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {
-            splits[2 * i] = new DataModel<>(); // training
-            splits[2 * i + 1] = new DataModel<>(); // test
+            splits[2 * i] = DataModelFactory.getDefaultModel(); // training
+            splits[2 * i + 1] = DataModelFactory.getDefaultModel(); // test
         }
         if (perUser) {
             int n = 0;

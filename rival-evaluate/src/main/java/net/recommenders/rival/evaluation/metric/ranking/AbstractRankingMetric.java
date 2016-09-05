@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.AbstractMetric;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 import net.recommenders.rival.evaluation.Pair;
@@ -53,7 +53,7 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public AbstractRankingMetric(final DataModel<U, I> predictions, final DataModel<U, I> test) {
+    public AbstractRankingMetric(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test) {
         this(predictions, test, 1.0);
     }
 
@@ -64,7 +64,7 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public AbstractRankingMetric(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold) {
+    public AbstractRankingMetric(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      * @param cutoffLevels cutoffs
      * @param relThreshold relevance threshold
      */
-    public AbstractRankingMetric(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final int[] cutoffLevels) {
+    public AbstractRankingMetric(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold, final int[] cutoffLevels) {
         super(predictions, test);
         setValue(Double.NaN);
         this.ats = Arrays.copyOf(cutoffLevels, cutoffLevels.length);

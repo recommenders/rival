@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 import java.util.HashMap;
@@ -73,7 +73,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public NDCG(final DataModel<U, I> predictions, final DataModel<U, I> test) {
+    public NDCG(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test) {
         this(predictions, test, new int[]{});
     }
 
@@ -84,7 +84,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      * @param test groundtruth ratings
      * @param ats cutoffs
      */
-    public NDCG(final DataModel<U, I> predictions, final DataModel<U, I> test, final int[] ats) {
+    public NDCG(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final int[] ats) {
         this(predictions, test, 1.0, ats, TYPE.EXP);
     }
 
@@ -98,7 +98,7 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
      * @param ats cutoffs
      * @param ndcgType type of NDCG computation
      */
-    public NDCG(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final int[] ats, final TYPE ndcgType) {
+    public NDCG(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold, final int[] ats, final TYPE ndcgType) {
         super(predictions, test, relThreshold, ats);
         this.type = ndcgType;
     }

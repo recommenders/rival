@@ -15,13 +15,14 @@
  */
 package net.recommenders.rival.evaluation.metric;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.ranking.Precision;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Map;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.evaluation.metric.ranking.Recall;
 
 import static org.junit.Assert.assertEquals;
@@ -36,8 +37,8 @@ public class PrecisionTest {
 
     @Test
     public void testSameGroundtruthAsPredictions() {
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> predictions = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
         for (long i = 1L; i < 20; i++) {
             for (long j = 1L; j < 15; j++) {
                 test.addPreference(i, j, i * j % 5 + 1.0);
@@ -62,8 +63,8 @@ public class PrecisionTest {
 
     @Test
     public void testSameGroundtruthAsPredictionsStringIDs() {
-        DataModel<String, String> predictions = new DataModel<String, String>();
-        DataModel<String, String> test = new DataModel<String, String>();
+        DataModelIF<String, String> predictions = DataModelFactory.getDefaultModel();
+        DataModelIF<String, String> test = DataModelFactory.getDefaultModel();
         for (long i = 1L; i < 20; i++) {
             for (long j = 1L; j < 15; j++) {
                 test.addPreference(String.valueOf("u" + i), String.valueOf("i" + j), i * j % 5 + 1.0);
@@ -90,8 +91,8 @@ public class PrecisionTest {
     public void testOneUserTrecevalStrategySingleRelevance() {
         // groundtruth: ? 0 1 1
         // predictions: 3 4 5 1
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> predictions = DataModelFactory.getDefaultModel();
         test.addPreference(1L, 2L, 0.0);
         test.addPreference(1L, 3L, 1.0);
         test.addPreference(1L, 4L, 1.0);
@@ -123,8 +124,8 @@ public class PrecisionTest {
     public void testOneUserTrecevalStrategyMultipleRelevance() {
         // groundtruth: ? 0 1 2
         // predictions: 3 4 5 1
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> predictions = DataModelFactory.getDefaultModel();
         test.addPreference(1L, 2L, 0.0);
         test.addPreference(1L, 3L, 1.0);
         test.addPreference(1L, 4L, 2.0);
@@ -155,8 +156,8 @@ public class PrecisionTest {
     @Test
     public void testIssue113() {
         boolean useBinaryScores = false; // if true, first configuration, otherwise, second configuration
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> predictions = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
 
         predictions.addPreference(2L, 13L, useBinaryScores ? 1.0 : 0.5328112138740229);
         test.addPreference(2L, 13L, 1.0);
