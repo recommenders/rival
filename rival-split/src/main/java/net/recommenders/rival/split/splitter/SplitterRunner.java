@@ -18,7 +18,6 @@ package net.recommenders.rival.split.splitter;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelUtils;
 import net.recommenders.rival.core.TemporalDataModelIF;
 
@@ -96,10 +95,10 @@ public final class SplitterRunner {
      * @throws UnsupportedEncodingException see
      * {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
      */
-    public static void run(final Properties properties, final TemporalDataModelIF<Long, Long> data, final boolean doDataClear)
+    public static <U, I> void run(final Properties properties, final TemporalDataModelIF<U, I> data, final boolean doDataClear)
             throws FileNotFoundException, UnsupportedEncodingException {
         System.out.println("Start splitting");
-        TemporalDataModelIF<Long, Long>[] splits;
+        TemporalDataModelIF<U, I>[] splits;
         // read parameters
         String outputFolder = properties.getProperty(SPLIT_OUTPUT_FOLDER);
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(SPLIT_OUTPUT_OVERWRITE, "false"));
@@ -108,7 +107,7 @@ public final class SplitterRunner {
         String splitTestPrefix = properties.getProperty(SPLIT_TEST_PREFIX);
         String splitTestSuffix = properties.getProperty(SPLIT_TEST_SUFFIX);
         // generate splits
-        Splitter<Long, Long> splitter = instantiateSplitter(properties);
+        Splitter<U, I> splitter = instantiateSplitter(properties);
         splits = splitter.split(data);
         if (doDataClear) {
             data.clear();
@@ -116,8 +115,8 @@ public final class SplitterRunner {
         System.out.println("Saving splits");
         // save splits
         for (int i = 0; i < splits.length / 2; i++) {
-            TemporalDataModelIF<Long, Long> training = splits[2 * i];
-            TemporalDataModelIF<Long, Long> test = splits[2 * i + 1];
+            TemporalDataModelIF<U, I> training = splits[2 * i];
+            TemporalDataModelIF<U, I> test = splits[2 * i + 1];
             String trainingFile = outputFolder + splitTrainingPrefix + i + splitTrainingSuffix;
             String testFile = outputFolder + splitTestPrefix + i + splitTestSuffix;
             DataModelUtils.saveDataModel(training, trainingFile, overwrite);
@@ -132,17 +131,17 @@ public final class SplitterRunner {
      * @param properties the properties to be used.
      * @return a splitter according to the properties mapping provided.
      */
-    public static Splitter<Long, Long> instantiateSplitter(final Properties properties) {
+    public static <U, I> Splitter<U, I> instantiateSplitter(final Properties properties) {
         // read parameters
         String splitterClassName = properties.getProperty(DATASET_SPLITTER);
         Boolean perUser = Boolean.parseBoolean(properties.getProperty(SPLIT_PERUSER));
         Boolean doSplitPerItems = Boolean.parseBoolean(properties.getProperty(SPLIT_PERITEMS, "true"));
         // generate splitter
-        Splitter<Long, Long> splitter = null;
+        Splitter<U, I> splitter = null;
         if (splitterClassName.contains("CrossValidation")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Integer nFolds = Integer.parseInt(properties.getProperty(SPLIT_CV_NFOLDS));
-            splitter = new CrossValidationSplitter<>(nFolds, perUser, seed);
+            splitter = new CrossValidationSplitter(nFolds, perUser, seed);
         } else if (splitterClassName.contains("Random")) {
             Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
