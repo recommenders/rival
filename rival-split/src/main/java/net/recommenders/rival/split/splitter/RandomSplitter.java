@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
@@ -32,7 +31,7 @@ import net.recommenders.rival.core.TemporalDataModelIF;
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class RandomSplitter implements Splitter<Long, Long> {
+public class RandomSplitter<U, I> implements Splitter<U, I> {
 
     /**
      * The percentage of training to be used by the splitter.
@@ -74,21 +73,21 @@ public class RandomSplitter implements Splitter<Long, Long> {
      * {@inheritDoc}
      */
     @Override
-    public DataModelIF<Long, Long>[] split(final DataModelIF<Long, Long> data) {
+    public DataModelIF<U, I>[] split(final DataModelIF<U, I> data) {
         @SuppressWarnings("unchecked")
-        final DataModelIF<Long, Long>[] splits = new DataModelIF[2];
+        final DataModelIF<U, I>[] splits = new DataModelIF[2];
         splits[0] = DataModelFactory.getDefaultModel(); // training
         splits[1] = DataModelFactory.getDefaultModel(); // test
         if (perUser) {
-            for (Long user : data.getUsers()) {
+            for (U user : data.getUsers()) {
                 if (doSplitPerItems) {
-                    List<Long> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                    List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
                     Collections.shuffle(items, rnd);
                     int splitPoint = Math.round(percentageTraining * items.size());
                     for (int i = 0; i < items.size(); i++) {
-                        Long item = items.get(i);
+                        I item = items.get(i);
                         Double pref = data.getUserItemPreferences().get(user).get(item);
-                        DataModelIF<Long, Long> datamodel = splits[0]; // training
+                        DataModelIF<U, I> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
                         }
@@ -101,11 +100,11 @@ public class RandomSplitter implements Splitter<Long, Long> {
                 }
             }
         } else {
-            for (Long user : data.getUsers()) {
-                for (Long item : data.getUserItemPreferences().get(user).keySet()) {
+            for (U user : data.getUsers()) {
+                for (I item : data.getUserItemPreferences().get(user).keySet()) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);
                     if (doSplitPerItems) {
-                        DataModelIF<Long, Long> datamodel = splits[0]; // training
+                        DataModelIF<U, I> datamodel = splits[0]; // training
                         if (rnd.nextDouble() > percentageTraining) {
                             datamodel = splits[1]; // test
                         }
@@ -113,7 +112,7 @@ public class RandomSplitter implements Splitter<Long, Long> {
                             datamodel.addPreference(user, item, pref);
                         }
                     } else {
-                        DataModelIF<Long, Long> datamodel = splits[0]; // training
+                        DataModelIF<U, I> datamodel = splits[0]; // training
                         if (rnd.nextDouble() > percentageTraining) {
                             datamodel = splits[1]; // test
                         }
@@ -131,25 +130,25 @@ public class RandomSplitter implements Splitter<Long, Long> {
      * {@inheritDoc}
      */
     @Override
-    public TemporalDataModelIF<Long, Long>[] split(final TemporalDataModelIF<Long, Long> data) {
+    public TemporalDataModelIF<U, I>[] split(final TemporalDataModelIF<U, I> data) {
         @SuppressWarnings("unchecked")
-        final TemporalDataModelIF<Long, Long>[] splits = new TemporalDataModelIF[2];
+        final TemporalDataModelIF<U, I>[] splits = new TemporalDataModelIF[2];
         splits[0] = new TemporalDataModel<>(); // training
         splits[1] = new TemporalDataModel<>(); // test
         if (perUser) {
-            for (Long user : data.getUsers()) {
+            for (U user : data.getUsers()) {
                 if (doSplitPerItems) {
-                    List<Long> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                    List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
                     Collections.shuffle(items, rnd);
                     int splitPoint = Math.round(percentageTraining * items.size());
                     for (int i = 0; i < items.size(); i++) {
-                        Long item = items.get(i);
+                        I item = items.get(i);
                         Double pref = data.getUserItemPreferences().get(user).get(item);
                         Set<Long> time = null;
                         if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
                             time = data.getUserItemTimestamps().get(user).get(item);
                         }
-                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
                         }
@@ -166,21 +165,21 @@ public class RandomSplitter implements Splitter<Long, Long> {
                     if (!data.getUserItemTimestamps().containsKey(user)) {
                         continue;
                     }
-                    List<String> itemsTime = new ArrayList<>();
-                    for (Entry<Long, Set<Long>> e : data.getUserItemTimestamps().get(user).entrySet()) {
-                        long i = e.getKey();
+                    List<Pair<I, Long>> itemsTime = new ArrayList<>();
+                    for (Entry<I, Set<Long>> e : data.getUserItemTimestamps().get(user).entrySet()) {
+                        I i = e.getKey();
                         for (Long t : e.getValue()) {
-                            itemsTime.add(i + "_" + t);
+                            itemsTime.add(new Pair<>(i, t));
                         }
                     }
                     Collections.shuffle(itemsTime, rnd);
                     int splitPoint = Math.round(percentageTraining * itemsTime.size());
                     for (int i = 0; i < itemsTime.size(); i++) {
-                        String it = itemsTime.get(i);
-                        Long item = Long.parseLong(it.split("_")[0]);
-                        Long time = Long.parseLong(it.split("_")[1]);
+                        Pair<I, Long> it = itemsTime.get(i);
+                        I item = it.getFirst();
+                        Long time = it.getSecond();
                         Double pref = data.getUserItemPreferences().get(user).get(item);
-                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
                         }
@@ -194,15 +193,15 @@ public class RandomSplitter implements Splitter<Long, Long> {
                 }
             }
         } else {
-            for (Long user : data.getUsers()) {
-                for (Long item : data.getUserItemPreferences().get(user).keySet()) {
+            for (U user : data.getUsers()) {
+                for (I item : data.getUserItemPreferences().get(user).keySet()) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);
                     Set<Long> time = null;
                     if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
                         time = data.getUserItemTimestamps().get(user).get(item);
                     }
                     if (doSplitPerItems) {
-                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                         if (rnd.nextDouble() > percentageTraining) {
                             datamodel = splits[1]; // test
                         }
@@ -216,7 +215,7 @@ public class RandomSplitter implements Splitter<Long, Long> {
                         }
                     } else if (time != null) {
                         for (Long t : time) {
-                            TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
+                            TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                             if (rnd.nextDouble() > percentageTraining) {
                                 datamodel = splits[1]; // test
                             }
@@ -226,7 +225,7 @@ public class RandomSplitter implements Splitter<Long, Long> {
                             datamodel.addTimestamp(user, item, t);
                         }
                     } else {
-                        TemporalDataModelIF<Long, Long> datamodel = splits[0]; // training
+                        TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                         if (rnd.nextDouble() > percentageTraining) {
                             datamodel = splits[1]; // test
                         }
@@ -238,5 +237,25 @@ public class RandomSplitter implements Splitter<Long, Long> {
             }
         }
         return splits;
+    }
+
+    private static class Pair<A, B> {
+
+        private A a;
+        private B b;
+
+        public Pair(A a, B b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public A getFirst() {
+            return a;
+        }
+
+        public B getSecond() {
+            return b;
+        }
+
     }
 }
