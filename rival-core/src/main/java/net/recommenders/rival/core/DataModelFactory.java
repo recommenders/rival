@@ -22,7 +22,15 @@ package net.recommenders.rival.core;
 public class DataModelFactory {
 
     public static <U, I> DataModelIF<U, I> getDefaultModel() {
+        return getSimpleModel();
+    }
+
+    public static <U, I> DataModelIF<U, I> getSimpleModel() {
         return new DataModel<>();
+    }
+
+    public static <U, I> TemporalDataModelIF<U, I> getSimpleTemporalModel() {
+        return new TemporalDataModel<>();
     }
 
 }
