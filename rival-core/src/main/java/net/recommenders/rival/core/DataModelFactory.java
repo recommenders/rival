@@ -15,6 +15,8 @@
  */
 package net.recommenders.rival.core;
 
+import net.recommenders.rival.core.ext.MahoutDataModel;
+
 /**
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
@@ -33,4 +35,7 @@ public class DataModelFactory {
         return new TemporalDataModel<>();
     }
 
+    public static TemporalDataModelIF<Long, Long> getMahoutTemporalModel() {
+        return new MahoutDataModel();
+    }
 }
