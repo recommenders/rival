@@ -40,7 +40,7 @@ public class TemporalDataModel<U, I> extends DataModel<U, I> implements Temporal
     /**
      * Default constructor.
      */
-    public TemporalDataModel() {
+    TemporalDataModel() {
         super();
     }
 

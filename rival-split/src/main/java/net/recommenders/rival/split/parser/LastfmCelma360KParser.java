@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.ParserWithIdMapping;
 import net.recommenders.rival.core.SimpleParser;
@@ -89,7 +90,7 @@ public class LastfmCelma360KParser extends AbstractLastfmCelmaParser implements 
      */
     @Override
     public TemporalDataModelIF<Long, Long> parseTemporalData(final File f, final String mapIdsPrefix) throws IOException {
-        TemporalDataModelIF<Long, Long> dataset = new TemporalDataModel<>();
+        TemporalDataModelIF<Long, Long> dataset = DataModelFactory.getDefaultTemporalModel();
 
         Map<String, Long> mapUserIds = new HashMap<>();
         Map<String, Long> mapItemIds = new HashMap<>();

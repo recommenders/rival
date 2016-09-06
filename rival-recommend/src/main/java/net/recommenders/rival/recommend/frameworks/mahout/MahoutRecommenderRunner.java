@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import net.recommenders.rival.core.DataModelFactory;
 
 /**
  * A runner for Mahout-based recommenders.
@@ -161,7 +162,7 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
-                model = new net.recommenders.rival.core.TemporalDataModel<Long, Long>();
+                model = DataModelFactory.getDefaultTemporalModel();
                 break;
             default:
                 model = null;

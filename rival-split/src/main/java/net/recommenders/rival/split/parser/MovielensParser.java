@@ -18,6 +18,7 @@ package net.recommenders.rival.split.parser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
@@ -61,7 +62,7 @@ public class MovielensParser implements Parser<Long, Long> {
      */
     @Override
     public TemporalDataModelIF<Long, Long> parseTemporalData(final File f) throws IOException {
-        TemporalDataModelIF<Long, Long> dataset = new TemporalDataModel<>();
+        TemporalDataModelIF<Long, Long> dataset = DataModelFactory.getDefaultTemporalModel();
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
         String line;

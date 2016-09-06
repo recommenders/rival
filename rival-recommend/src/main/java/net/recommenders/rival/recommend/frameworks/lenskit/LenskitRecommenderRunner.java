@@ -18,6 +18,7 @@ package net.recommenders.rival.recommend.frameworks.lenskit;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
@@ -196,7 +197,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
-                model = new TemporalDataModel<Long, Long>();
+                model = DataModelFactory.getDefaultTemporalModel();
                 break;
             default:
                 model = null;

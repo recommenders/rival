@@ -134,8 +134,8 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
     public TemporalDataModelIF<U, I>[] split(final TemporalDataModelIF<U, I> data) {
         @SuppressWarnings("unchecked")
         final TemporalDataModelIF<U, I>[] splits = new TemporalDataModelIF[2];
-        splits[0] = new TemporalDataModel<>(); // training
-        splits[1] = new TemporalDataModel<>(); // test
+        splits[0] = DataModelFactory.getDefaultTemporalModel(); // training
+        splits[1] = DataModelFactory.getDefaultTemporalModel(); // test
         if (perUser) {
             for (U user : data.getUsers()) {
                 if (doSplitPerItems) {

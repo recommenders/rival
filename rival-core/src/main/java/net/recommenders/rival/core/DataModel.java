@@ -49,7 +49,7 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
     /**
      * Default constructor.
      */
-    protected DataModel() {
+    DataModel() {
         this(false);
     }
 

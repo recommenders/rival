@@ -28,6 +28,10 @@ public class DataModelFactory {
         return getSimpleModel();
     }
 
+    public static <U, I> TemporalDataModelIF<U, I> getDefaultTemporalModel() {
+        return getSimpleTemporalModel();
+    }
+
     public static <U, I> DataModelIF<U, I> getSimpleModel() {
         return new DataModel<>();
     }

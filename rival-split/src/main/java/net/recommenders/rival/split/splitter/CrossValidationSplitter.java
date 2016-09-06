@@ -136,8 +136,8 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
         @SuppressWarnings("unchecked")
         final TemporalDataModelIF<U, I>[] splits = new TemporalDataModelIF[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {
-            splits[2 * i] = new TemporalDataModel<>(); // training
-            splits[2 * i + 1] = new TemporalDataModel<>(); // test
+            splits[2 * i] = DataModelFactory.getDefaultTemporalModel(); // training
+            splits[2 * i + 1] = DataModelFactory.getDefaultTemporalModel(); // test
         }
         if (perUser) {
             int n = 0;

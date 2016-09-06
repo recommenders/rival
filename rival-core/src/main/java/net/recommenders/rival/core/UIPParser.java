@@ -43,7 +43,7 @@ public class UIPParser extends AbstractParser implements Parser<Long, Long> {
      */
     @Override
     public TemporalDataModelIF<Long, Long> parseTemporalData(final File f) throws IOException {
-        TemporalDataModelIF<Long, Long> dataset = new TemporalDataModel<>();
+        TemporalDataModelIF<Long, Long> dataset = DataModelFactory.getDefaultTemporalModel();
         Reader in = new InputStreamReader(new FileInputStream(f), "UTF-8");
 
         Iterable<CSVRecord> records;

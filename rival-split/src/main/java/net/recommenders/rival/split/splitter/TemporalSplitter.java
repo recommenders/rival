@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
@@ -76,8 +77,8 @@ public class TemporalSplitter<U, I> implements Splitter<U, I> {
     public TemporalDataModelIF<U, I>[] split(final TemporalDataModelIF<U, I> data) {
         @SuppressWarnings("unchecked")
         final TemporalDataModelIF<U, I>[] splits = new TemporalDataModel[2];
-        splits[0] = new TemporalDataModel<>(); // training
-        splits[1] = new TemporalDataModel<>(); // test
+        splits[0] = DataModelFactory.getDefaultTemporalModel(); // training
+        splits[1] = DataModelFactory.getDefaultTemporalModel(); // test
         if (perUser) {
             for (U user : data.getUsers()) {
                 Set<Long> userTimestamps = new HashSet<>();
