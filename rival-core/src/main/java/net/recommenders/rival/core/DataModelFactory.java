@@ -16,6 +16,7 @@
 package net.recommenders.rival.core;
 
 import net.recommenders.rival.core.ext.MahoutDataModel;
+import net.recommenders.rival.core.ext.RankSysDataModel;
 
 /**
  *
@@ -37,5 +38,9 @@ public class DataModelFactory {
 
     public static TemporalDataModelIF<Long, Long> getMahoutTemporalModel() {
         return new MahoutDataModel();
+    }
+
+    public static <U, I> DataModelIF<U, I> getRankSysModel() {
+        return new RankSysDataModel<>();
     }
 }
