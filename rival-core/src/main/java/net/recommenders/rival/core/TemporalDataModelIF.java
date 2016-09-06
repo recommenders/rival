@@ -15,9 +15,6 @@
  */
 package net.recommenders.rival.core;
 
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Interface for a temporal data model. It is able to store users, items,
  * preferences, and timestamps.
@@ -31,11 +28,13 @@ import java.util.Set;
 public interface TemporalDataModelIF<U, I> extends DataModelIF<U, I> {
 
     /**
-     * Method that returns the map with the timestamps between users and items.
+     * Method that returns the timestamps between a user and an item.
      *
-     * @return the map with the timestamps between users and items.
+     * @param u the user.
+     * @param i the item.
+     * @return the timestamps between a user and an item.
      */
-    public Map<U, Map<I, Set<Long>>> getUserItemTimestamps();
+    public Iterable<Long> getUserItemTimestamps(U u, I i);
 
     /**
      * Method that adds a timestamp to the model between a user and an item.

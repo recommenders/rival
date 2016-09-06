@@ -241,8 +241,8 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
         DataModelIF<Long, Long> modelToEval = DataModelFactory.getDefaultModel();
         for (Long user : recModel.getUsers()) {
             for (Long item : strategy.getCandidateItemsToRank(user)) {
-                if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
-                    modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
+                if (!Double.isNaN(recModel.getUserItemPreference(user, item))) {
+                    modelToEval.addPreference(user, item, recModel.getUserItemPreference(user, item));
                 }
             }
         }

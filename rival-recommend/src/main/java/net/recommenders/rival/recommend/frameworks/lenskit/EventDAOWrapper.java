@@ -17,7 +17,6 @@ package net.recommenders.rival.recommend.frameworks.lenskit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import net.recommenders.rival.core.TemporalDataModelIF;
 import org.grouplens.lenskit.cursors.Cursor;
 import org.grouplens.lenskit.data.dao.EventCollectionDAO;
@@ -51,12 +50,12 @@ public class EventDAOWrapper implements EventDAO {
     public EventDAOWrapper(final TemporalDataModelIF<Long, Long> model) {
         List<Rating> events = new ArrayList<Rating>();
         RatingBuilder rb = new RatingBuilder();
-        for (Long u : model.getUserItemPreferences().keySet()) {
+        for (Long u : model.getUsers()) {
             rb.setUserId(u);
-            for (Long i : model.getUserItemPreferences().get(u).keySet()) {
+            for (Long i : model.getUserItems(u)) {
                 rb.setItemId(i);
-                rb.setRating(model.getUserItemPreferences().get(u).get(i));
-                Set<Long> timestamps = model.getUserItemTimestamps().get(u).get(i);
+                rb.setRating(model.getUserItemPreference(u, i));
+                Iterable<Long> timestamps = model.getUserItemTimestamps(u, i);
                 long t = -1;
                 if (timestamps != null) {
                     for (Long tt : timestamps) {

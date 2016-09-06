@@ -152,7 +152,11 @@ public class NDCG<U, I> extends AbstractRankingMetric<U, I> implements Evaluatio
                     m.put(user, dcg);
                 }
             }
-            double idcg = computeIDCG(user, getTest().getUserItemPreferences().get(user));
+            Map<I, Double> userTest = new HashMap<>();
+            for (I i : getTest().getUserItems(user)) {
+                userTest.put(i, getTest().getUserItemPreference(user, i));
+            }
+            double idcg = computeIDCG(user, userTest);
             double undcg = dcg / idcg;
             if (!Double.isNaN(undcg)) {
                 setValue(getValue() + undcg);

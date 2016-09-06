@@ -78,13 +78,32 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
     }
 
     /**
-     * Method that returns the preference map between users and items.
+     * Method that returns the preference between a user and an item.
      *
-     * @return the preference map between users and items.
+     * @param u the user.
+     * @param i the item.
+     * @return the preference between a user and an item or NaN.
      */
     @Override
-    public Map<U, Map<I, Double>> getUserItemPreferences() {
-        return userItemPreferences;
+    public Double getUserItemPreference(U u, I i) {
+        if (userItemPreferences.containsKey(u) && userItemPreferences.get(u).containsKey(i)) {
+            return userItemPreferences.get(u).get(i);
+        }
+        return Double.NaN;
+    }
+
+    /**
+     * Method that returns the items of a user.
+     *
+     * @param u the user.
+     * @return the items of a user.
+     */
+    @Override
+    public Iterable<I> getUserItems(U u) {
+        if (userItemPreferences.containsKey(u)) {
+            return userItemPreferences.get(u).keySet();
+        }
+        return null;
     }
 
     /**
@@ -123,7 +142,7 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
      * @return the items in the model.
      */
     @Override
-    public Set<I> getItems() {
+    public Iterable<I> getItems() {
         return items;
     }
 
@@ -133,8 +152,8 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
      * @return the users in the model.
      */
     @Override
-    public Set<U> getUsers() {
-        return getUserItemPreferences().keySet();
+    public Iterable<U> getUsers() {
+        return userItemPreferences.keySet();
     }
 
     /**
@@ -154,7 +173,7 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
      */
     @Override
     public int getNumUsers() {
-        return getUsers().size();
+        return userItemPreferences.keySet().size();
     }
 
     /**

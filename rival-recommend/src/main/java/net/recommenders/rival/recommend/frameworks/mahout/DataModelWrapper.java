@@ -18,7 +18,6 @@ package net.recommenders.rival.recommend.frameworks.mahout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import org.apache.mahout.cf.taste.common.Refreshable;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
@@ -54,12 +53,12 @@ public class DataModelWrapper implements DataModel {
     public DataModelWrapper(final net.recommenders.rival.core.TemporalDataModelIF<Long, Long> model) {
         FastByIDMap<Collection<Preference>> data = new FastByIDMap<Collection<Preference>>();
         FastByIDMap<FastByIDMap<Long>> timestampData = new FastByIDMap<FastByIDMap<Long>>();
-        for (Long u : model.getUserItemPreferences().keySet()) {
+        for (Long u : model.getUsers()) {
             List<Preference> prefs = new ArrayList<Preference>();
             FastByIDMap<Long> userTimestamps = new FastByIDMap<Long>();
             timestampData.put(u, userTimestamps);
-            for (Long i : model.getUserItemPreferences().get(u).keySet()) {
-                Set<Long> timestamps = model.getUserItemTimestamps().get(u).get(i);
+            for (Long i : model.getUserItems(u)) {
+                Iterable<Long> timestamps = model.getUserItemTimestamps(u, i);
                 long t = -1;
                 if (timestamps != null) {
                     for (Long tt : timestamps) {
@@ -68,7 +67,7 @@ public class DataModelWrapper implements DataModel {
                     }
                 }
                 userTimestamps.put(i, t);
-                prefs.add(new GenericPreference(u, i, model.getUserItemPreferences().get(u).get(i).floatValue()));
+                prefs.add(new GenericPreference(u, i, model.getUserItemPreference(u, i).floatValue()));
             }
             data.put(u, prefs);
         }

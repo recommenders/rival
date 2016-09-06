@@ -15,9 +15,6 @@
  */
 package net.recommenders.rival.core;
 
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Interface for the data model used throughout the toolkit. Able to store
  * users, items, and preferences.
@@ -31,11 +28,21 @@ import java.util.Set;
 public interface DataModelIF<U, I> {
 
     /**
-     * Method that returns the preference map between users and items.
+     * Method that returns the preference between a user and an item.
      *
-     * @return the preference map between users and items.
+     * @param u the user.
+     * @param i the item.
+     * @return the preference between a user and an item.
      */
-    public Map<U, Map<I, Double>> getUserItemPreferences();
+    public Double getUserItemPreference(U u, I i);
+
+    /**
+     * Method that returns the items of a user.
+     *
+     * @param u the user.
+     * @return the items of a user.
+     */
+    public Iterable<I> getUserItems(U u);
 
     /**
      * Method that adds a preference to the model between a user and an item.
@@ -51,14 +58,14 @@ public interface DataModelIF<U, I> {
      *
      * @return the items in the model.
      */
-    public Set<I> getItems();
+    public Iterable<I> getItems();
 
     /**
      * Method that returns the users in the model.
      *
      * @return the users in the model.
      */
-    public Set<U> getUsers();
+    public Iterable<U> getUsers();
 
     /**
      * Method that returns the number of items in the model.

@@ -101,16 +101,17 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
     public Map<U, List<Pair<I, Double>>> processDataAsRankedTestRelevance() {
         Map<U, List<Pair<I, Double>>> data = new HashMap<U, List<Pair<I, Double>>>();
 
-        Map<U, Map<I, Double>> predictedRatings = getPredictions().getUserItemPreferences();
         for (U testUser : getTest().getUsers()) {
-            Map<I, Double> userPredictedRatings = predictedRatings.get(testUser);
-            Map<I, Double> userRelevance = getTest().getUserItemPreferences().get(testUser);
-            if (userPredictedRatings != null) {
+            Map<I, Double> userPredictedRatings = new HashMap<>();
+            for (I i : getPredictions().getUserItems(testUser)) {
+                userPredictedRatings.put(i, getPredictions().getUserItemPreference(testUser, i));
+            }
+            if (!userPredictedRatings.isEmpty()) {
                 List<Pair<I, Double>> rankedTestRel = new ArrayList<Pair<I, Double>>();
                 for (I item : rankItems(userPredictedRatings)) {
-                    double rel = 0.0;
-                    if (userRelevance.containsKey(item)) {
-                        rel = userRelevance.get(item);
+                    double rel = getTest().getUserItemPreference(testUser, item);
+                    if (Double.isNaN(rel)) {
+                        rel = 0.0;
                     }
                     rankedTestRel.add(new Pair<I, Double>(item, rel));
                 }
@@ -129,9 +130,9 @@ public abstract class AbstractRankingMetric<U, I> extends AbstractMetric<U, I> i
      */
     protected double getNumberOfRelevantItems(final U user) {
         int n = 0;
-        if (getTest().getUserItemPreferences().containsKey(user)) {
-            for (Map.Entry<I, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
-                if (e.getValue() >= relevanceThreshold) {
+        if (getTest().getUserItems(user) != null) {
+            for (I i : getTest().getUserItems(user)) {
+                if (getTest().getUserItemPreference(user, i) >= relevanceThreshold) {
                     n++;
                 }
             }

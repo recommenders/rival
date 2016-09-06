@@ -93,9 +93,9 @@ public class RelPlusN extends AbstractStrategy {
         shuffledItems = shuffledItems.subList(0, Math.min(shuffledItems.size(), n));
         final Set<Long> items = new HashSet<Long>(shuffledItems);
         // add relevant ones
-        for (Entry<Long, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
-            if (e.getValue() >= getThreshold()) {
-                items.add(e.getKey());
+        for (Long i : getTest().getUserItems(user)) {
+            if (getTest().getUserItemPreference(user, i) >= getThreshold()) {
+                items.add(i);
             }
         }
         return items;
@@ -107,9 +107,9 @@ public class RelPlusN extends AbstractStrategy {
     @Override
     public void printRanking(final Long user, final List<Pair<Long, Double>> scoredItems, final PrintStream out, final OUTPUT_FORMAT format) {
         final Set<Long> relItems = new HashSet<Long>();
-        for (Entry<Long, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
-            if (e.getValue() >= getThreshold()) {
-                relItems.add(e.getKey());
+        for (Long i : getTest().getUserItems(user)) {
+            if (getTest().getUserItemPreference(user, i) >= getThreshold()) {
+                relItems.add(i);
             }
         }
         final Map<Long, Double> relScores = new HashMap<Long, Double>();
@@ -134,11 +134,12 @@ public class RelPlusN extends AbstractStrategy {
      */
     @Override
     public void printGroundtruth(final Long user, final PrintStream out, final OUTPUT_FORMAT format) {
-        for (Entry<Long, Double> e : getTest().getUserItemPreferences().get(user).entrySet()) {
-            if (e.getValue() >= getThreshold()) {
+        for (Long i : getTest().getUserItems(user)) {
+            Double d = getTest().getUserItemPreference(user, i);
+            if (d >= getThreshold()) {
                 final Map<Long, Double> tmp = new HashMap<Long, Double>();
-                tmp.put(e.getKey(), e.getValue());
-                printGroundtruth(user + "_" + e.getKey(), tmp, out, format);
+                tmp.put(i, d);
+                printGroundtruth(user + "_" + i, tmp, out, format);
             }
         }
     }

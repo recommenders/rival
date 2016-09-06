@@ -96,8 +96,11 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
      */
     protected Set<Long> getModelTrainingDifference(final DataModelIF<Long, Long> model, final Long user) {
         final Set<Long> items = new HashSet<Long>();
-        if (training.getUserItemPreferences().containsKey(user)) {
-            final Set<Long> trainingItems = training.getUserItemPreferences().get(user).keySet();
+        if (training.getUserItems(user) != null) {
+            final Set<Long> trainingItems = new HashSet<>();
+            for (Long i : training.getUserItems(user)) {
+                trainingItems.add(i);
+            }
             for (Long item : model.getItems()) {
                 if (!trainingItems.contains(item)) {
                     items.add(item);
@@ -169,9 +172,10 @@ public abstract class AbstractStrategy implements EvaluationStrategy<Long, Long>
     @Override
     public void printGroundtruth(final Long user, final PrintStream out, final OUTPUT_FORMAT format) {
         final Map<Long, Double> relItems = new HashMap<Long, Double>();
-        for (Entry<Long, Double> e : test.getUserItemPreferences().get(user).entrySet()) {
-            if (e.getValue() >= threshold) {
-                relItems.put(e.getKey(), e.getValue());
+        for (Long i : test.getUserItems(user)) {
+            Double d = test.getUserItemPreference(user, i);
+            if (d >= threshold) {
+                relItems.put(i, d);
             }
         }
         printGroundtruth("" + user, relItems, out, format);

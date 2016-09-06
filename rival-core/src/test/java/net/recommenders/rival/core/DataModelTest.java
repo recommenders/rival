@@ -45,7 +45,6 @@ public class DataModelTest<U, I> {
 
     @Before
     public void initialize() {
-
         for (long u = 1L; u <= USERS; u++) {
             for (long i = 1L; i <= ITEMS; i++) {
                 dm.addPreference(u, i, 1.0 * u * i);
@@ -55,11 +54,9 @@ public class DataModelTest<U, I> {
 
     @Test
     public void testGetUserPreferences() {
-        Map<Long, Map<Long, Double>> storedPrefs = dm.getUserItemPreferences();
         for (long u = 1L; u <= USERS; u++) {
-            Map<Long, Double> iprefs = storedPrefs.get(u);
             for (long i = 1L; i <= ITEMS; i++) {
-                assertEquals(1.0 * u * i, iprefs.get(i), 0.0);
+                assertEquals(1.0 * u * i, dm.getUserItemPreference(u, i), 0.0);
             }
         }
     }
@@ -86,11 +83,9 @@ public class DataModelTest<U, I> {
                 unconstrainedModel.addPreference(u, i, 1.0 * u * i);
             }
         }
-        Map<Long, Map<Long, Double>> storedPrefs = unconstrainedModel.getUserItemPreferences();
         for (long u = 1L; u <= USERS; u++) {
-            Map<Long, Double> iprefs = storedPrefs.get(u);
             for (long i = 1L; i <= ITEMS; i++) {
-                assertEquals(2.0 * u * i, iprefs.get(i), 0.0);
+                assertEquals(2.0 * u * i, unconstrainedModel.getUserItemPreference(u, i), 0.0);
             }
         }
         DataModel<Long, Long> constrainedModel = new DataModel<>(true);
@@ -103,11 +98,9 @@ public class DataModelTest<U, I> {
                 constrainedModel.addPreference(u, i, 1.0 * u * i);
             }
         }
-        storedPrefs = constrainedModel.getUserItemPreferences();
         for (long u = 1L; u <= USERS; u++) {
-            Map<Long, Double> iprefs = storedPrefs.get(u);
             for (long i = 1L; i <= ITEMS; i++) {
-                assertEquals(1.0 * u * i, iprefs.get(i), 0.0);
+                assertEquals(1.0 * u * i, constrainedModel.getUserItemPreference(u, i), 0.0);
             }
         }
     }

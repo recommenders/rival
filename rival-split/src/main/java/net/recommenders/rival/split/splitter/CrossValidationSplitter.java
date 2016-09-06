@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
@@ -77,10 +76,13 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
         if (perUser) {
             int n = 0;
             for (U user : data.getUsers()) {
-                List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                List<I> items = new ArrayList<>();
+                for (I i : data.getUserItems(user)) {
+                    items.add(i);
+                }
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
+                    Double pref = data.getUserItemPreference(user, item);
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
                         DataModelIF<U, I> datamodel = splits[2 * i]; // training
@@ -95,14 +97,20 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
                 }
             }
         } else {
-            List<U> users = new ArrayList<>(data.getUsers());
+            List<U> users = new ArrayList<>();
+            for (U u : data.getUsers()) {
+                users.add(u);
+            }
             Collections.shuffle(users, rnd);
             int n = 0;
             for (U user : users) {
-                List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                List<I> items = new ArrayList<>();
+                for (I i : data.getUserItems(user)) {
+                    items.add(i);
+                }
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
+                    Double pref = data.getUserItemPreference(user, item);
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
                         DataModelIF<U, I> datamodel = splits[2 * i]; // training
@@ -134,14 +142,14 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
         if (perUser) {
             int n = 0;
             for (U user : data.getUsers()) {
-                List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                List<I> items = new ArrayList<>();
+                for (I i : data.getUserItems(user)) {
+                    items.add(i);
+                }
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
-                    Set<Long> time = null;
-                    if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
-                        time = data.getUserItemTimestamps().get(user).get(item);
-                    }
+                    Double pref = data.getUserItemPreference(user, item);
+                    Iterable<Long> time = data.getUserItemTimestamps(user, item);
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
                         TemporalDataModelIF<U, I> datamodel = splits[2 * i]; // training
@@ -161,18 +169,21 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
                 }
             }
         } else {
-            List<U> users = new ArrayList<>(data.getUsers());
+            List<U> users = new ArrayList<>();
+            for (U u : data.getUsers()) {
+                users.add(u);
+            }
             Collections.shuffle(users, rnd);
             int n = 0;
             for (U user : users) {
-                List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                List<I> items = new ArrayList<>();
+                for (I i : data.getUserItems(user)) {
+                    items.add(i);
+                }
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
-                    Set<Long> time = null;
-                    if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
-                        time = data.getUserItemTimestamps().get(user).get(item);
-                    }
+                    Double pref = data.getUserItemPreference(user, item);
+                    Iterable<Long> time = data.getUserItemTimestamps(user, item);
                     int curFold = n % nFolds;
                     for (int i = 0; i < nFolds; i++) {
                         TemporalDataModelIF<U, I> datamodel = splits[2 * i]; // training

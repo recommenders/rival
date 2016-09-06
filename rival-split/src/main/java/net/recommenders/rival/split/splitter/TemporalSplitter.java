@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
@@ -81,12 +80,14 @@ public class TemporalSplitter<U, I> implements Splitter<U, I> {
         splits[1] = new TemporalDataModel<>(); // test
         if (perUser) {
             for (U user : data.getUsers()) {
-                if (!data.getUserItemTimestamps().containsKey(user)) {
-                    continue;
-                }
                 Set<Long> userTimestamps = new HashSet<>();
-                for (Set<Long> timestamps : data.getUserItemTimestamps().get(user).values()) {
-                    userTimestamps.addAll(timestamps);
+                for (I i : data.getUserItems(user)) {
+                    for (Long t : data.getUserItemTimestamps(user, i)) {
+                        userTimestamps.add(t);
+                    }
+                }
+                if (userTimestamps.isEmpty()) {
+                    continue;
                 }
                 List<Long> listTimestamps = new ArrayList<>(userTimestamps);
                 Collections.sort(listTimestamps);
@@ -100,11 +101,10 @@ public class TemporalSplitter<U, I> implements Splitter<U, I> {
                     n++;
                 }
                 if (doSplitPerItems) {
-                    for (Entry<I, Set<Long>> e : data.getUserItemTimestamps().get(user).entrySet()) {
-                        I item = e.getKey();
-                        Double pref = data.getUserItemPreferences().get(user).get(item);
+                    for (I item : data.getUserItems(user)) {
+                        Double pref = data.getUserItemPreference(user, item);
                         boolean inTest = false;
-                        for (Long time : e.getValue()) {
+                        for (Long time : data.getUserItemTimestamps(user, item)) {
                             if (testTimestamps.contains(time)) {
                                 inTest = true;
                                 break;
@@ -117,18 +117,14 @@ public class TemporalSplitter<U, I> implements Splitter<U, I> {
                         if (pref != null) {
                             datamodel.addPreference(user, item, pref);
                         }
-                        for (Long time : e.getValue()) {
+                        for (Long time : data.getUserItemTimestamps(user, item)) {
                             datamodel.addTimestamp(user, item, time);
                         }
                     }
                 } else {
-                    if (!data.getUserItemTimestamps().containsKey(user)) {
-                        continue;
-                    }
-                    for (Entry<I, Set<Long>> e : data.getUserItemTimestamps().get(user).entrySet()) {
-                        I item = e.getKey();
-                        Double pref = data.getUserItemPreferences().get(user).get(item);
-                        for (Long time : e.getValue()) {
+                    for (I item : data.getUserItems(user)) {
+                        Double pref = data.getUserItemPreference(user, item);
+                        for (Long time : data.getUserItemTimestamps(user, item)) {
                             TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                             if (testTimestamps.contains(time)) {
                                 datamodel = splits[1]; // test
@@ -144,9 +140,11 @@ public class TemporalSplitter<U, I> implements Splitter<U, I> {
         } else {
             // global temporal splitting
             Set<Long> allTimestamps = new HashSet<>();
-            for (U user : data.getUserItemTimestamps().keySet()) {
-                for (Set<Long> timestamps : data.getUserItemTimestamps().get(user).values()) {
-                    allTimestamps.addAll(timestamps);
+            for (U user : data.getUsers()) {
+                for (I i : data.getUserItems(user)) {
+                    for (Long t : data.getUserItemTimestamps(user, i)) {
+                        allTimestamps.add(t);
+                    }
                 }
             }
             List<Long> listTimestamps = new ArrayList<>(allTimestamps);
@@ -161,12 +159,12 @@ public class TemporalSplitter<U, I> implements Splitter<U, I> {
                 n++;
             }
             for (U user : data.getUsers()) {
-                if (!data.getUserItemTimestamps().containsKey(user)) {
-                    continue;
-                }
-                for (I item : data.getUserItemPreferences().get(user).keySet()) {
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
-                    Set<Long> time = data.getUserItemTimestamps().get(user).get(item);
+                for (I item : data.getUserItems(user)) {
+                    Double pref = data.getUserItemPreference(user, item);
+                    Iterable<Long> time = data.getUserItemTimestamps(user, item);
+                    if (time == null) {
+                        continue;
+                    }
                     if (doSplitPerItems) {
                         boolean inTest = false;
                         for (Long t : time) {

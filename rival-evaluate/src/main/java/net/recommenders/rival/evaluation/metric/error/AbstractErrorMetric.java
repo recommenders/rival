@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @param <U> - type associated to users' ids
@@ -116,27 +115,22 @@ public abstract class AbstractErrorMetric<U, I> extends AbstractMetric<U, I> imp
      */
     public Map<U, List<Double>> processDataAsPredictedDifferencesToTest() {
         Map<U, List<Double>> data = new HashMap<U, List<Double>>();
-        Map<U, Map<I, Double>> actualRatings = getTest().getUserItemPreferences();
-        Map<U, Map<I, Double>> predictedRatings = getPredictions().getUserItemPreferences();
 
         emptyItems = 0;
         emptyUsers = 0;
 
         for (U testUser : getTest().getUsers()) {
-            Map<I, Double> ratings = actualRatings.get(testUser);
             List<Double> userData = data.get(testUser);
             if (userData == null) {
                 userData = new ArrayList<Double>();
                 data.put(testUser, userData);
             }
-            for (Entry<I, Double> e : ratings.entrySet()) {
-                I testItem = e.getKey();
-                double realRating = ratings.get(testItem);
+            for (I testItem : getTest().getUserItems(testUser)) {
+                double realRating = getTest().getUserItemPreference(testUser, testItem);
                 double predictedRating = Double.NaN; // NaN as default value
-                if (predictedRatings.containsKey(testUser)) {
-                    if (predictedRatings.get(testUser).containsKey(testItem)) {
-                        predictedRating = predictedRatings.get(testUser).get(testItem);
-                    } else {
+                if (getPredictions().getUserItems(testUser) != null) {
+                    predictedRating = getPredictions().getUserItemPreference(testUser, testItem);
+                    if (Double.isNaN(predictedRating)) {
                         emptyItems++;
                     }
                 } else {

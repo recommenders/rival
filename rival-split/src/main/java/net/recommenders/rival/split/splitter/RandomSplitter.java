@@ -18,9 +18,7 @@ package net.recommenders.rival.split.splitter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Set;
 import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
@@ -81,12 +79,15 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
         if (perUser) {
             for (U user : data.getUsers()) {
                 if (doSplitPerItems) {
-                    List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                    List<I> items = new ArrayList<>();
+                    for (I i : data.getUserItems(user)) {
+                        items.add(i);
+                    }
                     Collections.shuffle(items, rnd);
                     int splitPoint = Math.round(percentageTraining * items.size());
                     for (int i = 0; i < items.size(); i++) {
                         I item = items.get(i);
-                        Double pref = data.getUserItemPreferences().get(user).get(item);
+                        Double pref = data.getUserItemPreference(user, item);
                         DataModelIF<U, I> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
@@ -101,8 +102,8 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
             }
         } else {
             for (U user : data.getUsers()) {
-                for (I item : data.getUserItemPreferences().get(user).keySet()) {
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
+                for (I item : data.getUserItems(user)) {
+                    Double pref = data.getUserItemPreference(user, item);
                     if (doSplitPerItems) {
                         DataModelIF<U, I> datamodel = splits[0]; // training
                         if (rnd.nextDouble() > percentageTraining) {
@@ -138,16 +139,16 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
         if (perUser) {
             for (U user : data.getUsers()) {
                 if (doSplitPerItems) {
-                    List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+                    List<I> items = new ArrayList<>();
+                    for (I i : data.getUserItems(user)) {
+                        items.add(i);
+                    }
                     Collections.shuffle(items, rnd);
                     int splitPoint = Math.round(percentageTraining * items.size());
                     for (int i = 0; i < items.size(); i++) {
                         I item = items.get(i);
-                        Double pref = data.getUserItemPreferences().get(user).get(item);
-                        Set<Long> time = null;
-                        if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
-                            time = data.getUserItemTimestamps().get(user).get(item);
-                        }
+                        Double pref = data.getUserItemPreference(user, item);
+                        Iterable<Long> time = data.getUserItemTimestamps(user, item);
                         TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
@@ -162,15 +163,14 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
                         }
                     }
                 } else {
-                    if (!data.getUserItemTimestamps().containsKey(user)) {
-                        continue;
-                    }
                     List<Pair<I, Long>> itemsTime = new ArrayList<>();
-                    for (Entry<I, Set<Long>> e : data.getUserItemTimestamps().get(user).entrySet()) {
-                        I i = e.getKey();
-                        for (Long t : e.getValue()) {
+                    for (I i : data.getUserItems(user)) {
+                        for (Long t : data.getUserItemTimestamps(user, i)) {
                             itemsTime.add(new Pair<>(i, t));
                         }
+                    }
+                    if (itemsTime.isEmpty()) {
+                        continue;
                     }
                     Collections.shuffle(itemsTime, rnd);
                     int splitPoint = Math.round(percentageTraining * itemsTime.size());
@@ -178,7 +178,7 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
                         Pair<I, Long> it = itemsTime.get(i);
                         I item = it.getFirst();
                         Long time = it.getSecond();
-                        Double pref = data.getUserItemPreferences().get(user).get(item);
+                        Double pref = data.getUserItemPreference(user, item);
                         TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                         if (i > splitPoint) {
                             datamodel = splits[1]; // test
@@ -194,12 +194,9 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
             }
         } else {
             for (U user : data.getUsers()) {
-                for (I item : data.getUserItemPreferences().get(user).keySet()) {
-                    Double pref = data.getUserItemPreferences().get(user).get(item);
-                    Set<Long> time = null;
-                    if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
-                        time = data.getUserItemTimestamps().get(user).get(item);
-                    }
+                for (I item : data.getUserItems(user)) {
+                    Double pref = data.getUserItemPreference(user, item);
+                    Iterable<Long> time = data.getUserItemTimestamps(user, item);
                     if (doSplitPerItems) {
                         TemporalDataModelIF<U, I> datamodel = splits[0]; // training
                         if (rnd.nextDouble() > percentageTraining) {

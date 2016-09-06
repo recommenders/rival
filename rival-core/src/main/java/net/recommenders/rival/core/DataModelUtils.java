@@ -55,10 +55,8 @@ public final class DataModelUtils {
         } else {
             PrintStream out = new PrintStream(outfile, "UTF-8");
             for (U user : dm.getUsers()) {
-                Map<I, Double> userPrefModel = dm.getUserItemPreferences().get(user);
-                for (Entry<I, Double> e : userPrefModel.entrySet()) {
-                    I item = e.getKey();
-                    Double pref = userPrefModel.get(item);
+                for (I item : dm.getUserItems(user)) {
+                    Double pref = dm.getUserItemPreference(user, item);
                     out.println(user + "\t" + item + "\t" + pref + "\t-1");
                 }
             }
@@ -85,15 +83,9 @@ public final class DataModelUtils {
         } else {
             PrintStream out = new PrintStream(outfile, "UTF-8");
             for (U user : dm.getUsers()) {
-                Map<I, Double> userPrefModel = dm.getUserItemPreferences().get(user);
-                Map<I, Set<Long>> userTimeModel = dm.getUserItemTimestamps().get(user);
-                for (Entry<I, Double> e : userPrefModel.entrySet()) {
-                    I item = e.getKey();
-                    Double pref = userPrefModel.get(item);
-                    Set<Long> time = null;
-                    if (userTimeModel != null) {
-                        time = userTimeModel.get(item);
-                    }
+                for (I item : dm.getUserItems(user)) {
+                    Double pref = dm.getUserItemPreference(user, item);
+                    Iterable<Long> time = dm.getUserItemTimestamps(user, item);
                     if (time == null) {
                         out.println(user + "\t" + item + "\t" + pref + "\t-1");
                     } else {

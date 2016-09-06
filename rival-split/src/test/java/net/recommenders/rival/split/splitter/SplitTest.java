@@ -26,7 +26,8 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Main class that parses a data set and splits it according to a property file.
- * It tests implementations of {@link net.recommenders.rival.split.splitter.Splitter}.
+ * It tests implementations of
+ * {@link net.recommenders.rival.split.splitter.Splitter}.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
@@ -58,27 +59,27 @@ public class SplitTest {
         assertTrue(splits.length == 2 * nFolds);
 
         // Let's take one (user, item) pair from one test
-        long userTest = -1;
-        long itemTest = -1;
-        for (Entry<Long, Map<Long, Double>> e : splits[1].getUserItemPreferences().entrySet()) {
-            userTest = e.getKey();
-            for (long i : e.getValue().keySet()) {
-                itemTest = i;
+        Long userTest = -1L;
+        Long itemTest = -1L;
+        for (Long user : splits[1].getUsers()) {
+            userTest = user;
+            for (Long item : splits[1].getUserItems(userTest)) {
+                itemTest = item;
                 break;
             }
             break;
         }
 
         // Let's check this pair is not in its corresponding training split
-        assertTrue(!splits[0].getUserItemPreferences().containsKey(userTest) || !splits[0].getUserItemPreferences().get(userTest).containsKey(itemTest));
+        assertTrue((splits[0].getUserItems(userTest) == null) || (Double.isNaN(splits[0].getUserItemPreference(userTest, itemTest))));
 
         for (int i = 1; i < splits.length / 2; i++) {
             DataModelIF<Long, Long> training = splits[2 * i];
             DataModelIF<Long, Long> test = splits[2 * i + 1];
             // Let's check this pair is not in any other test split
-            assertTrue(!test.getUserItemPreferences().containsKey(userTest) || !test.getUserItemPreferences().get(userTest).containsKey(itemTest));
+            assertTrue((test.getUserItems(userTest) == null) || (Double.isNaN(test.getUserItemPreference(userTest, itemTest))));
             // Let's check this pair is in every other training split
-            assertTrue(training.getUserItemPreferences().get(userTest).containsKey(itemTest));
+            assertTrue(!Double.isNaN(training.getUserItemPreference(userTest, itemTest)));
         }
     }
 
@@ -97,18 +98,18 @@ public class SplitTest {
         assertTrue(splits.length == 2);
 
         // Let's take one (user, item) pair from test
-        long userTest = -1;
-        long itemTest = -1;
-        for (Entry<Long, Map<Long, Double>> e : splits[1].getUserItemPreferences().entrySet()) {
-            userTest = e.getKey();
-            for (long i : e.getValue().keySet()) {
-                itemTest = i;
+        Long userTest = -1L;
+        Long itemTest = -1L;
+        for (Long user : splits[1].getUsers()) {
+            userTest = user;
+            for (Long item : splits[1].getUserItems(userTest)) {
+                itemTest = item;
                 break;
             }
             break;
         }
 
         // Let's check this pair is not in its corresponding training split
-        assertTrue(!splits[0].getUserItemPreferences().containsKey(userTest) || !splits[0].getUserItemPreferences().get(userTest).containsKey(itemTest));
+        assertTrue((splits[0].getUserItems(userTest) == null) || (Double.isNaN(splits[0].getUserItemPreference(userTest, itemTest))));
     }
 }

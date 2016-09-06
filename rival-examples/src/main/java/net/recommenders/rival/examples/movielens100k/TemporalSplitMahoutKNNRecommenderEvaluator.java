@@ -228,8 +228,8 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
         for (Long user : recModel.getUsers()) {
             assert strategy != null;
             for (Long item : strategy.getCandidateItemsToRank(user)) {
-                if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
-                    modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
+                if (!Double.isNaN(recModel.getUserItemPreference(user, item))) {
+                    modelToEval.addPreference(user, item, recModel.getUserItemPreference(user, item));
                 }
             }
         }

@@ -15,6 +15,7 @@
  */
 package net.recommenders.rival.evaluation.strategy;
 
+import java.util.HashSet;
 import java.util.Set;
 import net.recommenders.rival.core.DataModelIF;
 
@@ -46,7 +47,11 @@ public class UserTest extends AbstractStrategy {
      */
     @Override
     public Set<Long> getCandidateItemsToRank(final Long user) {
-        return getTest().getUserItemPreferences().get(user).keySet();
+        Set<Long> items = new HashSet<>();
+        for (Long i : getTest().getUserItems(user)) {
+            items.add(i);
+        }
+        return items;
     }
 
     /**
