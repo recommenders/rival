@@ -16,7 +16,7 @@
 package net.recommenders.rival.evaluation.strategy;
 
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 
 /**
  * An evaluation strategy where only the items in training are used as
@@ -37,7 +37,7 @@ public class TrainItems extends AbstractStrategy {
      * @param test The test set.
      * @param threshold The relevance threshold.
      */
-    public TrainItems(final DataModel<Long, Long> training, final DataModel<Long, Long> test, final double threshold) {
+    public TrainItems(final DataModelIF<Long, Long> training, final DataModelIF<Long, Long> test, final double threshold) {
         super(training, test, threshold);
     }
 
