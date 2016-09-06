@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Stream;
 import net.recommenders.rival.core.DataModelIF;
@@ -66,7 +67,11 @@ public class RankSysDataModel<U, I> implements DataModelIF<U, I> {
         if (model == null) {
             generateDatamodel();
         }
-        return model.getPreference(u, i).get().v2;
+        try {
+            return model.getPreference(u, i).get().v2;
+        } catch (NoSuchElementException e) {
+            return Double.NaN;
+        }
     }
 
     @Override
