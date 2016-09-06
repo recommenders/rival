@@ -38,9 +38,7 @@ public class MahoutDataModel implements TemporalDataModelIF<Long, Long> {
     private FastByIDMap<FastByIDMap<Long>> timestampData;
 
     public MahoutDataModel() {
-        model = null;
-        data = new FastByIDMap<Collection<Preference>>();
-        timestampData = new FastByIDMap<FastByIDMap<Long>>();
+        clear();
     }
 
     private void generateDatamodel() {
