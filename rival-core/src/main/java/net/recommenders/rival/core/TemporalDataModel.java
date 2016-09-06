@@ -41,7 +41,7 @@ public class TemporalDataModel<U, I> extends DataModel<U, I> implements Temporal
      * Default constructor.
      */
     TemporalDataModel() {
-        super();
+        this(false);
     }
 
     /**
@@ -51,7 +51,7 @@ public class TemporalDataModel<U, I> extends DataModel<U, I> implements Temporal
      * should be ignored.
      */
     public TemporalDataModel(final boolean ignoreDupPreferences) {
-        super(ignoreDupPreferences);
+        this(ignoreDupPreferences, new HashMap<>(), new HashSet<>(), new HashMap<>());
     }
 
     /**
@@ -79,7 +79,7 @@ public class TemporalDataModel<U, I> extends DataModel<U, I> implements Temporal
      */
     @Override
     public Iterable<Long> getUserItemTimestamps(U u, I i) {
-        if (userItemTimestamps.containsKey(u) && userItemTimestamps.get(u).containsKey(i)){
+        if (userItemTimestamps.containsKey(u) && userItemTimestamps.get(u).containsKey(i)) {
             return userItemTimestamps.get(u).get(i);
         }
         return null;
