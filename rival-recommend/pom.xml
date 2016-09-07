@@ -11,10 +11,6 @@
     <packaging>jar</packaging>
     <name>RiVal Recommendation</name>
 
-    <properties>
-        <lenskit.version>2.0.4</lenskit.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
