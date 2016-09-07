@@ -79,8 +79,8 @@ public final class CompletePipelineInMemory {
                 "org.grouplens.lenskit.vectors.similarity.CosineVectorSimilarity,org.grouplens.lenskit.vectors.similarity.PearsonCorrelation");
 //        props.put(MultipleRecommendationRunner.LENSKIT_SVD_RECS, "org.grouplens.lenskit.mf.funksvd.FunkSVDItemScorer");
         props.put(MultipleRecommendationRunner.LENSKIT_SVD_RECS, "");
-//        props.put(MultipleRecommendationRunner.LENSKIT_USERBASED_RECS, "org.grouplens.lenskit.knn.user.UserUserItemScorer");
-        props.put(MultipleRecommendationRunner.LENSKIT_USERBASED_RECS, "");
+        props.put(MultipleRecommendationRunner.LENSKIT_USERBASED_RECS, "org.grouplens.lenskit.knn.user.UserUserItemScorer");
+//        props.put(MultipleRecommendationRunner.LENSKIT_USERBASED_RECS, "");
 //        props.put(MultipleRecommendationRunner.MAHOUT_ITEMBASED_RECS, "");
 //        props.put(MultipleRecommendationRunner.MAHOUT_SIMILARITIES, "");
 //        props.put(MultipleRecommendationRunner.MAHOUT_SVD_FACTORIZER, "");

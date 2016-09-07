@@ -45,7 +45,7 @@
         <repository.domain>github.com</repository.domain>
         -->
         <mahout.version>0.8</mahout.version>
-        <lenskit.version>2.0.4</lenskit.version>
+        <lenskit.version>2.2.1</lenskit.version>
         <ranksys.version>0.4.3</ranksys.version>
     </properties>
 

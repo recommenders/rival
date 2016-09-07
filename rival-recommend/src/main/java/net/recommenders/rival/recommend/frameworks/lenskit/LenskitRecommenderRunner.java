@@ -38,15 +38,16 @@ import org.grouplens.lenskit.data.dao.EventCollectionDAO;
 import org.grouplens.lenskit.data.dao.EventDAO;
 import org.grouplens.lenskit.data.dao.PrefetchingItemDAO;
 import org.grouplens.lenskit.data.dao.PrefetchingUserDAO;
-import org.grouplens.lenskit.data.dao.SimpleFileRatingDAO;
 import org.grouplens.lenskit.data.dao.UserDAO;
+import org.grouplens.lenskit.data.text.Formats;
+import org.grouplens.lenskit.data.text.TextEventDAO;
 import org.grouplens.lenskit.iterative.IterationCount;
 import org.grouplens.lenskit.iterative.IterationCountStoppingCondition;
 import org.grouplens.lenskit.iterative.StoppingCondition;
 import org.grouplens.lenskit.knn.NeighborhoodSize;
 import org.grouplens.lenskit.knn.item.ItemSimilarity;
-import org.grouplens.lenskit.knn.user.NeighborhoodFinder;
-import org.grouplens.lenskit.knn.user.SimpleNeighborhoodFinder;
+import org.grouplens.lenskit.knn.user.NeighborFinder;
+import org.grouplens.lenskit.knn.user.LiveNeighborFinder;
 import org.grouplens.lenskit.mf.funksvd.FeatureCount;
 import org.grouplens.lenskit.scored.ScoredId;
 import org.grouplens.lenskit.vectors.similarity.VectorSimilarity;
@@ -77,7 +78,8 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
     /**
      * Runs the recommender.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts see
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @return see
      * {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      * @throws RecommenderException when the recommender is instantiated
@@ -92,15 +94,16 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
 
         File trainingFile = new File(getProperties().getProperty(RecommendationRunner.TRAINING_SET));
         File testFile = new File(getProperties().getProperty(RecommendationRunner.TEST_SET));
-        EventDAO base = new SimpleFileRatingDAO(trainingFile, "\t");
-        EventDAO test = new SimpleFileRatingDAO(testFile, "\t");
+        EventDAO base = new TextEventDAO(trainingFile, Formats.delimitedRatings("\t"));
+        EventDAO test = new TextEventDAO(testFile, Formats.delimitedRatings("\t"));
         return runLenskitRecommender(opts, base, test);
     }
 
     /**
      * Runs the recommender using the provided datamodels.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts see
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
      * @param testModel model to be used to test the recommender.
      * @return see
@@ -124,12 +127,16 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * Runs a Lenskit recommender using the provided datamodels and the
      * previously provided properties.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts see
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
      * @param testModel model to be used to test the recommender.
-     * @return nothing when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#OUTPUT_RECS},
-     * otherwise, when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_RECS}
-     * or {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_AND_OUTPUT_RECS}
+     * @return nothing when opts is
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#OUTPUT_RECS},
+     * otherwise, when opts is
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_RECS}
+     * or
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_AND_OUTPUT_RECS}
      * it returns the predictions
      * @throws RecommenderException when recommender cannot be instantiated
      * properly
@@ -139,10 +146,9 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         if (isAlreadyRecommended()) {
             return null;
         }
-        EventDAO dao = new EventCollectionDAO(Cursors.makeList(trainingModel.streamEvents()));
+        EventDAO dao = EventCollectionDAO.create(Cursors.makeList(trainingModel.streamEvents()));
         LenskitConfiguration config = new LenskitConfiguration();
         config.bind(EventDAO.class).to(dao);
-
 
         try {
             config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(getProperties().getProperty(RecommendationRunner.RECOMMENDER)));
@@ -151,7 +157,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
             throw new RecommenderException("Problem with ItemScorer: " + e.getMessage());
         }
         if (getProperties().getProperty(RecommendationRunner.RECOMMENDER).contains(".user.")) {
-            config.bind(NeighborhoodFinder.class).to(SimpleNeighborhoodFinder.class);
+            config.bind(NeighborFinder.class).to(LiveNeighborFinder.class);
             if (getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD).equals("-1")) {
                 getProperties().setProperty(RecommendationRunner.NEIGHBORHOOD, Math.round(Math.sqrt(new PrefetchingItemDAO(trainingModel).getItemIds().size())) + "");
             }

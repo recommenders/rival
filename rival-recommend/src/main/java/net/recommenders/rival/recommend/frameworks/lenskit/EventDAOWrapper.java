@@ -40,7 +40,7 @@ public class EventDAOWrapper implements EventDAO {
     /**
      * Lenskit's EventDAO that will be used as wrapper.
      */
-    private EventCollectionDAO wrapper;
+    private EventDAO wrapper;
 
     /**
      * Constructs the wrapper using the provided model.
@@ -67,7 +67,7 @@ public class EventDAOWrapper implements EventDAO {
                 events.add(rb.build());
             }
         }
-        wrapper = new EventCollectionDAO(events);
+        wrapper = EventCollectionDAO.create(events);
     }
 
     /**
