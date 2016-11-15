@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 import java.util.HashMap;
@@ -26,7 +26,10 @@ import net.recommenders.rival.evaluation.Pair;
 /**
  * Popularity-stratified recall as defined in "A generalized probabilistic
  * framework and its variants for training top-k recommender systems", Harald
- * Steck and Yu Xin.
+ * Steck and Yu Xin. Compatible with definitions in "Item popularity and
+ * recommendation accuracy", Harald Steck and "Ranking with non-random missing
+ * ratings: influence of popularity and positivity on evaluation metrics", Bruno
+ * Padel, Nicolas Usunier, Patrick Gallinari.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>.
  *
@@ -63,7 +66,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param theGamma smoothing parameter
      * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
+    public PopularityStratifiedRecall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
         this(predictions, test, 1.0, theGamma, theObservedItemRelevance);
     }
 
@@ -76,7 +79,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param theGamma smoothing parameter
      * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
+    public PopularityStratifiedRecall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold, final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
         this(predictions, test, relThreshold, new int[]{}, theGamma, theObservedItemRelevance);
     }
 
@@ -90,7 +93,7 @@ public class PopularityStratifiedRecall<U, I> extends AbstractRankingMetric<U, I
      * @param theGamma smoothing parameter
      * @param theObservedItemRelevance item relevance (popularity)
      */
-    public PopularityStratifiedRecall(final DataModel<U, I> predictions, final DataModel<U, I> test,
+    public PopularityStratifiedRecall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test,
             final double relThreshold, final int[] ats,
             final double theGamma, final Map<I, Integer> theObservedItemRelevance) {
         super(predictions, test, relThreshold, ats);

@@ -47,15 +47,19 @@ public class SimpleParser implements Parser<Long, Long> {
     public static final int TIME_TOK = 3;
 
     /**
-     * Parses data file.
-     *
-     * @param f The file to be parsed.
-     * @return A dataset created from the file.
-     * @throws IOException if the file cannot be read.
+     * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(final File f) throws IOException {
-        return parseData(f, "\t");
+    public DataModelIF<Long, Long> parseData(final File f) throws IOException {
+        return parseData(f, "\t", false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TemporalDataModelIF<Long, Long> parseTemporalData(final File f) throws IOException {
+        return parseData(f, "\t", true);
     }
 
     /**
@@ -63,19 +67,21 @@ public class SimpleParser implements Parser<Long, Long> {
      *
      * @param f The file to be parsed.
      * @param token The separator to be used.
+     * @param isTemporal A flag indicating if the file contains temporal
+     * information.
      * @return A dataset created from the file.
      * @throws IOException if the file cannot be read.
      */
-    public DataModel<Long, Long> parseData(final File f, final String token) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<Long, Long>();
+    public TemporalDataModelIF<Long, Long> parseData(final File f, final String token, final boolean isTemporal) throws IOException {
+        TemporalDataModelIF<Long, Long> dataset = new TemporalDataModel<>();
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
         String line = br.readLine();
         if ((line != null) && (!line.matches(".*[a-zA-Z].*"))) {
-            parseLine(line, dataset, token);
+            parseLine(line, dataset, token, isTemporal);
         }
         while ((line = br.readLine()) != null) {
-            parseLine(line, dataset, token);
+            parseLine(line, dataset, token, isTemporal);
         }
         br.close();
 
@@ -110,9 +116,11 @@ public class SimpleParser implements Parser<Long, Long> {
      *
      * @param line The line to be parsed.
      * @param dataset The dataset to add data from line to.
-     * @param token the token to split on
+     * @param token the token to split on.
+     * @param isTemporal A flag indicating if the line contains temporal
+     * information.
      */
-    private void parseLine(final String line, final DataModel<Long, Long> dataset, final String token) {
+    private void parseLine(final String line, final TemporalDataModelIF<Long, Long> dataset, final String token, final boolean isTemporal) {
         if (line == null) {
             return;
         }
@@ -126,7 +134,7 @@ public class SimpleParser implements Parser<Long, Long> {
         // timestamp
         long timestamp = -1;
         // allow no timestamp information
-        if (toks.length > TIME_TOK) {
+        if (isTemporal && toks.length > TIME_TOK) {
             timestamp = Long.parseLong(toks[TIME_TOK]);
         }
         //////

@@ -18,7 +18,7 @@ package net.recommenders.rival.recommend.frameworks;
 import java.io.File;
 import java.util.Map.Entry;
 import java.util.Properties;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,7 +187,7 @@ public abstract class AbstractRunner<U, I> {
      * @throws Exception when the recommender cannot be run. See implementations
      * for more information on possible exceptions.
      */
-    public abstract DataModel<U, I> run(RUN_OPTIONS opts) throws Exception;
+    public abstract TemporalDataModelIF<U, I> run(RUN_OPTIONS opts) throws Exception;
 
     /**
      * Runs the recommender using the provided training and test models.
@@ -204,5 +204,5 @@ public abstract class AbstractRunner<U, I> {
      * @throws Exception when the recommender cannot be run. See implementations
      * for more information on possible exceptions.
      */
-    public abstract DataModel<U, I> run(RUN_OPTIONS opts, DataModel<U, I> trainingModel, DataModel<U, I> testModel) throws Exception;
+    public abstract TemporalDataModelIF<U, I> run(RUN_OPTIONS opts, TemporalDataModelIF<U, I> trainingModel, TemporalDataModelIF<U, I> testModel) throws Exception;
 }

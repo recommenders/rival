@@ -24,7 +24,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.metric.error.AbstractErrorMetric;
 import net.recommenders.rival.evaluation.metric.ranking.AbstractRankingMetric;
@@ -106,8 +106,6 @@ public final class EvaluationMetricRunner {
         final Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(propertyFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException ie) {
             ie.printStackTrace();
         }
@@ -133,8 +131,8 @@ public final class EvaluationMetricRunner {
             throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         System.out.println("Parsing started: recommendation file");
         File recommendationFile = new File(properties.getProperty(PREDICTION_FILE));
-        DataModel<Long, Long> predictions = null;
-        EvaluationStrategy.OUTPUT_FORMAT recFormat = null;
+        DataModelIF<Long, Long> predictions;
+        EvaluationStrategy.OUTPUT_FORMAT recFormat;
         if (properties.getProperty(PREDICTION_FILE_FORMAT).equals(EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL.toString())) {
             recFormat = EvaluationStrategy.OUTPUT_FORMAT.TRECEVAL;
         } else {
@@ -153,7 +151,7 @@ public final class EvaluationMetricRunner {
         System.out.println("Parsing finished: recommendation file");
         System.out.println("Parsing started: test file");
         File testFile = new File(properties.getProperty(TEST_FILE));
-        DataModel<Long, Long> testModel = new SimpleParser().parseData(testFile);
+        DataModelIF<Long, Long> testModel = new SimpleParser().parseData(testFile);
         System.out.println("Parsing finished: test file");
         // read other parameters
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(OUTPUT_OVERWRITE, "false"));
@@ -208,26 +206,26 @@ public final class EvaluationMetricRunner {
      * fails
      */
     @SuppressWarnings("unchecked")
-    public static EvaluationMetric<Long> instantiateEvaluationMetric(final Properties properties, final DataModel<Long, Long> predictions, final DataModel<Long, Long> testModel)
+    public static EvaluationMetric<Long> instantiateEvaluationMetric(final Properties properties, final DataModelIF<Long, Long> predictions, final DataModelIF<Long, Long> testModel)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         int[] rankingCutoffs = getRankingCutoffs(properties);
         String metricClassName = properties.getProperty(METRIC);
         Class<?> metricClass = Class.forName(metricClassName);
-        EvaluationMetric<Long> metric = null;
+        EvaluationMetric<Long> metric;
         if (metricClassName.contains(".ranking.")) {
             if (metricClassName.endsWith("NDCG")) {
                 String ndcgType = properties.getProperty(NDCG_TYPE, "exp");
-                NDCG.TYPE nt = null;
+                NDCG.TYPE nt;
                 if (ndcgType.equalsIgnoreCase(NDCG.TYPE.EXP.toString())) {
                     nt = NDCG.TYPE.EXP;
                 } else {
                     nt = NDCG.TYPE.LIN;
                 }
-                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class, NDCG.TYPE.class).
+                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModelIF.class, DataModelIF.class, double.class, int[].class, NDCG.TYPE.class).
                         newInstance(predictions, testModel, threshold, rankingCutoffs, nt);
             } else {
-                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, double.class, int[].class).
+                metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModelIF.class, DataModelIF.class, double.class, int[].class).
                         newInstance(predictions, testModel, threshold, rankingCutoffs);
             }
         } else {
@@ -243,7 +241,7 @@ public final class EvaluationMetricRunner {
                 System.out.println("Invalid error strategy: " + strategy);
                 return null;
             }
-            metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModel.class, DataModel.class, AbstractErrorMetric.ErrorStrategy.class).newInstance(predictions, testModel, es);
+            metric = (EvaluationMetric<Long>) metricClass.getConstructor(DataModelIF.class, DataModelIF.class, AbstractErrorMetric.ErrorStrategy.class).newInstance(predictions, testModel, es);
         }
         return metric;
     }
@@ -267,10 +265,10 @@ public final class EvaluationMetricRunner {
      * @param <I> generic type for items.
      */
     @SuppressWarnings("unchecked")
-    public static <U, I> void generateOutput(final DataModel<U, I> testModel, final int[] rankingCutoffs,
+    public static <U, I> void generateOutput(final DataModelIF<U, I> testModel, final int[] rankingCutoffs,
             final EvaluationMetric<U> metric, final String metricName,
             final Boolean perUser, final File resultsFile, final Boolean overwrite, final Boolean append) throws FileNotFoundException, UnsupportedEncodingException {
-        PrintStream out = null;
+        PrintStream out;
         if (overwrite && append) {
             System.out.println("Incompatible arguments: overwrite && append!!!");
             return;

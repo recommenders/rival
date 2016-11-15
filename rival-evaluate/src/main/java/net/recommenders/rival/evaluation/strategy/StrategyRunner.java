@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.Pair;
 
@@ -129,11 +129,11 @@ public final class StrategyRunner {
         // read splits
         System.out.println("Parsing started: training file");
         File trainingFile = new File(properties.getProperty(TRAINING_FILE));
-        DataModel<Long, Long> trainingModel = new SimpleParser().parseData(trainingFile);
+        DataModelIF<Long, Long> trainingModel = new SimpleParser().parseData(trainingFile);
         System.out.println("Parsing finished: training file");
         System.out.println("Parsing started: test file");
         File testFile = new File(properties.getProperty(TEST_FILE));
-        DataModel<Long, Long> testModel = new SimpleParser().parseData(testFile);
+        DataModelIF<Long, Long> testModel = new SimpleParser().parseData(testFile);
         System.out.println("Parsing finished: test file");
         // read other parameters
         File inputFile = new File(properties.getProperty(INPUT_FILE));
@@ -185,7 +185,7 @@ public final class StrategyRunner {
      * @throws NoSuchMethodException when {@link Class#getConstructor(java.lang.Class[])}
      * fails
      */
-    public static EvaluationStrategy<Long, Long> instantiateStrategy(final Properties properties, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel)
+    public static EvaluationStrategy<Long, Long> instantiateStrategy(final Properties properties, final DataModelIF<Long, Long> trainingModel, final DataModelIF<Long, Long> testModel)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         Double threshold = Double.parseDouble(properties.getProperty(RELEVANCE_THRESHOLD));
         String strategyClassName = properties.getProperty(STRATEGY);
@@ -197,7 +197,7 @@ public final class StrategyRunner {
             Long seed = Long.parseLong(properties.getProperty(RELPLUSN_SEED));
             strategy = new RelPlusN(trainingModel, testModel, number, threshold, seed);
         } else {
-            Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, threshold);
+            Object strategyObj = strategyClass.getConstructor(DataModelIF.class, DataModelIF.class, double.class).newInstance(trainingModel, testModel, threshold);
             if (strategyObj instanceof EvaluationStrategy) {
                 @SuppressWarnings("unchecked")
                 EvaluationStrategy<Long, Long> strategyTemp = (EvaluationStrategy<Long, Long>) strategyObj;
@@ -221,7 +221,7 @@ public final class StrategyRunner {
      * @throws UnsupportedEncodingException If the default encoding (UTF-8) is
      * not supported.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations,
+    public static void generateOutput(final DataModelIF<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations,
             final EvaluationStrategy<Long, Long> strategy, final EvaluationStrategy.OUTPUT_FORMAT format,
             final File rankingFile, final File groundtruthFile, final Boolean overwrite)
             throws FileNotFoundException, UnsupportedEncodingException {

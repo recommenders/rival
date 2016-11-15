@@ -18,9 +18,11 @@ package net.recommenders.rival.split.parser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
+import net.recommenders.rival.core.TemporalDataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * A parser based on the format of Movielens files.
@@ -50,11 +52,19 @@ public class MovielensParser implements Parser<Long, Long> {
      * {@inheritDoc}
      */
     @Override
-    public DataModel<Long, Long> parseData(final File f) throws IOException {
-        DataModel<Long, Long> dataset = new DataModel<Long, Long>();
+    public DataModelIF<Long, Long> parseData(final File f) throws IOException {
+        return parseTemporalData(f);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TemporalDataModelIF<Long, Long> parseTemporalData(final File f) throws IOException {
+        TemporalDataModelIF<Long, Long> dataset = new TemporalDataModel<>();
 
         BufferedReader br = SimpleParser.getBufferedReader(f);
-        String line = null;
+        String line;
         while ((line = br.readLine()) != null) {
             parseLine(line, dataset);
         }
@@ -70,8 +80,8 @@ public class MovielensParser implements Parser<Long, Long> {
      * @param dataset the dataset where the information parsed from the line
      * will be stored into.
      */
-    private void parseLine(final String line, final DataModel<Long, Long> dataset) {
-        String[] toks = null;
+    private void parseLine(final String line, final TemporalDataModelIF<Long, Long> dataset) {
+        String[] toks;
         if (line.contains("::")) {
             toks = line.split("::");
         } else {

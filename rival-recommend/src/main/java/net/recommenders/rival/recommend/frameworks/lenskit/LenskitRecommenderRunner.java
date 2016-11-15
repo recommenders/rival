@@ -18,7 +18,8 @@ package net.recommenders.rival.recommend.frameworks.lenskit;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.TemporalDataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
@@ -83,7 +84,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public DataModel<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException {
+    public TemporalDataModelIF<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException {
         if (isAlreadyRecommended()) {
             return null;
         }
@@ -107,7 +108,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
      */
     @Override
-    public DataModel<Long, Long> run(final RUN_OPTIONS opts, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel) throws RecommenderException {
+    public TemporalDataModelIF<Long, Long> run(final RUN_OPTIONS opts, final TemporalDataModelIF<Long, Long> trainingModel, final TemporalDataModelIF<Long, Long> testModel) throws RecommenderException {
         if (isAlreadyRecommended()) {
             return null;
         }
@@ -133,7 +134,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * properly
      */
     @SuppressWarnings("unchecked")
-    public DataModel<Long, Long> runLenskitRecommender(final RUN_OPTIONS opts, final EventDAO trainingModel, final EventDAO testModel) throws RecommenderException {
+    public TemporalDataModelIF<Long, Long> runLenskitRecommender(final RUN_OPTIONS opts, final EventDAO trainingModel, final EventDAO testModel) throws RecommenderException {
         if (isAlreadyRecommended()) {
             return null;
         }
@@ -191,11 +192,11 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         }
         assert irec != null;
 
-        DataModel<Long, Long> model = null;
+        TemporalDataModelIF<Long, Long> model = null;
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
-                model = new DataModel<Long, Long>();
+                model = new TemporalDataModel<Long, Long>();
                 break;
             default:
                 model = null;

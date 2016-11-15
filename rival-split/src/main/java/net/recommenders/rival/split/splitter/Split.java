@@ -16,7 +16,6 @@
 package net.recommenders.rival.split.splitter;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import net.recommenders.rival.split.parser.ParserRunner;
@@ -47,8 +46,6 @@ public final class Split {
         final Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(propertyFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException ie) {
             ie.printStackTrace();
         }

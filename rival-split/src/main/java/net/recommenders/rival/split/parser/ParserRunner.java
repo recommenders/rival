@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.Parser;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Runner for the parser classes.
@@ -69,10 +70,10 @@ public final class ParserRunner {
      * fails
      * @throws IOException when {@link Parser#parseData(java.io.File)} fails
      */
-    public static DataModel<Long, Long> run(final Properties properties) throws ClassNotFoundException, IllegalAccessException,
+    public static TemporalDataModelIF<Long, Long> run(final Properties properties) throws ClassNotFoundException, IllegalAccessException,
             InstantiationException, InvocationTargetException, NoSuchMethodException, IOException {
         System.out.println("Parsing started");
-        DataModel<Long, Long> model = null;
+        TemporalDataModelIF<Long, Long> model = null;
         File file = new File(properties.getProperty(DATASET_FILE));
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
@@ -80,13 +81,13 @@ public final class ParserRunner {
         if (parserClassName.contains("LastfmCelma")) {
             String mapIdsPrefix = properties.getProperty(LASTFM_IDS_PREFIX);
             Object modelObj = parserClass.getMethod("parseData", File.class, String.class).invoke(parser, file, mapIdsPrefix);
-            if (modelObj instanceof DataModel) {
+            if (modelObj instanceof TemporalDataModelIF) {
                 @SuppressWarnings("unchecked")
-                DataModel<Long, Long> modelTemp = (DataModel<Long, Long>) modelObj;
+                TemporalDataModelIF<Long, Long> modelTemp = (TemporalDataModelIF<Long, Long>) modelObj;
                 model = modelTemp;
             }
         } else {
-            model = parser.parseData(file);
+            model = parser.parseTemporalData(file);
         }
         System.out.println("Parsing finished");
         return model;
@@ -114,7 +115,7 @@ public final class ParserRunner {
             InstantiationException, InvocationTargetException, NoSuchMethodException {
         String parserClassName = properties.getProperty(DATASET_PARSER);
         Class<?> parserClass = Class.forName(parserClassName);
-        Parser<Long, Long> parser = null;
+        Parser<Long, Long> parser;
         if (parserClassName.contains("LastfmCelma")) {
             Boolean useArtists = Boolean.parseBoolean(properties.getProperty(LASTFM_USEARTISTS));
             parser = (Parser<Long, Long>) parserClass.getConstructor(boolean.class).newInstance(useArtists);

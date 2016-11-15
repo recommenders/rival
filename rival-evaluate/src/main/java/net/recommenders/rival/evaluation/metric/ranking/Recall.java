@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class Recall<U, I> extends AbstractRankingMetric<U, I> implements Evaluat
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public Recall(final DataModel<U, I> predictions, final DataModel<U, I> test) {
+    public Recall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test) {
         this(predictions, test, 1.0);
     }
 
@@ -55,7 +55,7 @@ public class Recall<U, I> extends AbstractRankingMetric<U, I> implements Evaluat
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public Recall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold) {
+    public Recall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
@@ -67,7 +67,7 @@ public class Recall<U, I> extends AbstractRankingMetric<U, I> implements Evaluat
      * @param relThreshold relevance threshold
      * @param ats cutoffs
      */
-    public Recall(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final int[] ats) {
+    public Recall(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold, final int[] ats) {
         super(predictions, test, relThreshold, ats);
     }
 

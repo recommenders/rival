@@ -15,13 +15,14 @@
  */
 package net.recommenders.rival.evaluation.metric;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Map;
+import net.recommenders.rival.core.DataModelFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,8 +36,8 @@ public class RMSETest<U, I> {
 
     @Test
     public void testSameGroundtruthAsPredictions() {
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> predictions = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 10; j++) {
                 test.addPreference((long) i, (long) j, (double) i * j);

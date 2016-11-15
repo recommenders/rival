@@ -17,7 +17,6 @@ package net.recommenders.rival.examples;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -26,8 +25,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelFactory;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.Parser;
+import net.recommenders.rival.core.TemporalDataModelIF;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 import net.recommenders.rival.evaluation.metric.MultipleEvaluationMetricRunner;
 import net.recommenders.rival.evaluation.metric.ranking.AbstractRankingMetric;
@@ -63,7 +64,7 @@ public final class CompletePipelineInMemory {
     private static void fillDefaultProperties(final Properties props) {
         System.out.println("Setting default properties...");
         // parser
-        props.put(ParserRunner.DATASET_FILE, "./data/ml-100k/u.data");
+        props.put(ParserRunner.DATASET_FILE, "./data/ml-100k/ml-100k/u.data");
         props.put(ParserRunner.DATASET_PARSER, "net.recommenders.rival.split.parser.MovielensParser");
         // splits
         props.put(SplitterRunner.DATASET_SPLITTER, "net.recommenders.rival.split.splitter.RandomSplitter");
@@ -144,9 +145,6 @@ public final class CompletePipelineInMemory {
             } else {
                 properties.load(new FileInputStream(propertyFile));
             }
-        } catch (FileNotFoundException e) {
-            fillDefaultProperties(properties);
-            e.printStackTrace();
         } catch (IOException ie) {
             fillDefaultProperties(properties);
             ie.printStackTrace();
@@ -168,25 +166,25 @@ public final class CompletePipelineInMemory {
      */
     public static void runExampleInMemory(final Properties properties) {
         try {
-            DataModel<Long, Long>[] splits = prepareSplitsInMemory(properties);
+            TemporalDataModelIF<Long, Long>[] splits = prepareSplitsInMemory(properties);
             for (int i = 0; i < splits.length / 2; i++) {
                 System.out.println(">>> Processing split " + i / 2);
-                DataModel<Long, Long> training = splits[2 * i];
-                DataModel<Long, Long> test = splits[2 * i + 1];
-                Map<String, DataModel<Long, Long>> recModels = getRecommenderModels(properties, training, test);
-                Map<String, Map<String, Map<String, Map<String, Double>>>> mapStrategyRecommenderMetricUserValue = new HashMap<String, Map<String, Map<String, Map<String, Double>>>>();
-                for (Entry<String, DataModel<Long, Long>> e : recModels.entrySet()) {
+                TemporalDataModelIF<Long, Long> training = splits[2 * i];
+                TemporalDataModelIF<Long, Long> test = splits[2 * i + 1];
+                Map<String, DataModelIF<Long, Long>> recModels = getRecommenderModels(properties, training, test);
+                Map<String, Map<String, Map<String, Map<String, Double>>>> mapStrategyRecommenderMetricUserValue = new HashMap<>();
+                for (Entry<String, DataModelIF<Long, Long>> e : recModels.entrySet()) {
                     String rec = e.getKey();
-                    DataModel<Long, Long> recModel = e.getValue();
-                    Map<String, DataModel<Long, Long>> evalModels = applyStrategiesToRecommender(properties, training, test, recModel);
-                    for (Entry<String, DataModel<Long, Long>> e2 : evalModels.entrySet()) {
+                    DataModelIF<Long, Long> recModel = e.getValue();
+                    Map<String, DataModelIF<Long, Long>> evalModels = applyStrategiesToRecommender(properties, training, test, recModel);
+                    for (Entry<String, DataModelIF<Long, Long>> e2 : evalModels.entrySet()) {
                         String strat = e2.getKey();
-                        DataModel<Long, Long> evalModel = e2.getValue();
+                        DataModelIF<Long, Long> evalModel = e2.getValue();
                         Map<String, Map<String, Double>> results = evaluateStrategy(properties, test, evalModel);
                         // assign these results to a rec+strategy, at the end, compute statistics for all recs and one strategy
                         Map<String, Map<String, Map<String, Double>>> stratResults = mapStrategyRecommenderMetricUserValue.get(strat);
                         if (stratResults == null) {
-                            stratResults = new HashMap<String, Map<String, Map<String, Double>>>();
+                            stratResults = new HashMap<>();
                             mapStrategyRecommenderMetricUserValue.put(strat, stratResults);
                         }
                         stratResults.put(rec, results);
@@ -221,24 +219,28 @@ public final class CompletePipelineInMemory {
      * @param properties properties to be used.
      * @return the splits generated according to the properties passed.
      * @throws IOException see {@link Parser#parseData(java.io.File)}
-     * @throws ClassNotFoundException see {@link ParserRunner#instantiateParser(java.util.Properties)}
-     * @throws IllegalAccessException see {@link ParserRunner#instantiateParser(java.util.Properties)}
-     * @throws InstantiationException see {@link ParserRunner#instantiateParser(java.util.Properties)}
-     * @throws InvocationTargetException see {@link ParserRunner#instantiateParser(java.util.Properties)}
-     * @throws NoSuchMethodException see {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws ClassNotFoundException see
+     * {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws IllegalAccessException see
+     * {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws InstantiationException see
+     * {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws InvocationTargetException see
+     * {@link ParserRunner#instantiateParser(java.util.Properties)}
+     * @throws NoSuchMethodException see
+     * {@link ParserRunner#instantiateParser(java.util.Properties)}
      */
-    public static DataModel<Long, Long>[] prepareSplitsInMemory(final Properties properties)
+    public static TemporalDataModelIF<Long, Long>[] prepareSplitsInMemory(final Properties properties)
             throws IOException, ClassNotFoundException, IllegalAccessException,
             InstantiationException, InvocationTargetException, NoSuchMethodException {
         // get parameters
         String inFile = properties.getProperty(ParserRunner.DATASET_FILE);
         // parse dataset
         Parser<Long, Long> parser = ParserRunner.instantiateParser(properties);
-        DataModel<Long, Long> data = parser.parseData(new File(inFile));
+        TemporalDataModelIF<Long, Long> data = parser.parseTemporalData(new File(inFile));
         // prepare splits
         Splitter<Long, Long> splitter = SplitterRunner.instantiateSplitter(properties);
-        DataModel<Long, Long>[] splits = splitter.split(data);
-        return splits;
+        return splitter.split(data);
     }
 
     /**
@@ -254,7 +256,7 @@ public final class CompletePipelineInMemory {
      * @throws Exception see
      * {@link AbstractRunner#run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
-    public static Map<String, DataModel<Long, Long>> getRecommenderModels(final Properties properties, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel)
+    public static Map<String, DataModelIF<Long, Long>> getRecommenderModels(final Properties properties, final TemporalDataModelIF<Long, Long> trainingModel, final TemporalDataModelIF<Long, Long> testModel)
             throws Exception {
         AbstractRunner<Long, Long>[] mahoutRecs = MultipleRecommendationRunner.instantiateMahoutRecommenders(new HashSet<String>() {
 
@@ -269,7 +271,7 @@ public final class CompletePipelineInMemory {
             }
         }, properties);
 
-        Map<String, DataModel<Long, Long>> recommenderModels = new HashMap<String, DataModel<Long, Long>>();
+        Map<String, DataModelIF<Long, Long>> recommenderModels = new HashMap<>();
 
         for (AbstractRunner<Long, Long> mahoutRec : mahoutRecs) {
             recommenderModels.put(mahoutRec.getCanonicalFileName(), mahoutRec.run(AbstractRunner.RUN_OPTIONS.RETURN_RECS, trainingModel, testModel));
@@ -302,15 +304,15 @@ public final class CompletePipelineInMemory {
      * @throws NoSuchMethodException see
      * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
-    public static Map<String, DataModel<Long, Long>> applyStrategiesToRecommender(final Properties properties,
-            final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel, final DataModel<Long, Long> recModel)
+    public static Map<String, DataModelIF<Long, Long>> applyStrategiesToRecommender(final Properties properties,
+            final DataModelIF<Long, Long> trainingModel, final DataModelIF<Long, Long> testModel, final DataModelIF<Long, Long> recModel)
             throws ClassNotFoundException, IllegalAccessException,
             InstantiationException, InvocationTargetException, NoSuchMethodException {
         // apply all strategies
-        Map<String, DataModel<Long, Long>> modelToEvals = new HashMap<String, DataModel<Long, Long>>();
+        Map<String, DataModelIF<Long, Long>> modelToEvals = new HashMap<>();
         for (EvaluationStrategy<Long, Long> strategy : MultipleStrategyRunner.instantiateStrategies(properties, trainingModel, testModel)) {
             // apply strategy
-            DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
+            DataModelIF<Long, Long> modelToEval = DataModelFactory.getDefaultModel();
             for (Long user : recModel.getUsers()) {
                 for (Long item : strategy.getCandidateItemsToRank(user)) {
                     if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
@@ -346,13 +348,13 @@ public final class CompletePipelineInMemory {
      * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Map<String, Double>> evaluateStrategy(final Properties properties, final DataModel<Long, Long> test, final DataModel<Long, Long> modelToEvaluate)
+    private static Map<String, Map<String, Double>> evaluateStrategy(final Properties properties, final DataModelIF<Long, Long> test, final DataModelIF<Long, Long> modelToEvaluate)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-        Map<String, Map<String, Double>> mapMetricResults = new HashMap<String, Map<String, Double>>();
+        Map<String, Map<String, Double>> mapMetricResults = new HashMap<>();
         for (EvaluationMetric<Long> metric : MultipleEvaluationMetricRunner.instantiateEvaluationMetrics(properties, modelToEvaluate, test)) {
             metric.compute();
             Double all = metric.getValue();
-            Map<String, Double> results = new HashMap<String, Double>();
+            Map<String, Double> results = new HashMap<>();
             mapMetricResults.put(metric.toString(), results);
             results.put("all", all);
             Map<Long, Double> perUser = metric.getValuePerUser();
@@ -365,7 +367,7 @@ public final class CompletePipelineInMemory {
                 AbstractRankingMetric<Long, Long> rankingMetric = (AbstractRankingMetric<Long, Long>) metric;
                 for (int n : rankingMetric.getCutoffs()) {
                     all = rankingMetric.getValueAt(n);
-                    results = new HashMap<String, Double>();
+                    results = new HashMap<>();
                     mapMetricResults.put(metric.toString() + "@" + n, results);
                     results.put("all", all);
                     perUser = rankingMetric.getValuePerUser();
@@ -396,7 +398,7 @@ public final class CompletePipelineInMemory {
             return;
         }
         Map<String, Map<String, Double>> baselineResults = null;
-        Map<String, Map<String, Map<String, Double>>> methodsResults = new HashMap<String, Map<String, Map<String, Double>>>();
+        Map<String, Map<String, Map<String, Double>>> methodsResults = new HashMap<>();
         for (Entry<String, Map<String, Map<String, Double>>> e : strategyResults.entrySet()) {
             String n = e.getKey();
             if (n.equals(baselineName)) {

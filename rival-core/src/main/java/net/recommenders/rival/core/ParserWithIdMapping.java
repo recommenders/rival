@@ -26,7 +26,18 @@ import java.io.IOException;
  * @param <U> generic type of users
  * @param <I> generic type of items
  */
-public interface ParserWithIdMapping<U, I> {
+public interface ParserWithIdMapping<U, I> extends Parser<U, I> {
+
+    /**
+     * Parse a temporal data file.
+     *
+     * @param f The file to be parsed.
+     * @param mapIdsPrefix The prefix of the file where the id mapping will be
+     * stored (and will be read from).
+     * @return A dataset created from the file.
+     * @throws IOException if the file cannot be read.
+     */
+    TemporalDataModelIF<U, I> parseTemporalData(File f, String mapIdsPrefix) throws IOException;
 
     /**
      * Parse data file.
@@ -37,5 +48,5 @@ public interface ParserWithIdMapping<U, I> {
      * @return The data model created from the file.
      * @throws IOException if the file cannot be read.
      */
-    DataModel<U, I> parseData(File f, String mapIdsPrefix) throws IOException;
+    DataModelIF<U, I> parseData(File f, String mapIdsPrefix) throws IOException;
 }

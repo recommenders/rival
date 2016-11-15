@@ -33,7 +33,7 @@ public class DataModelTest<U, I> {
     /**
      * The data model.
      */
-    private DataModel<Long, Long> dm = new DataModel<Long, Long>();
+    private DataModel<Long, Long> dm = new DataModel<>();
     /**
      * The number of users in the data model.
      */
@@ -72,5 +72,43 @@ public class DataModelTest<U, I> {
     @Test
     public void testGetNumUsers() {
         assertEquals(USERS, dm.getNumUsers());
+    }
+
+    @Test
+    public void testDuplicatePreferences() {
+        DataModel<Long, Long> unconstrainedModel = new DataModel<>();
+        for (long u = 1L; u <= USERS; u++) {
+            for (long i = 1L; i <= ITEMS; i++) {
+                unconstrainedModel.addPreference(u, i, 1.0 * u * i);
+            }
+            // duplicate preferences
+            for (long i = 1L; i <= ITEMS; i++) {
+                unconstrainedModel.addPreference(u, i, 1.0 * u * i);
+            }
+        }
+        Map<Long, Map<Long, Double>> storedPrefs = unconstrainedModel.getUserItemPreferences();
+        for (long u = 1L; u <= USERS; u++) {
+            Map<Long, Double> iprefs = storedPrefs.get(u);
+            for (long i = 1L; i <= ITEMS; i++) {
+                assertEquals(2.0 * u * i, iprefs.get(i), 0.0);
+            }
+        }
+        DataModel<Long, Long> constrainedModel = new DataModel<>(true);
+        for (long u = 1L; u <= USERS; u++) {
+            for (long i = 1L; i <= ITEMS; i++) {
+                constrainedModel.addPreference(u, i, 1.0 * u * i);
+            }
+            // duplicate preferences
+            for (long i = 1L; i <= ITEMS; i++) {
+                constrainedModel.addPreference(u, i, 1.0 * u * i);
+            }
+        }
+        storedPrefs = constrainedModel.getUserItemPreferences();
+        for (long u = 1L; u <= USERS; u++) {
+            Map<Long, Double> iprefs = storedPrefs.get(u);
+            for (long i = 1L; i <= ITEMS; i++) {
+                assertEquals(1.0 * u * i, iprefs.get(i), 0.0);
+            }
+        }
     }
 }

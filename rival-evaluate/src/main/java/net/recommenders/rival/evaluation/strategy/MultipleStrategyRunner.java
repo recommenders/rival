@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.SimpleParser;
 import net.recommenders.rival.evaluation.Pair;
 
@@ -164,11 +164,11 @@ public final class MultipleStrategyRunner {
         for (String split : splits) {
             File trainingFile = new File(split + trainingSuffix);
             System.out.println("Parsing started: training file" + trainingFile);
-            DataModel<Long, Long> trainingModel = new SimpleParser().parseData(trainingFile);
+            DataModelIF<Long, Long> trainingModel = new SimpleParser().parseData(trainingFile);
             System.out.println("Parsing finished: training file ");
             File testFile = new File(split + testSuffix);
             System.out.println("Parsing started: test file" + testFile);
-            DataModel<Long, Long> testModel = new SimpleParser().parseData(testFile);
+            DataModelIF<Long, Long> testModel = new SimpleParser().parseData(testFile);
             System.out.println("Parsing finished: test file");
             Set<String> recommendationFiles = new HashSet<String>();
             getAllRecommendationFiles(recommendationFiles, inputFolder, new File(split).getName(), inputSuffix);
@@ -204,7 +204,7 @@ public final class MultipleStrategyRunner {
                                 }
                             }
                         } else {
-                            Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
+                            Object strategyObj = strategyClass.getConstructor(DataModelIF.class, DataModelIF.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
                             if (strategyObj instanceof EvaluationStrategy) {
                                 @SuppressWarnings("unchecked")
                                 EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyObj;
@@ -242,7 +242,7 @@ public final class MultipleStrategyRunner {
      * fails
      */
     @SuppressWarnings("unchecked")
-    public static EvaluationStrategy<Long, Long>[] instantiateStrategies(final Properties properties, final DataModel<Long, Long> trainingModel, final DataModel<Long, Long> testModel)
+    public static EvaluationStrategy<Long, Long>[] instantiateStrategies(final Properties properties, final DataModelIF<Long, Long> trainingModel, final DataModelIF<Long, Long> testModel)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         List<EvaluationStrategy<Long, Long>> stratList = new ArrayList<EvaluationStrategy<Long, Long>>();
 
@@ -262,7 +262,7 @@ public final class MultipleStrategyRunner {
                         }
                     }
                 } else {
-                    Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
+                    Object strategyObj = strategyClass.getConstructor(DataModelIF.class, DataModelIF.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
                     if (strategyObj instanceof EvaluationStrategy) {
                         @SuppressWarnings("unchecked")
                         EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyObj;
@@ -297,7 +297,7 @@ public final class MultipleStrategyRunner {
      * {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy,
      * net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations,
+    public static void generateOutput(final DataModelIF<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations,
             final EvaluationStrategy<Long, Long> strategy, final EvaluationStrategy.OUTPUT_FORMAT format,
             final File rankingFolder, final File groundtruthFolder, final String inputFileName,
             final String strategyClassSimpleName, final String threshold, final String suffix, final Boolean overwrite)

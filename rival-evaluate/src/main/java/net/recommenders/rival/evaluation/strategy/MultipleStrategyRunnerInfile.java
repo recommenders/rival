@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.SimpleParser;
 
 /**
@@ -157,11 +157,11 @@ public final class MultipleStrategyRunnerInfile {
         for (String split : splits) {
             File trainingFile = new File(split + trainingSuffix);
             System.out.println("Parsing started: training file" + trainingFile);
-            DataModel<Long, Long> trainingModel = new SimpleParser().parseData(trainingFile);
+            DataModelIF<Long, Long> trainingModel = new SimpleParser().parseData(trainingFile);
             System.out.println("Parsing finished: training file ");
             File testFile = new File(split + testSuffix);
             System.out.println("Parsing started: test file" + testFile);
-            DataModel<Long, Long> testModel = new SimpleParser().parseData(testFile);
+            DataModelIF<Long, Long> testModel = new SimpleParser().parseData(testFile);
             System.out.println("Parsing finished: test file");
             Set<String> recommendationFiles = new HashSet<String>();
             getAllRecommendationFiles(recommendationFiles, inputFolder, new File(split).getName(), inputSuffix);
@@ -186,7 +186,7 @@ public final class MultipleStrategyRunnerInfile {
                                 }
                             }
                         } else {
-                            Object strategyObj = strategyClass.getConstructor(DataModel.class, DataModel.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
+                            Object strategyObj = strategyClass.getConstructor(DataModelIF.class, DataModelIF.class, double.class).newInstance(trainingModel, testModel, Double.parseDouble(threshold));
                             if (strategyObj instanceof EvaluationStrategy) {
                                 @SuppressWarnings("unchecked")
                                 EvaluationStrategy<Long, Long> strategy = (EvaluationStrategy<Long, Long>) strategyObj;
@@ -216,7 +216,7 @@ public final class MultipleStrategyRunnerInfile {
      * @param overwrite Whether or not to overwrite the results file.
      * @throws IOException when a file cannot be parsed.
      */
-    public static void generateOutput(final DataModel<Long, Long> testModel, final File userRecommendationFile,
+    public static void generateOutput(final DataModelIF<Long, Long> testModel, final File userRecommendationFile,
             final EvaluationStrategy<Long, Long> strategy, final EvaluationStrategy.OUTPUT_FORMAT format,
             final File rankingFolder, final File groundtruthFolder, final String inputFileName,
             final String strategyClassSimpleName, final String threshold, final String suffix, final Boolean overwrite)

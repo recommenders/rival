@@ -30,50 +30,51 @@ import java.util.Set;
  * @param <U> generic type for users
  * @param <I> generic type for items
  */
-public class DataModel<U, I> {
+public class DataModel<U, I> implements DataModelIF<U, I> {
 
     /**
      * Preference map between users and items.
      */
-    private Map<U, Map<I, Double>> userItemPreferences;
+    protected Map<U, Map<I, Double>> userItemPreferences;
     /**
-     * Preference map between items and users.
+     * Set containing all the items.
      */
-    private Map<I, Map<U, Double>> itemUserPreferences;
+    protected Set<I> items;
     /**
-     * The map with the timestamps between users and items.
+     * Flag to indicate if duplicate preferences should be ignored or not.
+     * Default: false.
      */
-    private Map<U, Map<I, Set<Long>>> userItemTimestamps;
+    protected boolean ignoreDuplicatePreferences;
 
     /**
      * Default constructor.
      */
-    public DataModel() {
-        this(new HashMap<U, Map<I, Double>>(), new HashMap<I, Map<U, Double>>(), new HashMap<U, Map<I, Set<Long>>>());
+    protected DataModel() {
+        this(false);
     }
 
     /**
      * Constructor with parameters.
      *
-     * @param userItemPreference The preference map between users and items.
-     * @param itemUserPreference The preference map between items and users.
-     * @param userItemTimestamp The map with the timestamps between users and
-     * items
+     * @param ignoreDupPreferences The flag to indicate whether preferences
+     * should be ignored.
      */
-    public DataModel(final Map<U, Map<I, Double>> userItemPreference, final Map<I, Map<U, Double>> itemUserPreference,
-            final Map<U, Map<I, Set<Long>>> userItemTimestamp) {
-        this.userItemPreferences = userItemPreference;
-        this.itemUserPreferences = itemUserPreference;
-        this.userItemTimestamps = userItemTimestamp;
+    protected DataModel(final boolean ignoreDupPreferences) {
+        this(ignoreDupPreferences, new HashMap<U, Map<I, Double>>(), new HashSet<I>());
     }
 
     /**
-     * Method that returns the preference map between items and users.
+     * Constructor with parameters.
      *
-     * @return the preference map between items and users.
+     * @param ignoreDupPreferences The flag to indicate whether preferences
+     * should be ignored.
+     * @param userItemPreference The preference map between users and items.
+     * @param itemSet The items.
      */
-    public Map<I, Map<U, Double>> getItemUserPreferences() {
-        return itemUserPreferences;
+    protected DataModel(final boolean ignoreDupPreferences, final Map<U, Map<I, Double>> userItemPreference, final Set<I> itemSet) {
+        this.ignoreDuplicatePreferences = ignoreDupPreferences;
+        this.userItemPreferences = userItemPreference;
+        this.items = itemSet;
     }
 
     /**
@@ -81,17 +82,9 @@ public class DataModel<U, I> {
      *
      * @return the preference map between users and items.
      */
+    @Override
     public Map<U, Map<I, Double>> getUserItemPreferences() {
         return userItemPreferences;
-    }
-
-    /**
-     * Method that returns the map with the timestamps between users and items.
-     *
-     * @return the map with the timestamps between users and items.
-     */
-    public Map<U, Map<I, Set<Long>>> getUserItemTimestamps() {
-        return userItemTimestamps;
     }
 
     /**
@@ -101,47 +94,27 @@ public class DataModel<U, I> {
      * @param i the item.
      * @param d the preference.
      */
+    @Override
     public void addPreference(final U u, final I i, final Double d) {
         // update direct map
         Map<I, Double> userPreferences = userItemPreferences.get(u);
         if (userPreferences == null) {
-            userPreferences = new HashMap<I, Double>();
+            userPreferences = new HashMap<>();
             userItemPreferences.put(u, userPreferences);
         }
         Double preference = userPreferences.get(i);
         if (preference == null) {
             preference = 0.0;
+        } else if (ignoreDuplicatePreferences) {
+            // if duplicate preferences should be ignored, then we do not take into account the new value
+            preference = null;
         }
-        preference += d;
-        userPreferences.put(i, preference);
-        // update inverse map
-        Map<U, Double> itemPreferences = itemUserPreferences.get(i);
-        if (itemPreferences == null) {
-            itemPreferences = new HashMap<U, Double>();
-            itemUserPreferences.put(i, itemPreferences);
+        if (preference != null) {
+            preference += d;
+            userPreferences.put(i, preference);
         }
-        itemPreferences.put(u, preference);
-    }
-
-    /**
-     * Method that adds a timestamp to the model between a user and an item.
-     *
-     * @param u the user.
-     * @param i the item.
-     * @param t the timestamp.
-     */
-    public void addTimestamp(final U u, final I i, final Long t) {
-        Map<I, Set<Long>> userTimestamps = userItemTimestamps.get(u);
-        if (userTimestamps == null) {
-            userTimestamps = new HashMap<I, Set<Long>>();
-            userItemTimestamps.put(u, userTimestamps);
-        }
-        Set<Long> timestamps = userTimestamps.get(i);
-        if (timestamps == null) {
-            timestamps = new HashSet<Long>();
-            userTimestamps.put(i, timestamps);
-        }
-        timestamps.add(t);
+        // update items
+        items.add(i);
     }
 
     /**
@@ -149,8 +122,9 @@ public class DataModel<U, I> {
      *
      * @return the items in the model.
      */
+    @Override
     public Set<I> getItems() {
-        return getItemUserPreferences().keySet();
+        return items;
     }
 
     /**
@@ -158,6 +132,7 @@ public class DataModel<U, I> {
      *
      * @return the users in the model.
      */
+    @Override
     public Set<U> getUsers() {
         return getUserItemPreferences().keySet();
     }
@@ -167,8 +142,9 @@ public class DataModel<U, I> {
      *
      * @return the number of items in the model.
      */
+    @Override
     public int getNumItems() {
-        return getItems().size();
+        return items.size();
     }
 
     /**
@@ -176,6 +152,7 @@ public class DataModel<U, I> {
      *
      * @return the number of users in the model.
      */
+    @Override
     public int getNumUsers() {
         return getUsers().size();
     }
@@ -183,9 +160,9 @@ public class DataModel<U, I> {
     /**
      * Method that clears all the maps contained in the model.
      */
+    @Override
     public void clear() {
         userItemPreferences.clear();
-        userItemTimestamps.clear();
-        itemUserPreferences.clear();
+        items.clear();
     }
 }

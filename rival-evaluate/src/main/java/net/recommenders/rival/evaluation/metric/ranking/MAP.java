@@ -15,13 +15,13 @@
  */
 package net.recommenders.rival.evaluation.metric.ranking;
 
-import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.evaluation.metric.EvaluationMetric;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.evaluation.Pair;
 
 /**
@@ -45,7 +45,7 @@ public class MAP<U, I> extends AbstractRankingMetric<U, I> implements Evaluation
      * @param predictions predicted scores for users and items
      * @param test groundtruth information for users and items
      */
-    public MAP(final DataModel<U, I> predictions, final DataModel<U, I> test) {
+    public MAP(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test) {
         this(predictions, test, 1.0);
     }
 
@@ -56,7 +56,7 @@ public class MAP<U, I> extends AbstractRankingMetric<U, I> implements Evaluation
      * @param test groundtruth ratings
      * @param relThreshold relevance threshold
      */
-    public MAP(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold) {
+    public MAP(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold) {
         this(predictions, test, relThreshold, new int[]{});
     }
 
@@ -68,7 +68,7 @@ public class MAP<U, I> extends AbstractRankingMetric<U, I> implements Evaluation
      * @param relThreshold the relevance threshold
      * @param ats cutoffs
      */
-    public MAP(final DataModel<U, I> predictions, final DataModel<U, I> test, final double relThreshold, final int[] ats) {
+    public MAP(final DataModelIF<U, I> predictions, final DataModelIF<U, I> test, final double relThreshold, final int[] ats) {
         super(predictions, test, relThreshold, ats);
     }
 

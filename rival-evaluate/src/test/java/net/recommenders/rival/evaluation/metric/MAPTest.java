@@ -22,6 +22,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Map;
+import net.recommenders.rival.core.DataModelFactory;
+import net.recommenders.rival.core.DataModelIF;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,8 +37,8 @@ public class MAPTest {
 
     @Test
     public void testSameGroundtruthAsPredictions() {
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> predictions = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
         int nUsers = 20;
         int nItems = 15;
         for (long i = 1L; i < nUsers + 1; i++) {
@@ -66,8 +68,8 @@ public class MAPTest {
     public void testOneUserTrecevalStrategySingleRelevance() {
         // groundtruth: ? 0 1 1
         // predictions: 3 4 5 1
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> predictions = DataModelFactory.getDefaultModel();
         test.addPreference(1L, 2L, 0.0);
         test.addPreference(1L, 3L, 1.0);
         test.addPreference(1L, 4L, 1.0);
@@ -99,8 +101,8 @@ public class MAPTest {
     public void testOneUserTrecevalStrategyMultipleRelevance() {
         // groundtruth: ? 0 1 2
         // predictions: 3 4 5 1
-        DataModel<Long, Long> test = new DataModel<Long, Long>();
-        DataModel<Long, Long> predictions = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> test = DataModelFactory.getDefaultModel();
+        DataModelIF<Long, Long> predictions =DataModelFactory.getDefaultModel();
         test.addPreference(1L, 2L, 0.0);
         test.addPreference(1L, 3L, 1.0);
         test.addPreference(1L, 4L, 2.0);

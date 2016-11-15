@@ -15,7 +15,7 @@
  */
 package net.recommenders.rival.examples.movielens100k;
 
-import net.recommenders.rival.core.DataModel;
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.DataModelUtils;
 import net.recommenders.rival.core.Parser;
 import net.recommenders.rival.core.SimpleParser;
@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 import net.recommenders.rival.split.splitter.RandomSplitter;
 
@@ -86,8 +87,9 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
         String folder = "data/ml-100k";
         String modelPath = "data/ml-100k/model/";
         String recPath = "data/ml-100k/recommendations/";
+        String dataFile = "data/ml-100k/ml-100k/u.data";
         float percentage = PERCENTAGE;
-        prepareSplits(url, percentage, "data/ml-100k/u.data", folder, modelPath);
+        prepareSplits(url, percentage, dataFile, folder, modelPath);
         recommend(modelPath, recPath);
         // the strategy files are (currently) being ignored
         prepareStrategy(modelPath, recPath, modelPath);
@@ -112,14 +114,14 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
         long seed = SEED;
         Parser<Long, Long> parser = new MovielensParser();
 
-        DataModel<Long, Long> data = null;
+        DataModelIF<Long, Long> data = null;
         try {
             data = parser.parseData(new File(inFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        DataModel<Long, Long>[] splits = new RandomSplitter(percentage, perUser, seed, perItem).split(data);
+        DataModelIF<Long, Long>[] splits = new RandomSplitter<Long, Long>(percentage, perUser, seed, perItem).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
@@ -128,8 +130,8 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
             }
         }
         for (int i = 0; i < splits.length / 2; i++) {
-            DataModel<Long, Long> training = splits[2 * i];
-            DataModel<Long, Long> test = splits[2 * i + 1];
+            DataModelIF<Long, Long> training = splits[2 * i];
+            DataModelIF<Long, Long> test = splits[2 * i + 1];
             String trainingFile = outPath + "train_" + i + ".csv";
             String testFile = outPath + "test_" + i + ".csv";
             System.out.println("train: " + trainingFile);
@@ -206,9 +208,9 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
         File trainingFile = new File(splitPath + "train_" + i + ".csv");
         File testFile = new File(splitPath + "test_" + i + ".csv");
         File recFile = new File(recPath + "recs_" + i + ".csv");
-        DataModel<Long, Long> trainingModel = null;
-        DataModel<Long, Long> testModel = null;
-        DataModel<Long, Long> recModel = null;
+        DataModelIF<Long, Long> trainingModel = null;
+        DataModelIF<Long, Long> testModel = null;
+        DataModelIF<Long, Long> recModel = null;
         try {
             trainingModel = new SimpleParser().parseData(trainingFile);
             testModel = new SimpleParser().parseData(testFile);
@@ -222,7 +224,7 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
         String strategyClassName = "net.recommenders.rival.evaluation.strategy.UserTest";
         EvaluationStrategy<Long, Long> strategy = null;
         try {
-            strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModel.class, DataModel.class, double.class).
+            strategy = (EvaluationStrategy<Long, Long>) (Class.forName(strategyClassName)).getConstructor(DataModelIF.class, DataModelIF.class, double.class).
                     newInstance(trainingModel, testModel, threshold);
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -236,7 +238,7 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
             e.printStackTrace();
         }
 
-        DataModel<Long, Long> modelToEval = new DataModel<Long, Long>();
+        DataModelIF<Long, Long> modelToEval = DataModelFactory.getDefaultModel();
         for (Long user : recModel.getUsers()) {
             for (Long item : strategy.getCandidateItemsToRank(user)) {
                 if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
@@ -267,8 +269,8 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
         int i = 0;
         File testFile = new File(splitPath + "test_" + i + ".csv");
         File recFile = new File(recPath + "recs_" + i + ".csv");
-        DataModel<Long, Long> testModel = null;
-        DataModel<Long, Long> recModel = null;
+        DataModelIF<Long, Long> testModel = null;
+        DataModelIF<Long, Long> recModel = null;
         try {
             testModel = new SimpleParser().parseData(testFile);
             recModel = new SimpleParser().parseData(recFile);

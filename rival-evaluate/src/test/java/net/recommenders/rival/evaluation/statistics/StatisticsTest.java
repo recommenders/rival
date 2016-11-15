@@ -39,8 +39,8 @@ public class StatisticsTest {
     public void testPValue() {
         double[] systemX = new double[]{0.39, 0.28, 0.31, 0.21, 0.19, 0.64, 0.75, 0.36, 0.66, 0.54};
         double[] systemY = new double[]{0.27, 0.04, 0.18, 0.08, 0.19, 0.54, 0.57, 0.29, 0.20, 0.40};
-        Map<Integer, Double> x = new HashMap<Integer, Double>();
-        Map<Integer, Double> y = new HashMap<Integer, Double>();
+        Map<Integer, Double> x = new HashMap<>();
+        Map<Integer, Double> y = new HashMap<>();
         for (int i = 1; i <= systemX.length; i++) {
             x.put(i, systemX[i - 1]);
             y.put(i, systemY[i - 1]);
@@ -54,8 +54,8 @@ public class StatisticsTest {
     public void testConfidenceInterval() {
         double[] systemX = new double[]{0.39, 0.28, 0.31, 0.21, 0.19, 0.64, 0.75, 0.36, 0.66, 0.54};
         double[] systemY = new double[]{0.27, 0.04, 0.18, 0.08, 0.19, 0.54, 0.57, 0.29, 0.20, 0.40};
-        Map<Integer, Double> x = new HashMap<Integer, Double>();
-        Map<Integer, Double> y = new HashMap<Integer, Double>();
+        Map<Integer, Double> x = new HashMap<>();
+        Map<Integer, Double> y = new HashMap<>();
         for (int i = 1; i <= systemX.length; i++) {
             x.put(i, systemX[i - 1]);
             y.put(i, systemY[i - 1]);
@@ -68,8 +68,8 @@ public class StatisticsTest {
         // from http://www.unt.edu/rss/class/Jon/ISSS_SC/Module008/isss_m8_introttests/node4.html
         double[] x1 = new double[]{6, 6, 9, 8, 4, 6, 7, 8};
         double[] x2 = new double[]{5, 4, 3, 1, 5, 6, 3, 4};
-        x = new HashMap<Integer, Double>();
-        y = new HashMap<Integer, Double>();
+        x = new HashMap<>();
+        y = new HashMap<>();
         for (int i = 1; i <= x1.length; i++) {
             x.put(i, x1[i - 1]);
             y.put(i, x2[i - 1]);
@@ -79,14 +79,15 @@ public class StatisticsTest {
         assertEquals(4.25, interval[1], 0.01);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testConfidenceInterval2() {
         double[] systemX = new double[]{0.4, 0.44, 0.42, 0.4, 0.39};
         double[] systemY = new double[]{0.35, 0.4, 0.4, 0.39, 0.4};
         double[] systemZ = new double[]{0.35, 0.4, 0.37, 0.38, 0.39};
-        Map<Integer, Double> x = new HashMap<Integer, Double>();
-        Map<Integer, Double> y = new HashMap<Integer, Double>();
-        Map<Integer, Double> z = new HashMap<Integer, Double>();
+        Map<Integer, Double> x = new HashMap<>();
+        Map<Integer, Double> y = new HashMap<>();
+        Map<Integer, Double> z = new HashMap<>();
         for (int i = 1; i <= systemX.length; i++) {
             x.put(i, systemX[i - 1]);
             y.put(i, systemY[i - 1]);
@@ -106,14 +107,14 @@ public class StatisticsTest {
     public void testEffectSize() {
         double[] systemX = new double[]{0.39, 0.28, 0.31, 0.21, 0.19, 0.64, 0.75, 0.36, 0.66, 0.54};
         double[] systemY = new double[]{0.27, 0.04, 0.18, 0.08, 0.19, 0.54, 0.57, 0.29, 0.20, 0.40};
-        Map<Integer, Double> x = new HashMap<Integer, Double>();
-        Map<Integer, Double> y = new HashMap<Integer, Double>();
+        Map<Integer, Double> x = new HashMap<>();
+        Map<Integer, Double> y = new HashMap<>();
         for (int i = 1; i <= systemX.length; i++) {
             x.put(i, systemX[i - 1]);
             y.put(i, systemY[i - 1]);
         }
 
-        EffectSize<Integer> es = new EffectSize<Integer>(x, y);
+        EffectSize<Integer> es = new EffectSize<>(x, y);
         // high delta due to rounding numbers in referenced paper
         assertEquals(1.3, es.getEffectSize("pairedT"), 0.1);
 
@@ -128,13 +129,13 @@ public class StatisticsTest {
         // from http://www.unt.edu/rss/class/Jon/ISSS_SC/Module008/isss_m8_introttests/node4.html
         double[] x1 = new double[]{6, 6, 9, 8, 4, 6, 7, 8};
         double[] x2 = new double[]{5, 4, 3, 1, 5, 6, 3, 4};
-        x = new HashMap<Integer, Double>();
-        y = new HashMap<Integer, Double>();
+        x = new HashMap<>();
+        y = new HashMap<>();
         for (int i = 1; i <= x1.length; i++) {
             x.put(i, x1[i - 1]);
             y.put(i, x2[i - 1]);
         }
-        es = new EffectSize<Integer>(x, y);
+        es = new EffectSize<>(x, y);
         assertEquals(1.83, es.getEffectSize("dLS"), 0.1);
     }
 
@@ -143,12 +144,12 @@ public class StatisticsTest {
         // Example taken from Table 8.1 in "Elementary Statistics: A Problem Solving Approach 4th Edition", Andrew L. Comrey, Howard B. Lee
         double[] drugA = new double[]{6, 7, 9, 6, 3, 4, 7, 2, 1, 8};
         double[] drugB = new double[]{4, 6, 7, 7, 4, 2, 5, 1, 1, 5};
-        Map<Integer, Double> x = new HashMap<Integer, Double>();
-        Map<Integer, Double> y = new HashMap<Integer, Double>();
+        Map<Integer, Double> x = new HashMap<>();
+        Map<Integer, Double> y = new HashMap<>();
         for (int i = 1; i <= drugA.length; i++) {
             x.put(i, drugA[i - 1]);
             y.put(i, drugB[i - 1]);
         }
-        assertEquals(0.433, new StandardError<Integer>(x, y).getStandardError(), 0.001);
+        assertEquals(0.433, new StandardError<>(x, y).getStandardError(), 0.001);
     }
 }
