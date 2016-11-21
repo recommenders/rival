@@ -62,10 +62,12 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
      * either on the training or on the test split
      */
     public RandomSplitter(final float percentageTrainingRatio, final boolean perUserFlag, final long seed, final boolean doSplitPerItemsFlag) {
+        if (this.perUser && !this.doSplitPerItems) {
+            throw new IllegalArgumentException("Invalid combination perUser: True and doSplitPerItems: False");
+        }
         this.percentageTraining = percentageTrainingRatio;
         this.perUser = perUserFlag;
         this.doSplitPerItems = doSplitPerItemsFlag;
-
         rnd = new Random(seed);
     }
 
@@ -95,8 +97,6 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
                             datamodel.addPreference(user, item, pref);
                         }
                     }
-                } else {
-                    // Combination not available
                 }
             }
         } else {

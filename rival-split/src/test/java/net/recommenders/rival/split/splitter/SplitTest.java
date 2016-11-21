@@ -191,7 +191,7 @@ public class SplitTest {
         assertTrue(!splits[0].getUserItemPreferences().containsKey(userValid) || !splits[0].getUserItemPreferences().get(userValid).containsKey(itemValid));
         // Let's check this pair is not in its corresponding test split
         assertTrue(!splits[2].getUserItemPreferences().containsKey(userValid) || !splits[2].getUserItemPreferences().get(userValid).containsKey(itemValid));
-        
+
     }
 
 
