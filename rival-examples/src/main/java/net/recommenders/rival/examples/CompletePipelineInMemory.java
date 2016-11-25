@@ -254,7 +254,7 @@ public final class CompletePipelineInMemory {
      * @return a DataModel for every recommender generated assigned to its
      * corresponding name.
      * @throws Exception see
-     * {@link AbstractRunner#run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link AbstractRunner#run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.TemporalDataModelIF, net.recommenders.rival.core.TemporalDataModelIF)}
      */
     public static Map<String, DataModelIF<Long, Long>> getRecommenderModels(final Properties properties, final TemporalDataModelIF<Long, Long> trainingModel, final TemporalDataModelIF<Long, Long> testModel)
             throws Exception {
@@ -294,15 +294,15 @@ public final class CompletePipelineInMemory {
      * @param recModel a recommender model containing recommendations for users.
      * @return a datamodel for each strategy and its corresponding name.
      * @throws ClassNotFoundException see
-     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws IllegalAccessException see
-     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws InstantiationException see
-     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws InvocationTargetException see
-     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws NoSuchMethodException see
-     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleStrategyRunner#instantiateStrategies(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      */
     public static Map<String, DataModelIF<Long, Long>> applyStrategiesToRecommender(final Properties properties,
             final DataModelIF<Long, Long> trainingModel, final DataModelIF<Long, Long> testModel, final DataModelIF<Long, Long> recModel)
@@ -337,15 +337,15 @@ public final class CompletePipelineInMemory {
      * @return the evaluation results for every metric included in the
      * properties mapping.
      * @throws ClassNotFoundException see
-     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws IllegalAccessException see
-     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws InstantiationException see
-     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws InvocationTargetException see
-     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      * @throws NoSuchMethodException see
-     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link MultipleEvaluationMetricRunner#instantiateEvaluationMetrics(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      */
     @SuppressWarnings("unchecked")
     private static Map<String, Map<String, Double>> evaluateStrategy(final Properties properties, final DataModelIF<Long, Long> test, final DataModelIF<Long, Long> modelToEvaluate)

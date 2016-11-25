@@ -118,13 +118,13 @@ public final class EvaluationMetricRunner {
      *
      * @param properties The properties of the strategy.
      * @throws IOException if recommendation file is not found or output cannot
-     * be written (see {@link #generateOutput(net.recommenders.rival.core.DataModel, int[],
+     * be written (see {@link #generateOutput(net.recommenders.rival.core.DataModelIF, int[],
      * net.recommenders.rival.evaluation.metric.EvaluationMetric, java.lang.String, java.lang.Boolean, java.io.File, java.lang.Boolean, java.lang.Boolean)})
-     * @throws ClassNotFoundException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalAccessException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InstantiationException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InvocationTargetException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws NoSuchMethodException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws ClassNotFoundException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws IllegalAccessException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws InstantiationException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws InvocationTargetException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws NoSuchMethodException see {@link #instantiateEvaluationMetric(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      */
     @SuppressWarnings("unchecked")
     public static void run(final Properties properties)
