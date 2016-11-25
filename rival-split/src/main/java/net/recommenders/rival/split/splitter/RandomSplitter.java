@@ -15,16 +15,13 @@
  */
 package net.recommenders.rival.split.splitter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
 import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Class that splits a dataset randomly.
@@ -54,16 +51,20 @@ public class RandomSplitter<U, I> implements Splitter<U, I> {
     /**
      * Constructor.
      *
+     * Raises an exception if perUser is "true" and doSplitPerItems is "false".
+     *
      * @param percentageTrainingRatio percentage of training data to be split
      * @param perUserFlag flag to do the split in a per user basis
      * @param seed value to initialize a Random class
      * @param doSplitPerItemsFlag if true, every interaction between a user and
      * a specific item is considered as one, and hence all of them will be
      * either on the training or on the test split
+     *
+     * @exception IllegalArgumentException if perUser == true and doSplitPerItems == false
      */
     public RandomSplitter(final float percentageTrainingRatio, final boolean perUserFlag, final long seed, final boolean doSplitPerItemsFlag) {
         if (this.perUser && !this.doSplitPerItems) {
-            throw new IllegalArgumentException("Invalid combination perUser: True and doSplitPerItems: False");
+            throw new IllegalArgumentException("Unsupported parameters combination: perUser == true and doSplitPerItems == false");
         }
         this.percentageTraining = percentageTrainingRatio;
         this.perUser = perUserFlag;
