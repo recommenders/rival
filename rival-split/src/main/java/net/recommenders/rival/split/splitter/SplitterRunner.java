@@ -18,6 +18,8 @@ package net.recommenders.rival.split.splitter;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
+
+import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.DataModelUtils;
 import net.recommenders.rival.core.TemporalDataModelIF;
 
@@ -78,6 +80,11 @@ public final class SplitterRunner {
     public static final String SPLIT_TEST_SUFFIX = "split.test.suffix";
 
     /**
+     * Variable that represent the field delimiter for each line
+     */
+    public static final String SPLIT_FIELD_DELIMITER = "split.delimiter";
+
+    /**
      * Utility classes should not have a public or default constructor.
      */
     private SplitterRunner() {
@@ -86,14 +93,16 @@ public final class SplitterRunner {
     /**
      * Runs a Splitter instance based on the properties.
      *
-     * @param properties property file
-     * @param data the data to be split
+     * @param <U>         user identifier type
+     * @param <I>         item identifier type
+     * @param properties  property file
+     * @param data        the data to be split
      * @param doDataClear flag to clear the memory used for the data before
-     * saving the splits
-     * @throws FileNotFoundException see
-     * {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
+     *                    saving the splits
+     * @throws FileNotFoundException        see
+     *                                      {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(DataModelIF, String, boolean, String)}
      * @throws UnsupportedEncodingException see
-     * {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(net.recommenders.rival.core.DataModel, java.lang.String, boolean)}
+     *                                      {@link net.recommenders.rival.core.DataModelUtils#saveDataModel(DataModelIF, String, boolean, String)}
      */
     public static <U, I> void run(final Properties properties, final TemporalDataModelIF<U, I> data, final boolean doDataClear)
             throws FileNotFoundException, UnsupportedEncodingException {
@@ -102,6 +111,7 @@ public final class SplitterRunner {
         // read parameters
         String outputFolder = properties.getProperty(SPLIT_OUTPUT_FOLDER);
         Boolean overwrite = Boolean.parseBoolean(properties.getProperty(SPLIT_OUTPUT_OVERWRITE, "false"));
+        String fieldDelimiter = properties.getProperty(SPLIT_FIELD_DELIMITER, "\t");
         String splitTrainingPrefix = properties.getProperty(SPLIT_TRAINING_PREFIX);
         String splitTrainingSuffix = properties.getProperty(SPLIT_TRAINING_SUFFIX);
         String splitTestPrefix = properties.getProperty(SPLIT_TEST_PREFIX);
@@ -119,15 +129,16 @@ public final class SplitterRunner {
             TemporalDataModelIF<U, I> test = splits[2 * i + 1];
             String trainingFile = outputFolder + splitTrainingPrefix + i + splitTrainingSuffix;
             String testFile = outputFolder + splitTestPrefix + i + splitTestSuffix;
-            DataModelUtils.saveDataModel(training, trainingFile, overwrite);
-            DataModelUtils.saveDataModel(test, testFile, overwrite);
+            DataModelUtils.saveDataModel(training, trainingFile, overwrite, fieldDelimiter);
+            DataModelUtils.saveDataModel(test, testFile, overwrite, fieldDelimiter);
         }
     }
 
     /**
-     *
      * Instantiates a splitter based on the properties.
      *
+     * @param <U>        user identifier type
+     * @param <I>        item identifier type
      * @param properties the properties to be used.
      * @return a splitter according to the properties mapping provided.
      */
@@ -149,6 +160,11 @@ public final class SplitterRunner {
         } else if (splitterClassName.contains("Temporal")) {
             Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
             splitter = new TemporalSplitter<>(percentage, perUser, doSplitPerItems);
+        } else if (splitterClassName.contains("Validation")) {
+            Long seed = Long.parseLong(properties.getProperty(SPLIT_SEED));
+            Float percentage = Float.parseFloat(properties.getProperty(SPLIT_RANDOM_PERCENTAGE));
+            Splitter<U, I> randomSplitter = new RandomSplitter<>(percentage, perUser, seed, doSplitPerItems);
+            splitter = new ValidationSplitter<>(randomSplitter);
         }
         return splitter;
     }

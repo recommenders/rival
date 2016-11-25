@@ -18,6 +18,8 @@ package net.recommenders.rival.split.splitter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import net.recommenders.rival.core.TemporalDataModelIF;
 import net.recommenders.rival.split.parser.ParserRunner;
 
 /**
@@ -37,7 +39,7 @@ public final class Split {
      * Main method that loads properties from a file and runs a SplitterRunner.
      *
      * @param args program arguments (not used)
-     * @throws Exception see {@link SplitterRunner#run(java.util.Properties, net.recommenders.rival.core.DataModel, boolean)}
+     * @throws Exception see {@link net.recommenders.rival.split.splitter.SplitterRunner#run(Properties, TemporalDataModelIF, boolean)}
      * @see net.recommenders.rival.split.splitter.SplitterRunner
      */
     public static void main(final String[] args) throws Exception {
