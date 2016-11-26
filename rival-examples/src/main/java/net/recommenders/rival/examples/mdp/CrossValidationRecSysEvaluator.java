@@ -60,6 +60,7 @@ public abstract class CrossValidationRecSysEvaluator {
     * @param perUser   flag for enable or disable splitting by user
     * @param seed      seed for creating random split
     * @param delimiter dataset delimiter
+    * @param isTemporalData present temporal information field
     */
    public void split(final String inFile, final String outPath, boolean perUser, long seed, String delimiter, boolean isTemporalData) {
 
@@ -86,8 +87,8 @@ public abstract class CrossValidationRecSysEvaluator {
             log.info("train model fold {}: {}", (i + 1), trainingFile);
             log.info("test: model fold {}: {}", (i + 1), testFile);
             try {
-               DataModelUtils.saveDataModel(training, trainingFile, true);
-               DataModelUtils.saveDataModel(test, testFile, true);
+               DataModelUtils.saveDataModel(training, trainingFile, true, "\t");
+               DataModelUtils.saveDataModel(test, testFile, true, "\t");
             } catch (FileNotFoundException | UnsupportedEncodingException e) {
                e.printStackTrace();
             }
@@ -201,7 +202,7 @@ public abstract class CrossValidationRecSysEvaluator {
          EvaluationStrategy<Long, Long> strategy = new UserTest(trainingModel, testModel, this.relevanceThreshold);
          DataModelIF<Long, Long> evaluationModel = DataModelFactory.getDefaultModel();
          try {
-            DataModelUtils.saveDataModel(evaluationModel, Paths.get(outPath, "strategymodel_" + i + FILE_EXT).toString(), true);
+            DataModelUtils.saveDataModel(evaluationModel, Paths.get(outPath, "strategymodel_" + i + FILE_EXT).toString(), true, "\t");
          } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
          }
@@ -221,7 +222,7 @@ public abstract class CrossValidationRecSysEvaluator {
          }
 
          try {
-            DataModelUtils.saveDataModel(evaluationModel, Paths.get(outPath, "strategymodel_" + i + FILE_EXT).toString(), true);
+            DataModelUtils.saveDataModel(evaluationModel, Paths.get(outPath, "strategymodel_" + i + FILE_EXT).toString(), true, "\t");
          } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
          }

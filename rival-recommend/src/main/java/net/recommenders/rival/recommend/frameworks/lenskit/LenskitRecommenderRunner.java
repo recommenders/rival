@@ -18,6 +18,7 @@ package net.recommenders.rival.recommend.frameworks.lenskit;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
+
 import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
@@ -78,9 +79,9 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      *
      * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @return see
-     * {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.TemporalDataModelIF, net.recommenders.rival.core.TemporalDataModelIF)}
      * @throws RecommenderException when the recommender is instantiated
-     * incorrectly or breaks otherwise.
+     *                              incorrectly or breaks otherwise.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -99,13 +100,13 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
     /**
      * Runs the recommender using the provided datamodels.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts          see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
-     * @param testModel model to be used to test the recommender.
+     * @param testModel     model to be used to test the recommender.
      * @return see
      * {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
      * @throws RecommenderException see
-     * {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
+     *                              {@link #runLenskitRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
      */
     @Override
     public TemporalDataModelIF<Long, Long> run(final RUN_OPTIONS opts, final TemporalDataModelIF<Long, Long> trainingModel, final TemporalDataModelIF<Long, Long> testModel) throws RecommenderException {
@@ -123,15 +124,15 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * Runs a Lenskit recommender using the provided datamodels and the
      * previously provided properties.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts          see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
-     * @param testModel model to be used to test the recommender.
+     * @param testModel     model to be used to test the recommender.
      * @return nothing when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#OUTPUT_RECS},
      * otherwise, when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_RECS}
      * or {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_AND_OUTPUT_RECS}
      * it returns the predictions
      * @throws RecommenderException when recommender cannot be instantiated
-     * properly
+     *                              properly
      */
     @SuppressWarnings("unchecked")
     public TemporalDataModelIF<Long, Long> runLenskitRecommender(final RUN_OPTIONS opts, final EventDAO trainingModel, final EventDAO testModel) throws RecommenderException {

@@ -291,10 +291,10 @@ public final class MultipleStrategyRunner {
      * @param suffix The file suffix.
      * @param overwrite Whether or not to overwrite the results file.
      * @throws FileNotFoundException see
-     * {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy,
+     * {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModelIF, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy,
      * net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
      * @throws UnsupportedEncodingException see
-     * {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModel, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy,
+     * {@link StrategyRunner#generateOutput(net.recommenders.rival.core.DataModelIF, java.util.Map, net.recommenders.rival.evaluation.strategy.EvaluationStrategy,
      * net.recommenders.rival.evaluation.strategy.EvaluationStrategy.OUTPUT_FORMAT, java.io.File, java.io.File, java.lang.Boolean)}
      */
     public static void generateOutput(final DataModelIF<Long, Long> testModel, final Map<Long, List<Pair<Long, Double>>> mapUserRecommendations,
