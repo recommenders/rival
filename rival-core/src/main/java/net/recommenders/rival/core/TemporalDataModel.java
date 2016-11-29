@@ -42,6 +42,7 @@ public class TemporalDataModel<U, I> extends DataModel<U, I> implements Temporal
      */
     public TemporalDataModel() {
         super();
+        userItemTimestamps = new HashMap<>();
     }
 
     /**
@@ -52,6 +53,7 @@ public class TemporalDataModel<U, I> extends DataModel<U, I> implements Temporal
      */
     public TemporalDataModel(final boolean ignoreDupPreferences) {
         super(ignoreDupPreferences);
+        userItemTimestamps = new HashMap<>();
     }
 
     /**

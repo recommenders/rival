@@ -39,15 +39,15 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
     /**
      * The number of folds that the data will be split into.
      */
-    private int nFolds;
+    protected int nFolds;
     /**
      * The flag that indicates if the split should be done in a per user basis.
      */
-    private boolean perUser;
+    protected boolean perUser;
     /**
      * An instance of a Random class.
      */
-    private Random rnd;
+    protected Random rnd;
 
     /**
      * Constructor.
