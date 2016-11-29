@@ -1,5 +1,7 @@
 # RiVal
 
+[![Join the chat at https://gitter.im/recommenders/rival](https://badges.gitter.im/recommenders/rival.svg)](https://gitter.im/recommenders/rival?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/recommenders/rival.png?branch=master)](https://travis-ci.org/recommenders/rival)
 
 RiVal is a toolkit for data splitting and evaluation of recommender systems. This file contains information on how to work with the RiVal code and how to compile RiVal.
