@@ -60,7 +60,7 @@ public final class DataModelUtils {
                 for (Entry<I, Double> e : userPrefModel.entrySet()) {
                     I item = e.getKey();
                     Double pref = userPrefModel.get(item);
-                    out.println(user + delimiter + item + delimiter + pref + delimiter);
+                    out.println(user + delimiter + item + delimiter + pref);
                 }
             }
             out.close();
