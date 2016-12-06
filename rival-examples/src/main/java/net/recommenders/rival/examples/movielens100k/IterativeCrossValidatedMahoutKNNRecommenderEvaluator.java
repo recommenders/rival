@@ -27,8 +27,7 @@ import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.mahout.GenericRecommenderBuilder;
 import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
 import net.recommenders.rival.split.parser.MovielensParser;
-import net.recommenders.rival.split.splitter.CrossValidationSplitter;
-import net.recommenders.rival.split.splitter.CrossValidationSplitterIterative;
+import net.recommenders.rival.split.splitter.IterativeCrossValidationSplitter;
 
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
@@ -46,11 +45,16 @@ import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 
 /**
- * RiVal Movielens100k Mahout Example, using 5-fold cross validation.
- *
- * @author <a href="http://github.com/alansaid">Alan</a>
+ * RiVal Movielens100k Mahout Example, using 5-fold  iterative cross-validation.
+ * 
+ * 		Note: Adapted from CrossValidatedMahoutKNNRecommenderEvaluator the main difference is the usage of
+ * 			IterativeCrossValidationSplitter instead of CrossValidationSplitter
+ * 				
+ * 		Using IterativeCrossValidationSplitter reduces the memory required to generate data folds. 
+ * 				
+ * @author <a href="https://github.com/afcarvalho1991">André Carvalho</a>
  */
-public final class CrossValidatedIterativeMahoutKNNRecommenderEvaluator 
+public final class IterativeCrossValidatedMahoutKNNRecommenderEvaluator 
 {
 
     /**
@@ -77,7 +81,7 @@ public final class CrossValidatedIterativeMahoutKNNRecommenderEvaluator
     /**
      * Utility classes should not have a public or default constructor.
      */
-    private CrossValidatedIterativeMahoutKNNRecommenderEvaluator() {
+    private IterativeCrossValidatedMahoutKNNRecommenderEvaluator() {
     }
 
     /**
@@ -123,7 +127,7 @@ public final class CrossValidatedIterativeMahoutKNNRecommenderEvaluator
             e.printStackTrace();
         }
 
-        DataModelIF<Long, Long>[] splits = new CrossValidationSplitterIterative(nFolds, perUser, seed, outPath).split(data);
+        new IterativeCrossValidationSplitter<Long,Long>(nFolds, perUser, seed, outPath).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
@@ -132,24 +136,6 @@ public final class CrossValidatedIterativeMahoutKNNRecommenderEvaluator
             }
         }
         
-        /** 
-         * Removed because  It is iteratively done using CrossValidationSplitterIterative therefore only 1 fold is in memory all the time.
-         */
-//        for (int i = 0; i < splits.length / 2; i++) {
-//            DataModelIF<Long, Long> training = splits[2 * i];
-//            DataModelIF<Long, Long> test = splits[2 * i + 1];
-//            String trainingFile = outPath + "train_" + i + ".csv";
-//            String testFile = outPath + "test_" + i + ".csv";
-//            System.out.println("train: " + trainingFile);
-//            System.out.println("test: " + testFile);
-//            boolean overwrite = true;
-//            try {
-//                DataModelUtils.saveDataModel(training, trainingFile, overwrite, "\t");
-//                DataModelUtils.saveDataModel(test, testFile, overwrite, "\t");
-//            } catch (FileNotFoundException | UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     /**
