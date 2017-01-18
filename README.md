@@ -3,6 +3,7 @@
 
 [![Build Status](https://travis-ci.org/recommenders/rival.png?branch=master)](https://travis-ci.org/recommenders/rival)
 [![Join the chat at https://gitter.im/recommenders/rival](https://badges.gitter.im/recommenders/rival.svg)](https://gitter.im/recommenders/rival?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![codecov](https://codecov.io/gh/recommenders/rival/branch/master/graph/badge.svg)](https://codecov.io/gh/recommenders/rival)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
