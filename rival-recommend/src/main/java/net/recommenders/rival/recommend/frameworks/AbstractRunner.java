@@ -43,10 +43,12 @@ public abstract class AbstractRunner<U, I> {
          * Only return the recommendations.
          */
         RETURN_RECS,
+        
         /**
          * Nothing should be returned, only print the recommendations.
          */
         OUTPUT_RECS,
+        
         /**
          * Return and print recommendations.
          */
