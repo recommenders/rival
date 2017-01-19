@@ -25,6 +25,8 @@ import java.util.Map;
 import net.recommenders.rival.core.DataModelFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests for {@link NDCG}.
@@ -44,7 +46,12 @@ public class NDCGTest {
                 predictions.addPreference(i, j, i * j % 5 + 1.0);
             }
         }
+        NDCG<Long, Long> ndcgBasic = new NDCG<Long, Long>(predictions, test);
+        
+        assertNotNull(ndcgBasic);
+
         NDCG<Long, Long> ndcg = new NDCG<Long, Long>(predictions, test, new int[]{5, 10, 20});
+
 
         ndcg.compute();
 
