@@ -16,6 +16,7 @@
 package net.recommenders.rival.evaluation.metric;
 
 import net.recommenders.rival.core.DataModelIF;
+import net.recommenders.rival.evaluation.metric.error.AbstractErrorMetric;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import java.util.Map;
 import net.recommenders.rival.core.DataModelFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test for {@link RMSE}.
@@ -33,6 +35,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(JUnit4.class)
 public class RMSETest<U, I> {
+
 
     @Test
     public void testSameGroundtruthAsPredictions() {
@@ -45,6 +48,11 @@ public class RMSETest<U, I> {
             }
         }
         RMSE<Long, Long> rmse = new RMSE<Long, Long>(predictions, test);
+
+        RMSE<Long, Long> rmseStrat = new RMSE<Long, Long>(predictions, test, AbstractErrorMetric.ErrorStrategy.CONSIDER_EVERYTHING);
+        assertNotNull(rmseStrat);
+
+        assertEquals("RMSE_CONSIDER_EVERYTHING", rmseStrat.toString());
 
         rmse.compute();
 
