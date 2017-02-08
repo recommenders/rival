@@ -52,7 +52,7 @@ Note that all your contributions will be licensed under RiVal's copyright licenc
 
 ## Mailing list
 
-To subscribe to the rival mailing list, send an email to rival-requests@recommenders.net with the subject "subscribe".
+To subscribe to the rival mailing list, visit and join the [rival-users](https://groups.google.com/forum/#!forum/rival-user) Google group.
 
 ## More information
 * [RiVal website](http://rival.recommenders.net)
