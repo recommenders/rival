@@ -40,22 +40,24 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
 
 /**
- * RiVal Movielens100k Mahout Example, using 5-fold  iterative cross-validation.
- * 
- * 		Note: Adapted from CrossValidatedMahoutKNNRecommenderEvaluator the main difference is the usage of
- * 			IterativeCrossValidationSplitter instead of CrossValidationSplitter
- * 				
- * 		Using IterativeCrossValidationSplitter reduces the memory required to generate data folds. 
- * 				
+ * RiVal Movielens100k Mahout Example, using 5-fold iterative cross-validation.
+ *
+ * Note: Adapted from CrossValidatedMahoutKNNRecommenderEvaluator the main
+ * difference is the usage of IterativeCrossValidationSplitter instead of
+ * CrossValidationSplitter
+ *
+ * Using IterativeCrossValidationSplitter reduces the memory required to
+ * generate data folds.
+ *
  * @author <a href="https://github.com/afcarvalho1991">André Carvalho</a>
  */
-public final class IterativeCrossValidatedMahoutKNNRecommenderEvaluator 
-{
+public final class IterativeCrossValidatedMahoutKNNRecommenderEvaluator {
 
     /**
      * Default number of folds.
@@ -127,7 +129,7 @@ public final class IterativeCrossValidatedMahoutKNNRecommenderEvaluator
             e.printStackTrace();
         }
 
-        new IterativeCrossValidationSplitter<Long,Long>(nFolds, perUser, seed, outPath).split(data);
+        new IterativeCrossValidationSplitter<Long, Long>(nFolds, perUser, seed, outPath).split(data);
         File dir = new File(outPath);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
@@ -135,7 +137,7 @@ public final class IterativeCrossValidatedMahoutKNNRecommenderEvaluator
                 return;
             }
         }
-        
+
     }
 
     /**
@@ -178,7 +180,13 @@ public final class IterativeCrossValidatedMahoutKNNRecommenderEvaluator
                     long u = users.nextLong();
                     assert recommender != null;
                     List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                    RecommenderIO.writeData(u, items, outPath, fileName, !createFile, null);
+                    //
+                    List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
+                    for (RecommendedItem ri : items) {
+                        prefs.add(new RecommenderIO.Preference<>(u, ri.getItemID(), ri.getValue()));
+                    }
+                    //
+                    RecommenderIO.writeData(u, prefs, outPath, fileName, !createFile, null);
                     createFile = false;
                 }
             } catch (TasteException e) {
@@ -228,8 +236,8 @@ public final class IterativeCrossValidatedMahoutKNNRecommenderEvaluator
             for (Long user : recModel.getUsers()) {
                 assert strategy != null;
                 for (Long item : strategy.getCandidateItemsToRank(user)) {
-                    if (recModel.getUserItemPreferences().get(user).containsKey(item)) {
-                        modelToEval.addPreference(user, item, recModel.getUserItemPreferences().get(user).get(item));
+                    if (!Double.isNaN(recModel.getUserItemPreference(user, item))) {
+                        modelToEval.addPreference(user, item, recModel.getUserItemPreference(user, item));
                     }
                 }
             }

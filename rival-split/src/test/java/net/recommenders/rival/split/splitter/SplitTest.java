@@ -122,17 +122,17 @@ public class SplitTest {
             }
         }
 
-        DataModelIF<Long, Long>[] splits =
-                new ValidationSplitter<>(new RandomSplitter<Long, Long>(0.8f, false, 1L, false)).split(dm);
+        DataModelIF<Long, Long>[] splits
+                = new ValidationSplitter<>(new RandomSplitter<Long, Long>(0.8f, false, 1L, false)).split(dm);
 
         assertTrue(splits.length == 3);
 
         // Let's take one (user, item) pair from test
         long userTest = -1;
         long itemTest = -1;
-        for (Entry<Long, Map<Long, Double>> e : splits[1].getUserItemPreferences().entrySet()) {
-            userTest = e.getKey();
-            for (long i : e.getValue().keySet()) {
+        for (Long user : splits[1].getUsers()) {
+            userTest = user;
+            for (Long i : splits[1].getUserItems(user)) {
                 itemTest = i;
                 break;
             }
@@ -140,7 +140,7 @@ public class SplitTest {
         }
 
         // Let's check this pair is not in its corresponding training split
-        assertTrue(!splits[0].getUserItemPreferences().containsKey(userTest) || !splits[0].getUserItemPreferences().get(userTest).containsKey(itemTest));
+        assertTrue(Double.isNaN(splits[0].getUserItemPreference(userTest, itemTest)));
     }
 
     @Test
@@ -154,17 +154,17 @@ public class SplitTest {
 
         int nFolds = 5;
 
-        DataModelIF<Long, Long>[] splits =
-                new ValidationSplitter<>(new CrossValidationSplitter<Long, Long>(nFolds, false, 1L)).split(dm);
+        DataModelIF<Long, Long>[] splits
+                = new ValidationSplitter<>(new CrossValidationSplitter<Long, Long>(nFolds, false, 1L)).split(dm);
 
         assertTrue(splits.length == 3 * nFolds);
 
         // Let's take one (user, item) pair from one test
         long userTest = -1;
         long itemTest = -1;
-        for (Entry<Long, Map<Long, Double>> e : splits[2].getUserItemPreferences().entrySet()) {
-            userTest = e.getKey();
-            for (long i : e.getValue().keySet()) {
+        for (Long user : splits[2].getUsers()) {
+            userTest = user;
+            for (Long i : splits[2].getUserItems(user)) {
                 itemTest = i;
                 break;
             }
@@ -172,16 +172,16 @@ public class SplitTest {
         }
 
         // Let's check this pair is not in its corresponding training split
-        assertTrue(!splits[0].getUserItemPreferences().containsKey(userTest) || !splits[0].getUserItemPreferences().get(userTest).containsKey(itemTest));
+        assertTrue(Double.isNaN(splits[0].getUserItemPreference(userTest, itemTest)));
         // Let's check this pair is not in its corresponding validation split
-        assertTrue(!splits[1].getUserItemPreferences().containsKey(userTest) || !splits[1].getUserItemPreferences().get(userTest).containsKey(itemTest));
+        assertTrue(Double.isNaN(splits[1].getUserItemPreference(userTest, itemTest)));
 
         // Let's take one (user, item) pair from one validation
         long userValid = -1;
         long itemValid = -1;
-        for (Entry<Long, Map<Long, Double>> e : splits[1].getUserItemPreferences().entrySet()) {
-            userValid = e.getKey();
-            for (long i : e.getValue().keySet()) {
+        for (Long user : splits[1].getUsers()) {
+            userValid = user;
+            for (Long i : splits[1].getUserItems(user)) {
                 itemValid = i;
                 break;
             }
@@ -189,11 +189,10 @@ public class SplitTest {
         }
 
         // Let's check this pair is not in its corresponding training split
-        assertTrue(!splits[0].getUserItemPreferences().containsKey(userValid) || !splits[0].getUserItemPreferences().get(userValid).containsKey(itemValid));
+        assertTrue(Double.isNaN(splits[0].getUserItemPreference(userValid, itemValid)));
         // Let's check this pair is not in its corresponding test split
-        assertTrue(!splits[2].getUserItemPreferences().containsKey(userValid) || !splits[2].getUserItemPreferences().get(userValid).containsKey(itemValid));
+        assertTrue(Double.isNaN(splits[2].getUserItemPreference(userValid, itemValid)));
 
     }
-
 
 }

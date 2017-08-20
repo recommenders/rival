@@ -78,8 +78,11 @@ public class TemporalDataModel<U, I> extends DataModel<U, I> implements Temporal
      * @return the map with the timestamps between users and items.
      */
     @Override
-    public Map<U, Map<I, Set<Long>>> getUserItemTimestamps() {
-        return userItemTimestamps;
+    public Iterable<Long> getUserItemTimestamps(U u, I i) {
+        if (userItemTimestamps.containsKey(u) && userItemTimestamps.get(u).containsKey(i)) {
+            return userItemTimestamps.get(u).get(i);
+        }
+        return null;
     }
 
     /**

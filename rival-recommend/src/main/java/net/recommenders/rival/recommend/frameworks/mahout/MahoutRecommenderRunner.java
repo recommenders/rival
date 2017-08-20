@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import net.recommenders.rival.core.DataModelFactory;
-import net.recommenders.rival.core.DataModelIF;
+import net.recommenders.rival.core.TemporalDataModel;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * A runner for Mahout-based recommenders.
@@ -59,7 +59,8 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
     /**
      * Runs the recommender using models from file.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts see
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @return see
      * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
      *
@@ -70,7 +71,7 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
      * or breaks otherwise.
      */
     @Override
-    public DataModelIF<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException, TasteException, IOException {
+    public TemporalDataModelIF<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException, TasteException, IOException {
         if (isAlreadyRecommended()) {
             return null;
         }
@@ -82,20 +83,19 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
     /**
      * Runs the recommender using the provided datamodels.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts see
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
      * @param testModel model to be used to test the recommender.
      * @return see
      * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.apache.mahout.cf.taste.model.TemporalDataModelIF, org.apache.mahout.cf.taste.model.TemporalDataModelIF)}
-     * @throws RecommenderException see
-     * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS,
+     * @throws RecommenderException see      {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS,
      * org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
-     * @throws TasteException see
-     * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS,
+     * @throws TasteException see      {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS,
      * org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
      */
     @Override
-    public DataModelIF<Long, Long> run(final RUN_OPTIONS opts,
+    public TemporalDataModelIF<Long, Long> run(final RUN_OPTIONS opts,
             final net.recommenders.rival.core.TemporalDataModelIF<Long, Long> trainingModel,
             final net.recommenders.rival.core.TemporalDataModelIF<Long, Long> testModel)
             throws RecommenderException, TasteException {
@@ -113,19 +113,23 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
      * Runs a Mahout recommender using the provided datamodels and the
      * previously provided properties.
      *
-     * @param opts see {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
+     * @param opts see
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @param trainingModel model to be used to train the recommender.
      * @param testModel model to be used to test the recommender.
-     * @return nothing when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#OUTPUT_RECS},
-     * otherwise, when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_RECS}
-     * or {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_AND_OUTPUT_RECS}
+     * @return nothing when opts is
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#OUTPUT_RECS},
+     * otherwise, when opts is
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_RECS}
+     * or
+     * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_AND_OUTPUT_RECS}
      * it returns the predictions
      * @throws TasteException when there is a problem with the Mahout
      * recommender
      * @throws RecommenderException when recommender cannot be instantiated
      * properly
      */
-    public DataModelIF<Long, Long> runMahoutRecommender(final RUN_OPTIONS opts, final DataModel trainingModel, final DataModel testModel)
+    public TemporalDataModelIF<Long, Long> runMahoutRecommender(final RUN_OPTIONS opts, final DataModel trainingModel, final DataModel testModel)
             throws RecommenderException, TasteException {
         if (isAlreadyRecommended()) {
             return null;
@@ -139,7 +143,6 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
         if (getProperties().containsKey(RecommendationRunner.FACTORS) && getProperties().getProperty(RecommendationRunner.FACTORS).equals("-1")) {
             getProperties().setProperty(RecommendationRunner.FACTORS, Math.round(Math.sqrt(trainingModel.getNumItems())) + "");
         }
-
 
         Recommender recommender = null;
         if (getProperties().getProperty(RecommendationRunner.FACTORS) == null) {
@@ -160,11 +163,11 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
 
         LongPrimitiveIterator users = testModel.getUserIDs();
 
-        DataModelIF<Long, Long> model = null;
+        TemporalDataModelIF<Long, Long> model = null;
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
-                model = DataModelFactory.getDefaultModel();
+                model = new TemporalDataModel<>();
                 break;
             default:
                 model = null;
@@ -185,7 +188,7 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
                 List<RecommendedItem> items = recommender.recommend(u, trainingModel.getNumItems());
                 //
                 List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
-                for (RecommendedItem i: items){
+                for (RecommendedItem i : items) {
                     prefs.add(new RecommenderIO.Preference<>(u, i.getItemID(), i.getValue()));
                 }
                 //

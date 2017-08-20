@@ -32,8 +32,7 @@ import net.librec.recommender.Recommender;
 import net.librec.recommender.RecommenderContext;
 import net.librec.recommender.item.RecommendedItem;
 import net.librec.similarity.RecommenderSimilarity;
-import net.recommenders.rival.core.DataModelFactory;
-import net.recommenders.rival.core.DataModelIF;
+import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
 import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
@@ -74,7 +73,7 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public DataModelIF<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException {
+    public TemporalDataModelIF<Long, Long> run(final RUN_OPTIONS opts) throws RecommenderException {
         if (isAlreadyRecommended()) {
             return null;
         }
@@ -121,7 +120,7 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
      * {@link #runLibrecRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.grouplens.lenskit.data.dao.EventDAO, org.grouplens.lenskit.data.dao.EventDAO)}
      */
     @Override
-    public DataModelIF<Long, Long> run(RUN_OPTIONS opts, TemporalDataModelIF<Long, Long> trainingModel, TemporalDataModelIF<Long, Long> testModel) throws Exception {
+    public TemporalDataModelIF<Long, Long> run(RUN_OPTIONS opts, TemporalDataModelIF<Long, Long> trainingModel, TemporalDataModelIF<Long, Long> testModel) throws Exception {
         if (isAlreadyRecommended()) {
             return null;
         }
@@ -151,7 +150,7 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
      * properly
      */
     @SuppressWarnings("unchecked")
-    public DataModelIF<Long, Long> runLibrecRecommender(final RUN_OPTIONS opts, final DataModel trainingModel, final DataModel testModel) throws RecommenderException {
+    public TemporalDataModelIF<Long, Long> runLibrecRecommender(final RUN_OPTIONS opts, final DataModel trainingModel, final DataModel testModel) throws RecommenderException {
         if (isAlreadyRecommended()) {
             return null;
         }
@@ -193,11 +192,11 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
             throw new RecommenderException("Could not create Similarity class " + e.getMessage());
         }
 
-        DataModelIF<Long, Long> model = null;
+        TemporalDataModelIF<Long, Long> model = null;
         switch (opts) {
             case RETURN_AND_OUTPUT_RECS:
             case RETURN_RECS:
-                model = DataModelFactory.getDefaultModel();
+                model = new TemporalDataModel<>();
                 break;
             default:
                 model = null;

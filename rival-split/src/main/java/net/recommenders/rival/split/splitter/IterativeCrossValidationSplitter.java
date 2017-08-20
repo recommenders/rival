@@ -21,241 +21,233 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
- * Class replicates CrossValidationSplitter but each 
- * generated fold is written directly to a file 
- * instead of keeping N+1 times (original dataset + N folds) 
- * all at the same time in memory.  
- *   
+ * Class replicates CrossValidationSplitter but each generated fold is written
+ * directly to a file instead of keeping N+1 times (original dataset + N folds)
+ * all at the same time in memory.
+ *
  * @author <a href="https://github.com/afcarvalho1991">André Carvalho</a>
  *
  * @param <U> type of users
  * @param <I> type of items
  */
-public class IterativeCrossValidationSplitter<U, I>  extends CrossValidationSplitter<U, I> 
-{
+public class IterativeCrossValidationSplitter<U, I> extends CrossValidationSplitter<U, I> {
 
-	/** 
-	 * Folder where the generated splits are written to
-	 */
-	private String outPath;
-	
-	 /**
+    /**
+     * Folder where the generated splits are written to
+     */
+    private String outPath;
+
+    /**
      * Constructor.
      *
      * @param nFold number of folds that the data will be split into
      * @param perUsers flag to do the split in a per user basis
      * @param seed value to initialize a Random class
-     * @param outPath is folder to where each split (train and test) is going to be written to
+     * @param outPath is folder to where each split (train and test) is going to
+     * be written to
      */
-	public IterativeCrossValidationSplitter(int nFold, boolean perUsers, long seed, String outPath) 
-	{
-		super(nFold, perUsers, seed);
-		this.outPath = outPath;
-	}
-
-	 /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataModelIF<U, I>[] split(final DataModelIF<U, I> data)  
-    {
-    	try 
-    	{
-	        File dir = new File(outPath);
-	        if (!dir.exists()) {
-	            dir.mkdir();
-	        }
-	        final FileWriter[] splits = new FileWriter[2 * nFolds];
-	        for (int i = 0; i < nFolds; i++) 
-	        {
-	        	String 	trainingFile = outPath+"train_"+i+".csv",
-	        			testFile 	 = outPath+"test_"+i+".csv";
-	        	splits[2 * i] 		= new FileWriter(trainingFile);
-	            splits[2 * i + 1] 	= new FileWriter(testFile);
-	            
-	        }
-	        
-	        if (perUser) 
-	        {
-	            int n = 0;
-	            for (U user : data.getUsers()) {
-	                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
-	                Collections.shuffle(items, rnd);
-	                for (I item : items) {
-	                    Double pref = data.getUserItemPreferences().get(user).get(item);
-	                    int curFold = n % nFolds;
-	                    for (int i = 0; i < nFolds; i++) {
-	                    	FileWriter f_writer = splits[2 * i]; // training
-	                        if (i == curFold) {
-	                        	f_writer = splits[2 * i + 1]; // test
-	                        }
-	                        
-	                        if(f_writer==null) continue; // not a "valid" fold already computed
-	                        
-	                        if (pref != null) {
-	                        	f_writer.write(user+"\t"+item+"\t"+pref);
-	                        }
-	                        f_writer.write("\n");
-	                        f_writer.flush();
-	                    }
-	                    n++;
-	                }
-	            }
-	        } 
-	        else {
-	            List<U> users = new ArrayList<U>(data.getUsers());
-	            Collections.shuffle(users, rnd);
-	            int n = 0;
-	            for (U user : users) 
-	            {
-	                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
-	                Collections.shuffle(items, rnd);
-	                for (I item : items) {
-	                    Double pref = data.getUserItemPreferences().get(user).get(item);
-	                    int curFold = n % nFolds;
-	                    for (int i = 0; i < nFolds; i++) 
-	                    {
-	                    	FileWriter f_writer = splits[2 * i]; // training
-	                        if (i == curFold) f_writer = splits[2 * i + 1]; // test
-	                        
-	                        if(f_writer==null) continue; // not a "valid" fold already computed
-	                        
-	                        
-	                        if (pref != null) {
-	                        	f_writer.write(user+"\t"+item+"\t"+pref);
-	                        }
-							f_writer.write("\n");
-							f_writer.flush();
-	                    }
-	                    n++;
-	                }
-	            }
-	        }
-	        
-	        // Close files
-	        for (int i = 0; i < nFolds; i++) 
-	        {
-	            splits[2 * i].close();
-	            splits[2 * i + 1].close();
-	        }
-	        
-	    } catch (IOException e) {e.printStackTrace();}
-        return null;
+    public IterativeCrossValidationSplitter(int nFold, boolean perUsers, long seed, String outPath) {
+        super(nFold, perUsers, seed);
+        this.outPath = outPath;
     }
-    
+
     /**
      * {@inheritDoc}
-     * @returns 
      */
     @Override
-    public TemporalDataModelIF<U, I>[] split(final TemporalDataModelIF<U, I> data) 
-    {
-        try 
-    	{
-	        File dir = new File(outPath);
-	        if (!dir.exists()) {
-	            dir.mkdir();
-	        }
-	        final FileWriter[] splits = new FileWriter[2 * nFolds];
-	        for (int i = 0; i < nFolds; i++) 
-	        {
-	        	String 	trainingFile = outPath+"train_"+i+".csv",
-	        			testFile 	 = outPath+"test_"+i+".csv";
-	        	splits[2 * i] 		= new FileWriter(trainingFile);
-	            splits[2 * i + 1] 	= new FileWriter(testFile);
-	            
-	        }
-	        
-	        if (perUser) 
-	        {
-	            int n = 0;
-	            for (U user : data.getUsers()) {
-	                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
-	                Collections.shuffle(items, rnd);
-	                for (I item : items) {
-	                    Double pref = data.getUserItemPreferences().get(user).get(item);
-	                    Set<Long> time = null;
-	                    if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
-	                        time = data.getUserItemTimestamps().get(user).get(item);
-	                    }
-	                    int curFold = n % nFolds;
-	                    for (int i = 0; i < nFolds; i++) {
-	                    	FileWriter f_writer = splits[2 * i]; // training
-	                        if (i == curFold) {
-	                        	f_writer = splits[2 * i + 1]; // test
-	                        }
-	                        
-	                        if(f_writer==null) continue; // not a "valid" fold already computed
-	                        
-	                        if (pref != null) {
-	                        	f_writer.write(user+"\t"+item+"\t"+pref);
-	                        }
-	                        if (time != null) {
-	                            for (Long t : time) {
-	                            	f_writer.write("\t"+t);
-	                            }
-	                        }
-	                        f_writer.write("\n");
-	                        f_writer.flush();
-	                    }
-	                    n++;
-	                }
-	            }
-	        } 
-	        else {
-	            List<U> users = new ArrayList<U>(data.getUsers());
-	            Collections.shuffle(users, rnd);
-	            int n = 0;
-	            for (U user : users) 
-	            {
-	                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
-	                Collections.shuffle(items, rnd);
-	                for (I item : items) {
-	                    Double pref = data.getUserItemPreferences().get(user).get(item);
-	                    Set<Long> time = null;
-	                    if (data.getUserItemTimestamps().containsKey(user) && data.getUserItemTimestamps().get(user).containsKey(item)) {
-	                        time = data.getUserItemTimestamps().get(user).get(item);
-	                    }
-	                    int curFold = n % nFolds;
-	                    for (int i = 0; i < nFolds; i++) 
-	                    {
-	                    	FileWriter f_writer = splits[2 * i]; // training
-	                        if (i == curFold) f_writer = splits[2 * i + 1]; // test
-	                        
-	                        if(f_writer==null) continue; // not a "valid" fold already computed
-	                        
-	                        
-	                        if (pref != null) {
-	                        	f_writer.write(user+"\t"+item+"\t"+pref);
-	                        }
-	                        if (time != null) {
-	                            for (Long t : time) {
-	                            	f_writer.write("\t"+t);
-	                            }
-	                        }
-							f_writer.write("\n");
-							f_writer.flush();
-	                    }
-	                    n++;
-	                }
-	            }
-	        }
-	        
-	        // Close files
-	        for (int i = 0; i < nFolds; i++) 
-	        {
-	            splits[2 * i].close();
-	            splits[2 * i + 1].close();
-	        }
-	        
-	    } catch (IOException e) {e.printStackTrace();}
+    public DataModelIF<U, I>[] split(final DataModelIF<U, I> data) {
+        try {
+            File dir = new File(outPath);
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            final FileWriter[] splits = new FileWriter[2 * nFolds];
+            for (int i = 0; i < nFolds; i++) {
+                String trainingFile = outPath + "train_" + i + ".csv",
+                        testFile = outPath + "test_" + i + ".csv";
+                splits[2 * i] = new FileWriter(trainingFile);
+                splits[2 * i + 1] = new FileWriter(testFile);
+
+            }
+
+            if (perUser) {
+                int n = 0;
+                for (U user : data.getUsers()) {
+                    List<I> items = new ArrayList<>();
+                    data.getUserItems(user).forEach(i -> items.add(i));
+                    Collections.shuffle(items, rnd);
+                    for (I item : items) {
+                        Double pref = data.getUserItemPreference(user, item);
+                        int curFold = n % nFolds;
+                        for (int i = 0; i < nFolds; i++) {
+                            FileWriter f_writer = splits[2 * i]; // training
+                            if (i == curFold) {
+                                f_writer = splits[2 * i + 1]; // test
+                            }
+
+                            if (f_writer == null) {
+                                continue; // not a "valid" fold already computed
+                            }
+                            if (pref != null) {
+                                f_writer.write(user + "\t" + item + "\t" + pref);
+                            }
+                            f_writer.write("\n");
+                            f_writer.flush();
+                        }
+                        n++;
+                    }
+                }
+            } else {
+                List<U> users = new ArrayList<>();
+                data.getUsers().forEach(u -> users.add(u));
+                Collections.shuffle(users, rnd);
+                int n = 0;
+                for (U user : users) {
+                    List<I> items = new ArrayList<>();
+                    data.getUserItems(user).forEach(i -> items.add(i));
+                    Collections.shuffle(items, rnd);
+                    for (I item : items) {
+                        Double pref = data.getUserItemPreference(user, item);
+                        int curFold = n % nFolds;
+                        for (int i = 0; i < nFolds; i++) {
+                            FileWriter f_writer = splits[2 * i]; // training
+                            if (i == curFold) {
+                                f_writer = splits[2 * i + 1]; // test
+                            }
+                            if (f_writer == null) {
+                                continue; // not a "valid" fold already computed
+                            }
+
+                            if (pref != null) {
+                                f_writer.write(user + "\t" + item + "\t" + pref);
+                            }
+                            f_writer.write("\n");
+                            f_writer.flush();
+                        }
+                        n++;
+                    }
+                }
+            }
+
+            // Close files
+            for (int i = 0; i < nFolds; i++) {
+                splits[2 * i].close();
+                splits[2 * i + 1].close();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     *
+     * @returns
+     */
+    @Override
+    public TemporalDataModelIF<U, I>[] split(final TemporalDataModelIF<U, I> data) {
+        try {
+            File dir = new File(outPath);
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            final FileWriter[] splits = new FileWriter[2 * nFolds];
+            for (int i = 0; i < nFolds; i++) {
+                String trainingFile = outPath + "train_" + i + ".csv",
+                        testFile = outPath + "test_" + i + ".csv";
+                splits[2 * i] = new FileWriter(trainingFile);
+                splits[2 * i + 1] = new FileWriter(testFile);
+
+            }
+
+            if (perUser) {
+                int n = 0;
+                for (U user : data.getUsers()) {
+                    List<I> items = new ArrayList<>();
+                    data.getUserItems(user).forEach(i -> items.add(i));
+                    Collections.shuffle(items, rnd);
+                    for (I item : items) {
+                        Double pref = data.getUserItemPreference(user, item);
+                        Iterable<Long> time = data.getUserItemTimestamps(user, item);
+                        int curFold = n % nFolds;
+                        for (int i = 0; i < nFolds; i++) {
+                            FileWriter f_writer = splits[2 * i]; // training
+                            if (i == curFold) {
+                                f_writer = splits[2 * i + 1]; // test
+                            }
+
+                            if (f_writer == null) {
+                                continue; // not a "valid" fold already computed
+                            }
+                            if (pref != null) {
+                                f_writer.write(user + "\t" + item + "\t" + pref);
+                            }
+                            if (time != null) {
+                                for (Long t : time) {
+                                    f_writer.write("\t" + t);
+                                }
+                            }
+                            f_writer.write("\n");
+                            f_writer.flush();
+                        }
+                        n++;
+                    }
+                }
+            } else {
+                List<U> users = new ArrayList<>();
+                data.getUsers().forEach(u -> users.add(u));
+                Collections.shuffle(users, rnd);
+                int n = 0;
+                for (U user : users) {
+                    List<I> items = new ArrayList<>();
+                    data.getUserItems(user).forEach(i -> items.add(i));
+                    Collections.shuffle(items, rnd);
+                    for (I item : items) {
+                        Double pref = data.getUserItemPreference(user, item);
+                        Iterable<Long> time = data.getUserItemTimestamps(user, item);
+                        int curFold = n % nFolds;
+                        for (int i = 0; i < nFolds; i++) {
+                            FileWriter f_writer = splits[2 * i]; // training
+                            if (i == curFold) {
+                                f_writer = splits[2 * i + 1]; // test
+                            }
+                            if (f_writer == null) {
+                                continue; // not a "valid" fold already computed
+                            }
+
+                            if (pref != null) {
+                                f_writer.write(user + "\t" + item + "\t" + pref);
+                            }
+                            if (time != null) {
+                                for (Long t : time) {
+                                    f_writer.write("\t" + t);
+                                }
+                            }
+                            f_writer.write("\n");
+                            f_writer.flush();
+                        }
+                        n++;
+                    }
+                }
+            }
+
+            // Close files
+            for (int i = 0; i < nFolds; i++) {
+                splits[2 * i].close();
+                splits[2 * i + 1].close();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

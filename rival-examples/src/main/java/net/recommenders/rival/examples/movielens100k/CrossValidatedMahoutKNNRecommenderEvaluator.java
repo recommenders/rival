@@ -39,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.evaluation.metric.error.RMSE;
@@ -185,7 +186,13 @@ public final class CrossValidatedMahoutKNNRecommenderEvaluator {
                     long u = users.nextLong();
                     assert recommender != null;
                     List<RecommendedItem> items = recommender.recommend(u, trainModel.getNumItems());
-                    RecommenderIO.writeData(u, items, outPath, fileName, !createFile, null);
+                    //
+                    List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
+                    for (RecommendedItem ri : items) {
+                        prefs.add(new RecommenderIO.Preference<>(u, ri.getItemID(), ri.getValue()));
+                    }
+                    //
+                    RecommenderIO.writeData(u, prefs, outPath, fileName, !createFile, null);
                     createFile = false;
                 }
             } catch (TasteException e) {

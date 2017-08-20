@@ -15,7 +15,6 @@
  */
 package net.recommenders.rival.recommend.frameworks;
 
-import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 //import org.grouplens.lenskit.scored.ScoredId;
 
 import java.io.BufferedWriter;
@@ -24,7 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
-import net.recommenders.rival.core.DataModelIF;
+import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  * Recommender-related IO operations.
@@ -51,7 +50,7 @@ public final class RecommenderIO {
      * file
      * @param model if not null, recommendations will be saved here
      */
-    public static void writeData(final long user, final List<Preference<Long, Long>> recommendations, final String path, final String fileName, final boolean append, final DataModelIF<Long, Long> model) {
+    public static void writeData(final long user, final List<Preference<Long, Long>> recommendations, final String path, final String fileName, final boolean append, final TemporalDataModelIF<Long, Long> model) {
         BufferedWriter out = null;
         try {
             File dir = null;

@@ -15,9 +15,7 @@
  */
 package net.recommenders.rival.core;
 
-import java.util.Map;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +73,7 @@ public class DataModelTest<U, I> {
 
     @Test
     public void testGetItems() {
-        assertEquals(ITEMS, dm.getItems().size());
+        assertEquals(ITEMS, dm.getNumItems());
     }
 
     @Test
@@ -83,7 +81,6 @@ public class DataModelTest<U, I> {
         dm.clear();
         assertEquals(0, dm.getNumItems());
     }
-
 
     @Test
     public void testDuplicatePreferences() {
