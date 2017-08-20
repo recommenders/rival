@@ -31,8 +31,8 @@ public class UserTest extends AbstractStrategy {
      * Default constructor.
      *
      * @see
-     * AbstractStrategy#AbstractStrategy(net.recommenders.rival.core.DataModel,
-     * net.recommenders.rival.core.DataModel, double)
+     * AbstractStrategy#AbstractStrategy(net.recommenders.rival.core.DataModelIF,
+     * net.recommenders.rival.core.DataModelIF, double)
      *
      * @param training The training set.
      * @param test The test set.

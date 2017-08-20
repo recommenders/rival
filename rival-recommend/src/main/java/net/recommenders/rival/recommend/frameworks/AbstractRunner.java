@@ -18,7 +18,7 @@ package net.recommenders.rival.recommend.frameworks;
 import java.io.File;
 import java.util.Map.Entry;
 import java.util.Properties;
-import net.recommenders.rival.core.DataModelIF;
+
 import net.recommenders.rival.core.TemporalDataModelIF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +26,9 @@ import org.slf4j.LoggerFactory;
 /**
  * An abstract recommender runner.
  *
- * @author <a href="http://github.com/alansaid">Alan</a>
- *
  * @param <U> generic type for users
  * @param <I> generic type for items
+ * @author <a href="http://github.com/alansaid">Alan</a>
  */
 public abstract class AbstractRunner<U, I> {
 
@@ -44,15 +43,18 @@ public abstract class AbstractRunner<U, I> {
          * Only return the recommendations.
          */
         RETURN_RECS,
+        
         /**
          * Nothing should be returned, only print the recommendations.
          */
         OUTPUT_RECS,
+        
         /**
          * Return and print recommendations.
          */
         RETURN_AND_OUTPUT_RECS;
     }
+
     /**
      * Logger.
      */
@@ -183,27 +185,27 @@ public abstract class AbstractRunner<U, I> {
      * Runs the recommender. Training and test models will be read from file.
      *
      * @param opts options to run this recommender. See {@link RUN_OPTIONS}
-     * enum.
-     * @return see {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     *             enum.
+     * @return see {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.TemporalDataModelIF, net.recommenders.rival.core.TemporalDataModelIF)}
      * @throws Exception when the recommender cannot be run. See implementations
-     * for more information on possible exceptions.
+     *                   for more information on possible exceptions.
      */
-    public abstract DataModelIF<U, I> run(RUN_OPTIONS opts) throws Exception;
+    public abstract TemporalDataModelIF<U, I> run(RUN_OPTIONS opts) throws Exception;
 
     /**
      * Runs the recommender using the provided training and test models.
      *
-     * @param opts options to run this recommender. See {@link RUN_OPTIONS}
-     * enum.
+     * @param opts          options to run this recommender. See {@link RUN_OPTIONS}
+     *                      enum.
      * @param trainingModel Model to train the recommender.
-     * @param testModel Model from where users to generate recommendations to
-     * will be considered.
+     * @param testModel     Model from where users to generate recommendations to
+     *                      will be considered.
      * @return nothing when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#OUTPUT_RECS},
      * otherwise, when opts is {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_RECS}
      * or {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS#RETURN_AND_OUTPUT_RECS}
      * it returns the predictions
      * @throws Exception when the recommender cannot be run. See implementations
-     * for more information on possible exceptions.
+     *                   for more information on possible exceptions.
      */
-    public abstract DataModelIF<U, I> run(RUN_OPTIONS opts, TemporalDataModelIF<U, I> trainingModel, TemporalDataModelIF<U, I> testModel) throws Exception;
+    public abstract TemporalDataModelIF<U, I> run(RUN_OPTIONS opts, TemporalDataModelIF<U, I> trainingModel, TemporalDataModelIF<U, I> testModel) throws Exception;
 }

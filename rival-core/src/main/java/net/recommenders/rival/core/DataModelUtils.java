@@ -39,25 +39,28 @@ public final class DataModelUtils {
     /**
      * Method that saves a data model to a file.
      *
-     * @param dm the data model
-     * @param outfile file where the model will be saved
+     * @param dm        the data model
+     * @param outfile   file where the model will be saved
      * @param overwrite flag that indicates if the file should be overwritten
-     * @param <U> type of users
-     * @param <I> type of items
-     * @throws FileNotFoundException when outfile cannot be used.
+     * @param delimiter field delimiter
+     * @param <U>       type of users
+     * @param <I>       type of items
+     * @throws FileNotFoundException        when outfile cannot be used.
      * @throws UnsupportedEncodingException when the requested encoding (UTF-8)
-     * is not available.
+     *                                      is not available.
      */
-    public static <U, I> void saveDataModel(final DataModelIF<U, I> dm, final String outfile, final boolean overwrite)
+    public static <U, I> void saveDataModel(final DataModelIF<U, I> dm, final String outfile, final boolean overwrite, final String delimiter)
             throws FileNotFoundException, UnsupportedEncodingException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);
         } else {
             PrintStream out = new PrintStream(outfile, "UTF-8");
             for (U user : dm.getUsers()) {
-                for (I item : dm.getUserItems(user)) {
-                    Double pref = dm.getUserItemPreference(user, item);
-                    out.println(user + "\t" + item + "\t" + pref + "\t-1");
+                Map<I, Double> userPrefModel = dm.getUserItemPreferences().get(user);
+                for (Entry<I, Double> e : userPrefModel.entrySet()) {
+                    I item = e.getKey();
+                    Double pref = userPrefModel.get(item);
+                    out.println(user + delimiter + item + delimiter + pref);
                 }
             }
             out.close();
@@ -67,30 +70,37 @@ public final class DataModelUtils {
     /**
      * Method that saves a temporal data model to a file.
      *
-     * @param dm the data model
-     * @param outfile file where the model will be saved
+     * @param dm        the data model
+     * @param outfile   file where the model will be saved
      * @param overwrite flag that indicates if the file should be overwritten
-     * @param <U> type of users
-     * @param <I> type of items
-     * @throws FileNotFoundException when outfile cannot be used.
+     * @param delimiter field delimiter
+     * @param <U>       type of users
+     * @param <I>       type of items
+     * @throws FileNotFoundException        when outfile cannot be used.
      * @throws UnsupportedEncodingException when the requested encoding (UTF-8)
-     * is not available.
+     *                                      is not available.
      */
-    public static <U, I> void saveDataModel(final TemporalDataModelIF<U, I> dm, final String outfile, final boolean overwrite)
+    public static <U, I> void saveDataModel(final TemporalDataModelIF<U, I> dm, final String outfile, final boolean overwrite, String delimiter)
             throws FileNotFoundException, UnsupportedEncodingException {
         if (new File(outfile).exists() && !overwrite) {
             System.out.println("Ignoring " + outfile);
         } else {
             PrintStream out = new PrintStream(outfile, "UTF-8");
             for (U user : dm.getUsers()) {
-                for (I item : dm.getUserItems(user)) {
-                    Double pref = dm.getUserItemPreference(user, item);
-                    Iterable<Long> time = dm.getUserItemTimestamps(user, item);
+                Map<I, Double> userPrefModel = dm.getUserItemPreferences().get(user);
+                Map<I, Set<Long>> userTimeModel = dm.getUserItemTimestamps().get(user);
+                for (Entry<I, Double> e : userPrefModel.entrySet()) {
+                    I item = e.getKey();
+                    Double pref = userPrefModel.get(item);
+                    Set<Long> time = null;
+                    if (userTimeModel != null) {
+                        time = userTimeModel.get(item);
+                    }
                     if (time == null) {
-                        out.println(user + "\t" + item + "\t" + pref + "\t-1");
+                        out.println(user + delimiter + item + delimiter + pref + delimiter + "-1");
                     } else {
                         for (Long t : time) {
-                            out.println(user + "\t" + item + "\t" + pref + "\t" + t);
+                            out.println(user + delimiter + item + delimiter + pref + delimiter + t);
                         }
                     }
                 }

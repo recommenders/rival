@@ -133,8 +133,8 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
             System.out.println("test: " + testFile);
             boolean overwrite = true;
             try {
-                DataModelUtils.saveDataModel(training, trainingFile, overwrite);
-                DataModelUtils.saveDataModel(test, testFile, overwrite);
+                DataModelUtils.saveDataModel(training, trainingFile, overwrite, "\t");
+                DataModelUtils.saveDataModel(test, testFile, overwrite, "\t");
             } catch (FileNotFoundException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -234,7 +234,7 @@ public final class TemporalSplitMahoutKNNRecommenderEvaluator {
             }
         }
         try {
-            DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
+            DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true, "\t");
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }

@@ -118,11 +118,11 @@ public final class StrategyRunner {
      *
      * @param properties The properties of the strategy.
      * @throws IOException when a file cannot be parsed
-     * @throws ClassNotFoundException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws IllegalAccessException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InstantiationException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws InvocationTargetException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
-     * @throws NoSuchMethodException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * @throws ClassNotFoundException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws IllegalAccessException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws InstantiationException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws InvocationTargetException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
+     * @throws NoSuchMethodException see {@link #instantiateStrategy(java.util.Properties, net.recommenders.rival.core.DataModelIF, net.recommenders.rival.core.DataModelIF)}
      */
     public static void run(final Properties properties)
             throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {

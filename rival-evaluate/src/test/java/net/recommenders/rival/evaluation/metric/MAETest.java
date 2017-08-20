@@ -15,27 +15,24 @@
  */
 package net.recommenders.rival.evaluation.metric;
 
+import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
-import net.recommenders.rival.evaluation.metric.error.AbstractErrorMetric;
-import net.recommenders.rival.evaluation.metric.error.RMSE;
+import net.recommenders.rival.evaluation.metric.error.MAE;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Map;
-import net.recommenders.rival.core.DataModelFactory;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
- * Test for {@link RMSE}.
+ * Test for {@link MAE}.
  *
  * @author <a href="http://github.com/alansaid">Alan</a>.
  */
 @RunWith(JUnit4.class)
-public class RMSETest<U, I> {
-
+public class MAETest<U, I> {
 
     @Test
     public void testSameGroundtruthAsPredictions() {
@@ -47,19 +44,14 @@ public class RMSETest<U, I> {
                 predictions.addPreference((long) i, (long) j, (double) i * j);
             }
         }
-        RMSE<Long, Long> rmse = new RMSE<Long, Long>(predictions, test);
+        MAE<Long, Long> mae = new MAE<Long, Long>(predictions, test);
 
-        RMSE<Long, Long> rmseStrat = new RMSE<Long, Long>(predictions, test, AbstractErrorMetric.ErrorStrategy.CONSIDER_EVERYTHING);
-        assertNotNull(rmseStrat);
+        mae.compute();
 
-        assertEquals("RMSE_CONSIDER_EVERYTHING", rmseStrat.toString());
+        assertEquals(0.0, mae.getValue(), 0.0);
 
-        rmse.compute();
-
-        assertEquals(0.0, rmse.getValue(), 0.0);
-
-        Map<Long, Double> rmsePerUser = rmse.getValuePerUser();
-        for (Map.Entry<Long, Double> e : rmsePerUser.entrySet()) {
+        Map<Long, Double> maePerUser = mae.getValuePerUser();
+        for (Map.Entry<Long, Double> e : maePerUser.entrySet()) {
             double value = e.getValue();
             assertEquals(0.0, value, 0.0);
         }

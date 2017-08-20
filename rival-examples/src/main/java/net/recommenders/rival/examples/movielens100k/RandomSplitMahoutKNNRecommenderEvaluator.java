@@ -138,8 +138,8 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
             System.out.println("test: " + testFile);
             boolean overwrite = true;
             try {
-                DataModelUtils.saveDataModel(training, trainingFile, overwrite);
-                DataModelUtils.saveDataModel(test, testFile, overwrite);
+                DataModelUtils.saveDataModel(training, trainingFile, overwrite, "\t");
+                DataModelUtils.saveDataModel(test, testFile, overwrite, "\t");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (UnsupportedEncodingException e) {
@@ -247,7 +247,7 @@ public final class RandomSplitMahoutKNNRecommenderEvaluator {
             }
         }
         try {
-            DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true);
+            DataModelUtils.saveDataModel(modelToEval, outPath + "strategymodel_" + i + ".csv", true, "\t");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
