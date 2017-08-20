@@ -18,27 +18,31 @@ package net.recommenders.rival.recommend.frameworks.librec;
 import com.google.common.collect.BiMap;
 import java.io.File;
 import java.io.PrintStream;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import librec.data.DataDAO;
-import librec.data.SparseMatrix;
-import librec.data.SparseTensor;
+import net.librec.common.LibrecException;
+import net.librec.conf.Configuration;
+import net.librec.conf.Configured;
+import net.librec.data.DataAppender;
+import net.librec.data.DataContext;
+import net.librec.data.DataModel;
+import net.librec.data.DataSplitter;
+import net.librec.data.model.TextDataModel;
+import net.librec.math.structure.DataSet;
 import net.recommenders.rival.core.TemporalDataModelIF;
 
 /**
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class DataDAOWrapper extends DataDAO {
+public class DataDAOWrapper implements DataModel {
 
     /**
      * Serial version UID.
      */
-    private static final long serialVersionUID = 140160729L;
+    private static final long serialVersionUID = 170160729L;
     /**
-     * Librec's DataDAO that will be used as wrapper.
+     * Librec's DataModel that will be used as wrapper.
      */
-    private DataDAO wrapper;
+    private DataModel wrapper;
 
     /**
      * Constructs the wrapper using the provided model.
@@ -46,7 +50,7 @@ public class DataDAOWrapper extends DataDAO {
      * @param model the model to be used to create the wrapped model
      */
     public DataDAOWrapper(final TemporalDataModelIF<Long, Long> model) {
-        super(null);
+        super();
         try {
             // generate file based on the model
             File path = File.createTempFile("librec", "datadao");
@@ -67,165 +71,77 @@ public class DataDAOWrapper extends DataDAO {
             }
             out.close();
             // create the wrapper based on this file
-            wrapper = new DataDAO(path.getAbsolutePath());
+            Configuration confTraining = new Configuration();
+            confTraining.set(Configured.CONF_DATA_INPUT_PATH, path.getAbsolutePath());
+            confTraining.set(Configured.CONF_DATA_COLUMN_FORMAT, "UIR");
+            confTraining.set("data.model.splitter", "ratio");
+            confTraining.set("data.splitter.trainset.ratio", "0.999");
+            confTraining.set("data.splitter.ratio", "rating");
+            wrapper = new TextDataModel(confTraining);
+            wrapper.buildDataModel();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public SparseMatrix[] readData() throws Exception {
-        return wrapper.readData();
+    public void buildDataModel() throws LibrecException {
+        wrapper.buildDataModel();
     }
 
     @Override
-    public SparseMatrix[] readData(double binThold) throws Exception {
-        return wrapper.readData(binThold);
+    public void loadDataModel() throws LibrecException {
+        wrapper.loadDataModel();
     }
 
     @Override
-    public SparseMatrix[] readData(int[] cols, double binThold) throws Exception {
-        return wrapper.readData(cols, binThold);
+    public void saveDataModel() throws LibrecException {
+        wrapper.saveDataModel();
     }
 
     @Override
-    public SparseMatrix[] readTensor(int[] cols, double binThold) throws Exception {
-        return wrapper.readTensor(cols, binThold);
+    public DataSplitter getDataSplitter() {
+        return wrapper.getDataSplitter();
     }
 
     @Override
-    public void writeArff(String relation, String toPath) throws Exception {
-        wrapper.writeArff(relation, toPath);
+    public DataSet getTrainDataSet() {
+        return wrapper.getTrainDataSet();
     }
 
     @Override
-    public void writeData(String toPath) throws Exception {
-        wrapper.writeData(toPath);
+    public DataSet getTestDataSet() {
+        return wrapper.getTestDataSet();
     }
 
     @Override
-    public void writeData(String toPath, String sep) throws Exception {
-        wrapper.writeData(toPath, sep);
+    public DataSet getValidDataSet() {
+        return wrapper.getValidDataSet();
     }
 
     @Override
-    public void printDistr(boolean isWriteOut) throws Exception {
-        wrapper.printDistr(isWriteOut);
+    public DataSet getDatetimeDataSet() {
+        return wrapper.getDatetimeDataSet();
     }
 
     @Override
-    public void printSpecs() throws Exception {
-        wrapper.printSpecs();
+    public BiMap<String, Integer> getUserMappingData() {
+        return wrapper.getUserMappingData();
     }
 
     @Override
-    public int numDays() {
-        return wrapper.numDays();
+    public BiMap<String, Integer> getItemMappingData() {
+        return wrapper.getItemMappingData();
     }
 
     @Override
-    public int numItems() {
-        return wrapper.numItems();
+    public DataAppender getDataAppender() {
+        return wrapper.getDataAppender();
     }
 
     @Override
-    public int numRatings() {
-        return wrapper.numRatings();
-    }
-
-    @Override
-    public int numUsers() {
-        return wrapper.numUsers();
-    }
-
-    @Override
-    public String getDataDirectory() {
-        return wrapper.getDataDirectory();
-    }
-
-    @Override
-    public String getDataName() {
-        return wrapper.getDataName();
-    }
-
-    @Override
-    public String getDataPath() {
-        return wrapper.getDataPath();
-    }
-
-    @Override
-    public int getItemId(String rawId) {
-        return wrapper.getItemId(rawId);
-    }
-
-    @Override
-    public String getItemId(int innerId) {
-        return wrapper.getItemId(innerId);
-    }
-
-    @Override
-    public BiMap<String, Integer> getItemIds() {
-        return wrapper.getItemIds();
-    }
-
-    @Override
-    public long getMaxTimestamp() {
-        return wrapper.getMaxTimestamp();
-    }
-
-    @Override
-    public long getMinTimestamp() {
-        return wrapper.getMinTimestamp();
-    }
-
-    @Override
-    public SparseMatrix getRateMatrix() {
-        return wrapper.getRateMatrix();
-    }
-
-    @Override
-    public SparseTensor getRateTensor() {
-        return wrapper.getRateTensor();
-    }
-
-    @Override
-    public List<Double> getRatingScale() {
-        return wrapper.getRatingScale();
-    }
-
-    @Override
-    public int getUserId(String rawId) {
-        return wrapper.getUserId(rawId);
-    }
-
-    @Override
-    public String getUserId(int innerId) {
-        return wrapper.getUserId(innerId);
-    }
-
-    @Override
-    public BiMap<String, Integer> getUserIds() {
-        return wrapper.getUserIds();
-    }
-
-    @Override
-    public void setHeadline(boolean isHeadline) {
-        wrapper.setHeadline(isHeadline);
-    }
-
-    @Override
-    public void setTimeUnit(TimeUnit timeUnit) {
-        wrapper.setTimeUnit(timeUnit);
-    }
-
-    @Override
-    public boolean isHeadline() {
-        return wrapper.isHeadline();
-    }
-
-    @Override
-    public boolean isItemAsUser() {
-        return wrapper.isItemAsUser();
+    public DataContext getContext() {
+        return wrapper.getContext();
     }
 
 }

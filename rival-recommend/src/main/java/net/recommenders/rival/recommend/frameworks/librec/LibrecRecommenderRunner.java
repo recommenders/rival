@@ -17,18 +17,21 @@ package net.recommenders.rival.recommend.frameworks.librec;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import librec.data.DataDAO;
-import librec.data.SparseMatrix;
-import librec.intf.GraphicRecommender;
-import librec.intf.IterativeRecommender;
-import librec.intf.Recommender;
-import librec.util.FileConfiger;
+import net.librec.common.LibrecException;
+import net.librec.conf.Configuration;
+import net.librec.conf.Configured;
+import net.librec.data.DataModel;
+import net.librec.data.model.TextDataModel;
+import net.librec.filter.GenericRecommendedFilter;
+import net.librec.recommender.Recommender;
+import net.librec.recommender.RecommenderContext;
+import net.librec.recommender.item.RecommendedItem;
+import net.librec.similarity.RecommenderSimilarity;
 import net.recommenders.rival.core.DataModelFactory;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModelIF;
@@ -36,8 +39,6 @@ import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,24 +82,30 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
         File trainingFile = new File(getProperties().getProperty(RecommendationRunner.TRAINING_SET));
         File testFile = new File(getProperties().getProperty(RecommendationRunner.TEST_SET));
 
-        DataDAO training = new DataDAO(trainingFile.getAbsolutePath());
-        DataDAO test = new DataDAO(testFile.getAbsolutePath());
-        SparseMatrix[] data = null;
         try {
-            data = training.readData();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            e.printStackTrace();
-        }
-        SparseMatrix[] testData = null;
-        try {
-            testData = test.readData();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            e.printStackTrace();
-        }
+            Configuration confTraining = new Configuration();
+            confTraining.set(Configured.CONF_DATA_INPUT_PATH, trainingFile.getAbsolutePath());
+            confTraining.set(Configured.CONF_DATA_COLUMN_FORMAT, "UIR");
+            confTraining.set("data.model.splitter", "ratio");
+            confTraining.set("data.splitter.trainset.ratio", "0.999");
+            confTraining.set("data.splitter.ratio", "rating");
+            DataModel training = new TextDataModel(confTraining);
+            training.buildDataModel();
 
-        return runLibrecRecommender(opts, training, data[0], testData[0]);
+            Configuration confTest = new Configuration();
+            confTest.set(Configured.CONF_DATA_INPUT_PATH, testFile.getAbsolutePath());
+            confTest.set(Configured.CONF_DATA_COLUMN_FORMAT, "UIR");
+            confTest.set("data.model.splitter", "ratio");
+            confTest.set("data.splitter.trainset.ratio", "0.999");
+            confTest.set("data.splitter.ratio", "rating");
+            DataModel test = new TextDataModel(confTest);
+            test.buildDataModel();
+
+            return runLibrecRecommender(opts, training, test);
+        } catch (LibrecException e) {
+            e.printStackTrace();
+            throw new RecommenderException(e.getMessage());
+        }
     }
 
     /**
@@ -118,25 +125,11 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
         if (isAlreadyRecommended()) {
             return null;
         }
-        // transform from core's DataModels to LibRec's DataDAO and SparseMatrix
-        DataDAO trainingModelLibrec = new DataDAOWrapper(trainingModel);
-        DataDAO testModelLibrec = new DataDAOWrapper(testModel);
-        SparseMatrix[] data = null;
-        try {
-            data = trainingModelLibrec.readData();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            e.printStackTrace();
-        }
-        SparseMatrix[] testData = null;
-        try {
-            testData = testModelLibrec.readData();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            e.printStackTrace();
-        }
+        // transform from core's DataModels to LibRec's DataModel
+        DataModel trainingModelLibrec = new DataDAOWrapper(trainingModel);
+        DataModel testModelLibrec = new DataDAOWrapper(testModel);
 
-        return runLibrecRecommender(opts, trainingModelLibrec, data[0], testData[0]);
+        return runLibrecRecommender(opts, trainingModelLibrec, testModelLibrec);
     }
 
     /**
@@ -158,35 +151,43 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
      * properly
      */
     @SuppressWarnings("unchecked")
-    public DataModelIF<Long, Long> runLibrecRecommender(final RUN_OPTIONS opts, final DataDAO rateDAO, final SparseMatrix trainingModel, final SparseMatrix testModel) throws RecommenderException {
+    public DataModelIF<Long, Long> runLibrecRecommender(final RUN_OPTIONS opts, final DataModel trainingModel, final DataModel testModel) throws RecommenderException {
         if (isAlreadyRecommended()) {
             return null;
         }
 
-        String recommenderProperty = getProperties().getProperty(RecommendationRunner.RECOMMENDER);
-        FileConfiger cf = null;
-        try {
-            cf = new MyFileConfiger(getProperties());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            e.printStackTrace();
-        }
+        Configuration conf = new Configuration();
+        RecommenderContext rc = new RecommenderContext(conf, trainingModel);
 
-        // preset from LibRec.java
-        Recommender.cf = cf;
-        Recommender.resetStatics = true;
-        IterativeRecommender.resetStatics = true;
-        GraphicRecommender.resetStatics = true;
-        // end
-        // readData from LibRec.java
-        Recommender.rateMatrix = trainingModel;
-        Recommender.rateDao = rateDAO;
-        // end
+        int nItems = trainingModel.getItemMappingData().size();
+        String recommenderProperty = getProperties().getProperty(RecommendationRunner.RECOMMENDER);
+        if (getProperties().containsKey(RecommendationRunner.NEIGHBORHOOD) && getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD).equals("-1")) {
+            getProperties().setProperty(RecommendationRunner.NEIGHBORHOOD, Math.round(Math.sqrt(nItems)) + "");
+        }
+        if (getProperties().containsKey(RecommendationRunner.FACTORS) && getProperties().getProperty(RecommendationRunner.FACTORS).equals("-1")) {
+            getProperties().setProperty(RecommendationRunner.FACTORS, Math.round(Math.sqrt(nItems)) + "");
+        }
+        if (getProperties().containsKey(RecommendationRunner.SIMILARITY)) {
+            String similarityType = getProperties().getProperty(RecommendationRunner.SIMILARITY);
+            Class<?> similarityClass = null;
+            try {
+                similarityClass = Class.forName(similarityType);
+                RecommenderSimilarity similarity = (RecommenderSimilarity) similarityClass.getConstructor().newInstance();
+                similarity.buildSimilarityMatrix(trainingModel);
+                rc.setSimilarity(similarity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            conf.set("rec.neighbors.knn.number", getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD));
+        }
+        // TODO: more recs
+
         Recommender rec = null;
         Class<?> recClass = null;
         try {
             recClass = Class.forName(recommenderProperty);
-            rec = (Recommender) recClass.getConstructor(SparseMatrix.class, SparseMatrix.class, int.class).newInstance(trainingModel, testModel, -1);
+            rec = (Recommender) recClass.getConstructor().newInstance();
+            rec.setContext(rc);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RecommenderException("Could not create Similarity class " + e.getMessage());
@@ -216,71 +217,53 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
         } else {
             try {
                 // train the model
-                rec.execute();
+                rec.recommend(rc);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
                 e.printStackTrace();
             }
         }
 
+        List<RecommendedItem> recommendedItemList = rec.getRecommendedList();
         boolean createFile = true;
         // rows: users
         // columns: items
-        for (Integer user : testModel.rows()) {
-            // LibRec does not have a method to return a ranking!
-            // ranking creation
-            List<Pair<Integer, Double>> recs = new ArrayList<>();
-            Set<Integer> trainingItems = new HashSet<>(trainingModel.getColumns(user));
-            for (Integer item : trainingModel.columns()) {
+        for (Map.Entry<String, Integer> e : testModel.getUserMappingData().entrySet()) {
+            Long user = Long.parseLong(e.getKey());
+            int u = e.getValue();
+            Set<String> notInTrainingItems = new HashSet<>();
+            for (Map.Entry<String, Integer> e2 : trainingModel.getItemMappingData().entrySet()) {
+                String item = e2.getKey();
+                int i = e2.getValue();
                 // ignore if item belongs to the training profile of user
-                if (trainingItems.contains(item)) {
+                if (notInTrainingItems.contains(item)) {
                     continue;
                 }
-                double d = Double.NaN;
-                try {
-                    d = rec.predict(user, item);
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage());
-                    e.printStackTrace();
+                if (!trainingModel.getDataSplitter().getTrainData().contains(u, i)) {
+                    notInTrainingItems.add(item);
                 }
-                recs.add(new ImmutablePair<>(item, d));
             }
-            // sort the list to have items with larger scores at the beginning
-            Collections.sort(recs, new Comparator<Pair<Integer, Double>>() {
-                @Override
-                public int compare(Pair<Integer, Double> o1, Pair<Integer, Double> o2) {
-                    return o2.getRight().compareTo(o1.getRight());
-                }
-            });
+            // 
+            List<String> userIdList = new ArrayList<>();
+            userIdList.add(e.getKey());
+            List<String> itemIdList = new ArrayList<>(notInTrainingItems);
+            // filter the recommended result
+            //   The GenericRecommendedFilter instance returns the recommendedList 
+            //   that contains the recommendedItem with only the specific userId or itemId
+            GenericRecommendedFilter filter = new GenericRecommendedFilter();
+            filter.setUserIdList(userIdList);
+            filter.setItemIdList(itemIdList);
+            List<RecommendedItem> recs = filter.filter(recommendedItemList);
+
             // end of ranking creation
             List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
-            for (Pair<Integer, Double> i : recs) {
-                prefs.add(new RecommenderIO.Preference<>(user.longValue(), i.getKey().longValue(), i.getValue()));
+            for (RecommendedItem recommendedItem : recs) {
+                prefs.add(new RecommenderIO.Preference<>(user, Long.parseLong(recommendedItem.getItemId()), recommendedItem.getValue()));
             }
             //
             RecommenderIO.writeData(user, prefs, getPath(), name, !createFile, model);
             createFile = false;
         }
         return model;
-    }
-
-    private static class MyFileConfiger extends FileConfiger {
-
-        private Properties props;
-
-        public MyFileConfiger(Properties p) throws Exception {
-            super(".");
-            props = p;
-        }
-
-        @Override
-        public String getString(String key, String val) {
-            return props.getProperty(key, val);
-        }
-
-        @Override
-        public String getString(String key) {
-            return props.getProperty(key);
-        }
     }
 }

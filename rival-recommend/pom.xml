@@ -49,8 +49,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.guoguibing</groupId>
-            <artifactId>librec</artifactId>
+            <groupId>net.librec</groupId>
+            <artifactId>librec-core</artifactId>
             <version>${librec.version}</version>
         </dependency>
 
