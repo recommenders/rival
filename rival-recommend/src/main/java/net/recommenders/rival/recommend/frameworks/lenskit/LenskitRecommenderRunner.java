@@ -15,7 +15,9 @@
  */
 package net.recommenders.rival.recommend.frameworks.lenskit;
 
+import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModelFactory;
@@ -25,32 +27,31 @@ import net.recommenders.rival.recommend.frameworks.AbstractRunner;
 import net.recommenders.rival.recommend.frameworks.RecommendationRunner;
 import net.recommenders.rival.recommend.frameworks.RecommenderIO;
 import net.recommenders.rival.recommend.frameworks.exceptions.RecommenderException;
-import org.grouplens.lenskit.ItemRecommender;
-import org.grouplens.lenskit.ItemScorer;
-import org.grouplens.lenskit.Recommender;
-import org.grouplens.lenskit.RecommenderBuildException;
-import org.grouplens.lenskit.baseline.BaselineScorer;
-import org.grouplens.lenskit.baseline.UserMeanItemScorer;
-import org.grouplens.lenskit.core.LenskitConfiguration;
-import org.grouplens.lenskit.core.LenskitRecommenderEngine;
-import org.grouplens.lenskit.cursors.Cursors;
-import org.grouplens.lenskit.data.dao.EventCollectionDAO;
-import org.grouplens.lenskit.data.dao.EventDAO;
-import org.grouplens.lenskit.data.dao.PrefetchingItemDAO;
-import org.grouplens.lenskit.data.dao.PrefetchingUserDAO;
-import org.grouplens.lenskit.data.dao.UserDAO;
-import org.grouplens.lenskit.data.text.Formats;
-import org.grouplens.lenskit.data.text.TextEventDAO;
+import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.grouplens.lenskit.iterative.IterationCount;
 import org.grouplens.lenskit.iterative.IterationCountStoppingCondition;
 import org.grouplens.lenskit.iterative.StoppingCondition;
-import org.grouplens.lenskit.knn.NeighborhoodSize;
-import org.grouplens.lenskit.knn.item.ItemSimilarity;
-import org.grouplens.lenskit.knn.user.NeighborFinder;
-import org.grouplens.lenskit.knn.user.LiveNeighborFinder;
-import org.grouplens.lenskit.mf.funksvd.FeatureCount;
-import org.grouplens.lenskit.scored.ScoredId;
-import org.grouplens.lenskit.vectors.similarity.VectorSimilarity;
+import org.lenskit.LenskitConfiguration;
+import org.lenskit.LenskitRecommender;
+import org.lenskit.LenskitRecommenderEngine;
+import org.lenskit.api.ItemRecommender;
+import org.lenskit.api.ItemScorer;
+import org.lenskit.api.RecommenderBuildException;
+import org.lenskit.api.Result;
+import org.lenskit.baseline.BaselineScorer;
+import org.lenskit.baseline.UserMeanItemScorer;
+import org.lenskit.data.dao.DataAccessObject;
+import org.lenskit.data.dao.file.StaticDataSource;
+import org.lenskit.data.dao.file.TextEntitySource;
+import org.lenskit.data.ratings.RatingSummary;
+import org.lenskit.data.ratings.RatingVectorPDAO;
+import org.lenskit.data.ratings.StandardRatingVectorPDAO;
+import org.lenskit.knn.NeighborhoodSize;
+import org.lenskit.knn.user.LiveNeighborFinder;
+import org.lenskit.knn.user.NeighborFinder;
+import org.lenskit.mf.funksvd.FeatureCount;
+import org.lenskit.similarity.VectorSimilarity;
+import org.lenskit.util.IdBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,8 +95,20 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
 
         File trainingFile = new File(getProperties().getProperty(RecommendationRunner.TRAINING_SET));
         File testFile = new File(getProperties().getProperty(RecommendationRunner.TEST_SET));
-        EventDAO base = new TextEventDAO(trainingFile, Formats.delimitedRatings("\t"));
-        EventDAO test = new TextEventDAO(testFile, Formats.delimitedRatings("\t"));
+//        EventDAO base = new TextEventDAO(trainingFile, Formats.delimitedRatings("\t"));
+        TextEntitySource tesTraining = new TextEntitySource();
+        tesTraining.setFile(trainingFile.toPath());
+        tesTraining.setFormat(org.lenskit.data.dao.file.Formats.delimitedRatings("\t"));
+        StaticDataSource sourceTraining = new StaticDataSource("training");
+        sourceTraining.addSource(tesTraining);
+        DataAccessObject base = sourceTraining.get();
+//        EventDAO test = new TextEventDAO(testFile, Formats.delimitedRatings("\t"));
+        TextEntitySource tesTest = new TextEntitySource();
+        tesTest.setFile(testFile.toPath());
+        tesTest.setFormat(org.lenskit.data.dao.file.Formats.delimitedRatings("\t"));
+        StaticDataSource sourceTest = new StaticDataSource("test");
+        sourceTest.addSource(tesTest);
+        DataAccessObject test = sourceTest.get();
         return runLenskitRecommender(opts, base, test);
     }
 
@@ -117,8 +130,8 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
             return null;
         }
         // transform from core's DataModels to Lenskit's EventDAO
-        EventDAO trainingModelLensKit = new EventDAOWrapper(trainingModel);
-        EventDAO testModelLensKit = new EventDAOWrapper(testModel);
+        DataAccessObject trainingModelLensKit = new EventDAOWrapper(trainingModel);
+        DataAccessObject testModelLensKit = new EventDAOWrapper(testModel);
 
         return runLenskitRecommender(opts, trainingModelLensKit, testModelLensKit);
     }
@@ -142,13 +155,13 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * properly
      */
     @SuppressWarnings("unchecked")
-    public DataModelIF<Long, Long> runLenskitRecommender(final RUN_OPTIONS opts, final EventDAO trainingModel, final EventDAO testModel) throws RecommenderException {
+    public DataModelIF<Long, Long> runLenskitRecommender(final RUN_OPTIONS opts, final DataAccessObject trainingModel, final DataAccessObject testModel) throws RecommenderException {
         if (isAlreadyRecommended()) {
             return null;
         }
-        EventDAO dao = EventCollectionDAO.create(Cursors.makeList(trainingModel.streamEvents()));
         LenskitConfiguration config = new LenskitConfiguration();
-        config.bind(EventDAO.class).to(dao);
+//        int nItems = new PrefetchingItemDAO(trainingModel).getItemIds().size();
+        int nItems = RatingSummary.create(trainingModel).getItems().size();
 
         try {
             config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(getProperties().getProperty(RecommendationRunner.RECOMMENDER)));
@@ -159,7 +172,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         if (getProperties().getProperty(RecommendationRunner.RECOMMENDER).contains(".user.")) {
             config.bind(NeighborFinder.class).to(LiveNeighborFinder.class);
             if (getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD).equals("-1")) {
-                getProperties().setProperty(RecommendationRunner.NEIGHBORHOOD, Math.round(Math.sqrt(new PrefetchingItemDAO(trainingModel).getItemIds().size())) + "");
+                getProperties().setProperty(RecommendationRunner.NEIGHBORHOOD, Math.round(Math.sqrt(nItems)) + "");
             }
             config.set(NeighborhoodSize.class).to(Integer.parseInt(getProperties().getProperty(RecommendationRunner.NEIGHBORHOOD)));
         }
@@ -178,26 +191,29 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
             config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
             config.set(IterationCount.class).to(DEFAULT_ITERATIONS);
             if (getProperties().getProperty(RecommendationRunner.FACTORS).equals("-1")) {
-                getProperties().setProperty(RecommendationRunner.FACTORS, Math.round(Math.sqrt(new PrefetchingItemDAO(trainingModel).getItemIds().size())) + "");
+                getProperties().setProperty(RecommendationRunner.FACTORS, Math.round(Math.sqrt(nItems)) + "");
             }
             config.set(FeatureCount.class).to(Integer.parseInt(getProperties().getProperty(RecommendationRunner.FACTORS)));
         }
 
-        UserDAO test = new PrefetchingUserDAO(testModel);
-        Recommender rec = null;
+        RatingVectorPDAO test = new StandardRatingVectorPDAO(testModel);
+        LenskitRecommender rec = null;
         try {
-            LenskitRecommenderEngine engine = LenskitRecommenderEngine.build(config);
-            rec = engine.createRecommender();
+            LenskitRecommenderEngine engine = LenskitRecommenderEngine.build(config, trainingModel);
+            rec = engine.createRecommender(trainingModel);
         } catch (RecommenderBuildException e) {
             LOGGER.error(e.getMessage());
             e.printStackTrace();
             throw new RecommenderException("Problem with LenskitRecommenderEngine: " + e.getMessage());
         }
         ItemRecommender irec = null;
+        ItemScorer iscore = null;
         if (rec != null) {
             irec = rec.getItemRecommender();
+            iscore = rec.getItemScorer();
         }
         assert irec != null;
+        assert iscore != null;
 
         DataModelIF<Long, Long> model = null;
         switch (opts) {
@@ -218,9 +234,20 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
                 name = null;
         }
         boolean createFile = true;
-        for (long user : test.getUserIds()) {
-            List<ScoredId> recs = irec.recommend(user);
-            RecommenderIO.writeData(user, recs, getPath(), name, !createFile, model);
+        for (IdBox<Long2DoubleMap> u : test.streamUsers()) {
+            long user = u.getId();
+            List<Long> recItems = irec.recommend(user);
+            //
+            List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
+            for (Long i : recItems) {
+                Result r = iscore.score(user, i);
+                if (r != null) {
+                    double s = r.getScore();
+                    prefs.add(new RecommenderIO.Preference<>(user, i, s));
+                }
+            }
+            //
+            RecommenderIO.writeData(user, prefs, getPath(), name, !createFile, model);
             createFile = false;
         }
         return model;

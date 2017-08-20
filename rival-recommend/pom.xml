@@ -31,19 +31,19 @@
         </dependency>
 
         <dependency>
-            <groupId>org.grouplens.lenskit</groupId>
+            <groupId>org.lenskit</groupId>
             <artifactId>lenskit-core</artifactId>
             <version>${lenskit.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.grouplens.lenskit</groupId>
+            <groupId>org.lenskit</groupId>
             <artifactId>lenskit-knn</artifactId>
             <version>${lenskit.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.grouplens.lenskit</groupId>
+            <groupId>org.lenskit</groupId>
             <artifactId>lenskit-svd</artifactId>
             <version>${lenskit.version}</version>
         </dependency>

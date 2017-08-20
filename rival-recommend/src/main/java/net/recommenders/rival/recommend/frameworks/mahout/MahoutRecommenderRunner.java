@@ -28,6 +28,7 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import net.recommenders.rival.core.DataModelFactory;
@@ -182,7 +183,13 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
             long u = users.nextLong();
             try {
                 List<RecommendedItem> items = recommender.recommend(u, trainingModel.getNumItems());
-                RecommenderIO.writeData(u, items, getPath(), name, !createFile, model);
+                //
+                List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
+                for (RecommendedItem i: items){
+                    prefs.add(new RecommenderIO.Preference<>(u, i.getItemID(), i.getValue()));
+                }
+                //
+                RecommenderIO.writeData(u, prefs, getPath(), name, !createFile, model);
                 createFile = false;
             } catch (TasteException e) {
                 e.printStackTrace();

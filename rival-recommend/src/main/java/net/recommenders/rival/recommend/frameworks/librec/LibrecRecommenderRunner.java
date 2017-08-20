@@ -253,7 +253,12 @@ public class LibrecRecommenderRunner extends AbstractRunner<Long, Long> {
                 }
             });
             // end of ranking creation
-            RecommenderIO.writeData(user, recs, getPath(), name, !createFile, model);
+            List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
+            for (Pair<Integer, Double> i : recs) {
+                prefs.add(new RecommenderIO.Preference<>(user.longValue(), i.getKey().longValue(), i.getValue()));
+            }
+            //
+            RecommenderIO.writeData(user, prefs, getPath(), name, !createFile, model);
             createFile = false;
         }
         return model;

@@ -16,7 +16,7 @@
 package net.recommenders.rival.recommend.frameworks;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.grouplens.lenskit.scored.ScoredId;
+//import org.grouplens.lenskit.scored.ScoredId;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -50,9 +50,8 @@ public final class RecommenderIO {
      * @param append flag to decide if recommendations should be appended to
      * file
      * @param model if not null, recommendations will be saved here
-     * @param <T> type of recommendations
      */
-    public static <T> void writeData(final long user, final List<T> recommendations, final String path, final String fileName, final boolean append, final DataModelIF<Long, Long> model) {
+    public static void writeData(final long user, final List<Preference<Long, Long>> recommendations, final String path, final String fileName, final boolean append, final DataModelIF<Long, Long> model) {
         BufferedWriter out = null;
         try {
             File dir = null;
@@ -68,24 +67,12 @@ public final class RecommenderIO {
             if ((path != null) && (fileName != null)) {
                 out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "/" + fileName, append), "UTF-8"));
             }
-            for (Object ri : recommendations) {
-                if (ri instanceof RecommendedItem) {
-                    RecommendedItem recItem = (RecommendedItem) ri;
-                    if (out != null) {
-                        out.write(user + "\t" + recItem.getItemID() + "\t" + recItem.getValue() + "\n");
-                    }
-                    if (model != null) {
-                        model.addPreference(user, recItem.getItemID(), 1.0 * recItem.getValue());
-                    }
+            for (Preference<Long, Long> recItem : recommendations) {
+                if (out != null) {
+                    out.write(user + "\t" + recItem.getItem()+ "\t" + recItem.getScore() + "\n");
                 }
-                if (ri instanceof ScoredId) {
-                    ScoredId recItem = (ScoredId) ri;
-                    if (out != null) {
-                        out.write(user + "\t" + recItem.getId() + "\t" + recItem.getScore() + "\n");
-                    }
-                    if (model != null) {
-                        model.addPreference(user, recItem.getId(), recItem.getScore());
-                    }
+                if (model != null) {
+                    model.addPreference(user, recItem.getItem(), recItem.getScore());
                 }
             }
             if (out != null) {
@@ -104,5 +91,31 @@ public final class RecommenderIO {
                 }
             }
         }
+    }
+
+    public static class Preference<U, I> {
+
+        private U user;
+        private I item;
+        private double score;
+
+        public Preference(U user, I item, double score) {
+            this.user = user;
+            this.item = item;
+            this.score = score;
+        }
+
+        public U getUser() {
+            return user;
+        }
+
+        public I getItem() {
+            return item;
+        }
+
+        public double getScore() {
+            return score;
+        }
+
     }
 }

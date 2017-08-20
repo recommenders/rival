@@ -15,32 +15,38 @@
  */
 package net.recommenders.rival.recommend.frameworks.lenskit;
 
+import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import net.recommenders.rival.core.TemporalDataModelIF;
-import org.grouplens.lenskit.cursors.Cursor;
-import org.grouplens.lenskit.data.dao.EventCollectionDAO;
-import org.grouplens.lenskit.data.dao.EventDAO;
-import org.grouplens.lenskit.data.dao.SortOrder;
-import org.grouplens.lenskit.data.event.Event;
-import org.grouplens.lenskit.data.event.Rating;
-import org.grouplens.lenskit.data.event.RatingBuilder;
+import org.lenskit.data.dao.DataAccessObject;
+import org.lenskit.data.dao.EntityCollectionDAO;
+import org.lenskit.data.dao.EntityQuery;
+import org.lenskit.data.dao.Query;
+import org.lenskit.data.entities.Entity;
+import org.lenskit.data.entities.EntityType;
+import org.lenskit.data.entities.TypedName;
+import org.lenskit.data.ratings.Rating;
+import org.lenskit.data.ratings.RatingBuilder;
+import org.lenskit.util.IdBox;
+import org.lenskit.util.io.ObjectStream;
 
 /**
  * Lenskit's EventDAO wrapper for {@link net.recommenders.rival.core.DataModel}.
  *
  * @author <a href="http://github.com/abellogin">Alejandro</a>
  */
-public class EventDAOWrapper implements EventDAO {
+public class EventDAOWrapper implements DataAccessObject {
 
     /**
      * Serial version UID.
      */
-    private static final long serialVersionUID = 120150729L;
+    private static final long serialVersionUID = 170150729L;
     /**
-     * Lenskit's EventDAO that will be used as wrapper.
+     * Lenskit's DataAccessObject that will be used as wrapper.
      */
-    private EventDAO wrapper;
+    private DataAccessObject wrapper;
 
     /**
      * Constructs the wrapper using the provided model.
@@ -48,7 +54,7 @@ public class EventDAOWrapper implements EventDAO {
      * @param model the model to be used to create the wrapped model
      */
     public EventDAOWrapper(final TemporalDataModelIF<Long, Long> model) {
-        List<Rating> events = new ArrayList<Rating>();
+        List<Rating> events = new ArrayList<>();
         RatingBuilder rb = new RatingBuilder();
         for (Long u : model.getUsers()) {
             rb.setUserId(u);
@@ -67,30 +73,78 @@ public class EventDAOWrapper implements EventDAO {
                 events.add(rb.build());
             }
         }
-        wrapper = EventCollectionDAO.create(events);
+        wrapper = EntityCollectionDAO.create(events);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Cursor<Event> streamEvents() {
-        return wrapper.streamEvents();
+    public Set<EntityType> getEntityTypes() {
+        return wrapper.getEntityTypes();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <E extends Event> Cursor<E> streamEvents(final Class<E> type) {
-        return wrapper.streamEvents(type);
+    public LongSet getEntityIds(EntityType et) {
+        return wrapper.getEntityIds(et);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <E extends Event> Cursor<E> streamEvents(final Class<E> type, final SortOrder so) {
-        return wrapper.streamEvents(type, so);
+    public Entity lookupEntity(EntityType et, long l) {
+        return wrapper.lookupEntity(et, l);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <E extends Entity> E lookupEntity(EntityType et, long l, Class<E> type) {
+        return wrapper.lookupEntity(et, l, type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ObjectStream<Entity> streamEntities(EntityType et) {
+        return wrapper.streamEntities(et);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <E extends Entity> ObjectStream<E> streamEntities(EntityQuery<E> eq) {
+        return wrapper.streamEntities(eq);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <E extends Entity> ObjectStream<IdBox<List<E>>> streamEntityGroups(EntityQuery<E> eq, TypedName<Long> tn) {
+        return wrapper.streamEntityGroups(eq, tn);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Query<Entity> query(EntityType et) {
+        return wrapper.query(et);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <V extends Entity> Query<V> query(Class<V> type) {
+        return wrapper.query(type);
     }
 }
