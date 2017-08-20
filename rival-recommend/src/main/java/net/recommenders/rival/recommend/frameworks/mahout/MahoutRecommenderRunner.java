@@ -85,7 +85,7 @@ public class MahoutRecommenderRunner extends AbstractRunner<Long, Long> {
      * @param trainingModel model to be used to train the recommender.
      * @param testModel model to be used to test the recommender.
      * @return see
-     * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}
+     * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, org.apache.mahout.cf.taste.model.TemporalDataModelIF, org.apache.mahout.cf.taste.model.TemporalDataModelIF)}
      * @throws RecommenderException see
      * {@link #runMahoutRecommender(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS,
      * org.apache.mahout.cf.taste.model.DataModel, org.apache.mahout.cf.taste.model.DataModel)}

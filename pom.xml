@@ -46,6 +46,7 @@
         -->
         <mahout.version>0.8</mahout.version>
         <lenskit.version>2.2.1</lenskit.version>
+        <librec.version>-SNAPSHOT</librec.version>
         <ranksys.version>0.4.3</ranksys.version>
     </properties>
 

@@ -49,6 +49,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.guoguibing</groupId>
+            <artifactId>librec</artifactId>
+            <version>${librec.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.6</version>

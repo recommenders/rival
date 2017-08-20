@@ -81,7 +81,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
      * @param opts see
      * {@link net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS}
      * @return see
-     * {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.DataModel, net.recommenders.rival.core.DataModel)}
+     * {@link #run(net.recommenders.rival.recommend.frameworks.AbstractRunner.RUN_OPTIONS, net.recommenders.rival.core.TemporalDataModelIF, net.recommenders.rival.core.TemporalDataModelIF)}
      * @throws RecommenderException when the recommender is instantiated
      * incorrectly or breaks otherwise.
      */
