@@ -16,9 +16,11 @@
 package net.recommenders.rival.recommend.frameworks.lenskit;
 
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import net.recommenders.rival.core.TemporalDataModel;
 import net.recommenders.rival.core.TemporalDataModelIF;
@@ -39,6 +41,8 @@ import org.lenskit.api.RecommenderBuildException;
 import org.lenskit.api.Result;
 import org.lenskit.baseline.BaselineScorer;
 import org.lenskit.baseline.UserMeanItemScorer;
+import org.lenskit.bias.BiasModel;
+import org.lenskit.bias.UserItemBiasModel;
 import org.lenskit.data.dao.DataAccessObject;
 import org.lenskit.data.dao.file.StaticDataSource;
 import org.lenskit.data.dao.file.TextEntitySource;
@@ -160,7 +164,8 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         }
         LenskitConfiguration config = new LenskitConfiguration();
 //        int nItems = new PrefetchingItemDAO(trainingModel).getItemIds().size();
-        int nItems = RatingSummary.create(trainingModel).getItems().size();
+        LongSet items = RatingSummary.create(trainingModel).getItems();
+        int nItems = items.size();
 
         try {
             config.bind(ItemScorer.class).to((Class<? extends ItemScorer>) Class.forName(getProperties().getProperty(RecommendationRunner.RECOMMENDER)));
@@ -188,6 +193,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         if (getProperties().containsKey(RecommendationRunner.FACTORS)) {
             config.bind(BaselineScorer.class, ItemScorer.class).to(UserMeanItemScorer.class);
             config.bind(StoppingCondition.class).to(IterationCountStoppingCondition.class);
+            config.bind(BiasModel.class).to(UserItemBiasModel.class);
             config.set(IterationCount.class).to(DEFAULT_ITERATIONS);
             if (getProperties().getProperty(RecommendationRunner.FACTORS).equals("-1")) {
                 getProperties().setProperty(RecommendationRunner.FACTORS, Math.round(Math.sqrt(nItems)) + "");
@@ -235,13 +241,17 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
         boolean createFile = true;
         for (IdBox<Long2DoubleMap> u : test.streamUsers()) {
             long user = u.getId();
-            List<Long> recItems = irec.recommend(user);
+            // The following does not return anything
+            // List<Long> recItems = irec.recommend(user, nItems);
             //
             List<RecommenderIO.Preference<Long, Long>> prefs = new ArrayList<>();
-            for (Long i : recItems) {
-                Result r = iscore.score(user, i);
-                if (r != null) {
-                    double s = r.getScore();
+            Map<Long, Double> results = iscore.score(user, items);
+            for (Long i : items) {
+//                Result r = iscore.score(user, i);
+//                if (r != null) {
+                if (results.containsKey(i)) {
+//                    Double s = r.getScore();
+                    Double s = results.get(i);
                     prefs.add(new RecommenderIO.Preference<>(user, i, s));
                 }
             }
@@ -249,6 +259,7 @@ public class LenskitRecommenderRunner extends AbstractRunner<Long, Long> {
             RecommenderIO.writeData(user, prefs, getPath(), name, !createFile, model);
             createFile = false;
         }
+        rec.close();
         return model;
     }
 }
