@@ -17,6 +17,7 @@ package net.recommenders.rival.core.ext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import net.recommenders.rival.core.TemporalDataModelIF;
 import org.apache.mahout.cf.taste.common.TasteException;
@@ -115,7 +116,7 @@ public class MahoutDataModel implements TemporalDataModelIF<Long, Long> {
         } catch (TasteException e) {
             e.printStackTrace();
         }
-        return null;
+        return Collections.emptySet();
     }
 
     @Override

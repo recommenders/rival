@@ -15,6 +15,7 @@
  */
 package net.recommenders.rival.core;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -103,7 +104,7 @@ public class DataModel<U, I> implements DataModelIF<U, I> {
         if (userItemPreferences.containsKey(u)) {
             return userItemPreferences.get(u).keySet();
         }
-        return null;
+        return Collections.emptySet();
     }
 
     /**
