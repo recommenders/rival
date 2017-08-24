@@ -66,6 +66,14 @@ public final class RecommendationRunner {
      */
     public static final String TEST_SET = "test";
     /**
+     * The property key for the user index.
+     */
+    public static final String USER_INDEX = "user_index";
+    /**
+     * The property key for the item index.
+     */
+    public static final String ITEM_INDEX = "item_index";
+    /**
      * The property key for the output.
      */
     public static final String OUTPUT = "output";
@@ -81,6 +89,14 @@ public final class RecommendationRunner {
      * The property key for LensKit.
      */
     public static final String LENSKIT = "lenskit";
+    /**
+     * The property key for Librec.
+     */
+    public static final String LIBREC = "librec";
+    /**
+     * The property key for RankSys.
+     */
+    public static final String RANKSYS = "ranksys";
     /**
      * The canonical path.
      */

@@ -85,6 +85,33 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ranksys.RankSys</groupId>
+            <artifactId>RankSys-core</artifactId>
+            <version>${ranksys.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ranksys.RankSys</groupId>
+            <artifactId>RankSys-fast</artifactId>
+            <version>${ranksys.version}</version>
+        </dependency>    
+        <dependency>
+            <groupId>org.ranksys.RankSys</groupId>
+            <artifactId>RankSys-formats</artifactId>
+            <version>${ranksys.version}</version>
+        </dependency>    
+        <dependency>
+            <groupId>org.ranksys.RankSys</groupId>
+            <artifactId>RankSys-mf</artifactId>
+            <version>${ranksys.version}</version>
+        </dependency>    
+        <dependency>
+            <groupId>org.ranksys.RankSys</groupId>
+            <artifactId>RankSys-nn</artifactId>
+            <version>${ranksys.version}</version>
+        </dependency>    
+
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.6</version>
