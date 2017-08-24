@@ -15,7 +15,9 @@
  */
 package net.recommenders.rival.evaluation.statistics;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.commons.math3.stat.inference.WilcoxonSignedRankTest;
 
@@ -36,6 +38,10 @@ public class StatisticalSignificance {
      * Test metric for each dimension (users).
      */
     private Map<?, Double> testMetricPerDimension;
+    /**
+     * Users.
+     */
+    private Set<?> dimensions;
 
     /**
      * Default constructor.
@@ -48,6 +54,8 @@ public class StatisticalSignificance {
     public StatisticalSignificance(final Map<?, Double> theBaselineMetricPerDimension, final Map<?, Double> theTestMetricPerDimension) {
         this.baselineMetricPerDimension = theBaselineMetricPerDimension;
         this.testMetricPerDimension = theTestMetricPerDimension;
+        this.dimensions = new HashSet<>(baselineMetricPerDimension.keySet());
+        this.dimensions.retainAll(testMetricPerDimension.keySet());
     }
 
     /**
@@ -59,28 +67,42 @@ public class StatisticalSignificance {
     public double getPValue(final String method) {
         double p = Double.NaN;
 
-        double[] baselineValues = new double[baselineMetricPerDimension.values().size()];
-        int i = 0;
-        for (Double d : baselineMetricPerDimension.values()) {
-            baselineValues[i] = d;
-            i++;
-        }
-
-        double[] testValues = new double[testMetricPerDimension.values().size()];
-        i = 0;
-        for (Double d : testMetricPerDimension.values()) {
-            testValues[i] = d;
-            i++;
-        }
-
         if ("t".equals(method)) {
-            p = TestUtils.tTest(baselineValues, testValues);
-        } else if ("pairedT".equals(method)) {
-            p = TestUtils.pairedTTest(baselineValues, testValues);
-        } else if ("wilcoxon".equals(method)) {
-            p = new WilcoxonSignedRankTest().wilcoxonSignedRankTest(baselineValues, testValues, false);
-        }
+            double[] baselineValues = new double[baselineMetricPerDimension.values().size()];
+            int i = 0;
+            for (Double d : baselineMetricPerDimension.values()) {
+                baselineValues[i] = d;
+                i++;
+            }
 
+            double[] testValues = new double[testMetricPerDimension.values().size()];
+            i = 0;
+            for (Double d : testMetricPerDimension.values()) {
+                testValues[i] = d;
+                i++;
+            }
+
+            p = TestUtils.tTest(baselineValues, testValues);
+        } else {
+            double[] baselineValues = new double[dimensions.size()];
+            int i = 0;
+            for (Object d : dimensions) {
+                baselineValues[i] = baselineMetricPerDimension.get(d);
+                i++;
+            }
+
+            double[] testValues = new double[dimensions.size()];
+            i = 0;
+            for (Object d : dimensions) {
+                testValues[i] = testMetricPerDimension.get(d);
+                i++;
+            }
+            if ("pairedT".equals(method)) {
+                p = TestUtils.pairedTTest(baselineValues, testValues);
+            } else if ("wilcoxon".equals(method)) {
+                p = new WilcoxonSignedRankTest().wilcoxonSignedRankTest(baselineValues, testValues, false);
+            }
+        }
         return p;
     }
 
