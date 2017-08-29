@@ -56,7 +56,6 @@ import org.ranksys.formats.preference.SimpleRatingPreferencesReader;
  */
 public class RanksysRecommenderRunner extends AbstractRunner<Long, Long> {
 
-    public static final int DEFAULT_ITERATIONS = 10;
     public static final double DEFAULT_ALPHA = 1.0;
     public static final double DEFAULT_LAMBDA = 0.1;
     public static final int DEFAULT_Q = 1;
