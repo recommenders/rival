@@ -40,15 +40,17 @@ and dependencies.  The five sub-modules are as follows:
 
 ## Contributing to RiVal
   
-We'll be very happy if you want to contribute to RiVal. If you are not sure on what to work on, have a look a the current [issues](/../../issues/).
+We're very happy if you want to contribute to RiVal. If you are not sure on what to work on, have a look a the current [issues](/../../issues/).
 
-If you want to contribute, to it in the form of GitHub pull requests. To do this:
+If you want to contribute, do it in the form of GitHub pull requests. To do this:
 
+
+1. Find the [issue](issues) you want to fix, or create a new one describing what your contribution fixes.
 1. Fork RiVal [rival](/../../) on GitHub
 2. Push your changes to your fork
 3. Submit a pull request via the GitHub Web interface
 
-Note that all your contributions will be licensed under RiVal's copyright licences (Apache).
+Note that all your contributions will be licensed under RiVal's copyright licences (Apache). If you are committing a new class, make sure to include the copyright statement at the top.
 
 ## Mailing list
 
