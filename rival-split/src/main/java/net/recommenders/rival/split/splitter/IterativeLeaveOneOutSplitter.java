@@ -15,15 +15,19 @@
  */
 package net.recommenders.rival.split.splitter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModelIF;
+import net.recommenders.rival.split.parser.MovielensParser;
 
 /**
  * Class that splits a dataset using a leave one out user based splitter It
@@ -125,9 +129,12 @@ public class IterativeLeaveOneOutSplitter<U, I> implements Splitter<U, I> {
 							times.add(time);
 						}
 						timestamp = "" + Collections.min(times);
-						splits[0].println(user + "\t" + crossValidatedItem + "\t" + prefCV + "\t" + timestamp);
+						splits[0].println(user + "\t" + item + "\t" + pref + "\t" + timestamp);
 					}
-					splits[0].println(user + "\t" + item + "\t" + pref.floatValue());
+					else {
+						splits[0].println(user + "\t" + item + "\t" + pref);
+					}
+					
 				}
 
 			}
