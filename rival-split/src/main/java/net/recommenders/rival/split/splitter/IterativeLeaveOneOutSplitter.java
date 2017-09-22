@@ -15,19 +15,15 @@
  */
 package net.recommenders.rival.split.splitter;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import net.recommenders.rival.core.DataModel;
 import net.recommenders.rival.core.DataModelIF;
 import net.recommenders.rival.core.TemporalDataModelIF;
-import net.recommenders.rival.split.parser.MovielensParser;
 
 /**
  * Class that splits a dataset using a leave one out user based splitter It
