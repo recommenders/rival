@@ -125,9 +125,12 @@ public class IterativeLeaveOneOutSplitter<U, I> implements Splitter<U, I> {
 							times.add(time);
 						}
 						timestamp = "" + Collections.min(times);
-						splits[0].println(user + "\t" + crossValidatedItem + "\t" + prefCV + "\t" + timestamp);
+						splits[0].println(user + "\t" + item + "\t" + pref + "\t" + timestamp);
 					}
-					splits[0].println(user + "\t" + item + "\t" + pref.floatValue());
+					else {
+						splits[0].println(user + "\t" + item + "\t" + pref);
+					}
+					
 				}
 
 			}
