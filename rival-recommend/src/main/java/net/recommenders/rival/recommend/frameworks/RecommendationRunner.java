@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import net.recommenders.rival.recommend.frameworks.lenskit.LenskitRecommenderRunner;
 import net.recommenders.rival.recommend.frameworks.mahout.MahoutRecommenderRunner;
+import net.recommenders.rival.recommend.frameworks.ranksys.RanksysRecommenderRunner;
 
 import java.util.Properties;
 
@@ -191,6 +192,8 @@ public final class RecommendationRunner {
             rr = new MahoutRecommenderRunner(properties);
         } else if (properties.getProperty(FRAMEWORK).equals(LENSKIT)) {
             rr = new LenskitRecommenderRunner(properties);
+        } else if (properties.getProperty(FRAMEWORK).equals(RANKSYS)) {
+            rr = new RanksysRecommenderRunner(properties);
         }
         return rr;
     }

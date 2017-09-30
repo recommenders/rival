@@ -74,6 +74,26 @@ public final class MultipleRecommendationRunner {
     /**
      * Property key.
      */
+    public static final String RANKSYS_ITEMBASED_RECS = "ranksys.rec.ib";
+    /**
+     * Property key.
+     */
+    public static final String RANKSYS_USERBASED_RECS = "ranksys.rec.ub";
+    /**
+     * Property key.
+     */
+    public static final String RANKSYS_SIMILARITIES = "ranksys.sim";
+    /**
+     * Property key.
+     */
+    public static final String RANKSYS_SVD_RECS = "ranksys.rec.svd";
+    /**
+     * Property key.
+     */
+    public static final String RANKSYS_SVD_FACTORIZER = "ranksys.svd.factorizer";
+    /**
+     * Property key.
+     */
     public static final String N = "neighborhood"; //also factors
     /**
      * Property key.
@@ -113,6 +133,7 @@ public final class MultipleRecommendationRunner {
 
         runLenskitRecommenders(paths, properties);
         runMahoutRecommenders(paths, properties);
+        runRanksysRecommenders(paths, properties);
     }
 
     /**
@@ -285,6 +306,97 @@ public final class MultipleRecommendationRunner {
             }
         } catch (NullPointerException e) {
             System.out.println("Properties not set (Mahout recommenders)");
+        }
+        AbstractRunner<Long, Long>[] recs = recList.toArray(new AbstractRunner[0]);
+        return recs;
+    }
+
+    /**
+     * Runs Ranksys-based recommenders.
+     *
+     * @param paths the input and output paths.
+     * @param properties the properties.
+     */
+    public static void runRanksysRecommenders(final Set<String> paths, final Properties properties) {
+        for (AbstractRunner<Long, Long> rec : instantiateRanksysRecommenders(paths, properties)) {
+            RecommendationRunner.run(rec);
+        }
+    }
+
+    /**
+     *
+     * Instantiates recommenders based on the provided properties.
+     *
+     * @param paths the input and output paths.
+     * @param properties the properties.
+     * @return an array of recommenders, prepared to be run.
+     */
+    @SuppressWarnings("unchecked")
+    public static AbstractRunner<Long, Long>[] instantiateRanksysRecommenders(final Set<String> paths, final Properties properties) {
+        List<AbstractRunner<Long, Long>> recList = new ArrayList<AbstractRunner<Long, Long>>();
+        try {
+            String[] ibRecs = properties.getProperty(RANKSYS_ITEMBASED_RECS).split(",");
+            String[] ubRecs = properties.getProperty(RANKSYS_USERBASED_RECS).split(",");
+            String[] svdRecs = properties.getProperty(RANKSYS_SVD_RECS).split(",");
+            String[] similarities = properties.getProperty(RANKSYS_SIMILARITIES).split(",");
+            String[] neighborhoods = properties.getProperty(N).split(",");
+
+            String[] factorizers = properties.getProperty(RANKSYS_SVD_FACTORIZER).split(",");
+
+            for (String path : paths) {
+                Properties prop = new Properties();
+                prop.setProperty(RecommendationRunner.TRAINING_SET, path + "_train.dat");
+                prop.setProperty(RecommendationRunner.TEST_SET, path + "_test.dat");
+                prop.setProperty(RecommendationRunner.OUTPUT, properties.getProperty(OUTPUT, ""));
+                prop.setProperty(RecommendationRunner.FRAMEWORK, "ranksys");
+                // first IB because it (should) does not have neighborhood
+                for (String ibRec : ibRecs) {
+                    if (ibRec.trim().isEmpty()) {
+                        continue;
+                    }
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, ibRec);
+                    for (String sim : similarities) {
+                        prop.setProperty(RecommendationRunner.SIMILARITY, sim);
+                        AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
+                        recList.add(ar);
+                        prop.remove(RecommendationRunner.SIMILARITY);
+                    }
+                }
+                for (String ubRec : ubRecs) {
+                    if (ubRec.trim().isEmpty()) {
+                        continue;
+                    }
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, ubRec);
+                    for (String sim : similarities) {
+                        prop.setProperty(RecommendationRunner.SIMILARITY, sim);
+                        for (String n : neighborhoods) {
+                            prop.setProperty(RecommendationRunner.NEIGHBORHOOD, n);
+                            AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
+                            recList.add(ar);
+                        }
+                        prop.remove(RecommendationRunner.SIMILARITY);
+//                    prop.remove(RecommendationRunner.neighborhood);
+                    }
+                }
+                for (String svdRec : svdRecs) {
+                    if (svdRec.trim().isEmpty()) {
+                        continue;
+                    }
+                    prop.setProperty(RecommendationRunner.RECOMMENDER, svdRec);
+                    for (String fact : factorizers) {
+                        prop.setProperty(RecommendationRunner.FACTORIZER, fact);
+                        for (String f : neighborhoods) {
+                            prop.setProperty(RecommendationRunner.FACTORS, f);
+                            AbstractRunner<Long, Long> ar = RecommendationRunner.instantiateRecommender(prop);
+                            recList.add(ar);
+                        }
+                        prop.remove(RecommendationRunner.FACTORIZER);
+
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Properties not set (Ranksys recommenders)");
         }
         AbstractRunner<Long, Long>[] recs = recList.toArray(new AbstractRunner[0]);
         return recs;
