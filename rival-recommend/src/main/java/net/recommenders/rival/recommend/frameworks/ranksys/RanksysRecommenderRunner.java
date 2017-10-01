@@ -16,6 +16,9 @@
 package net.recommenders.rival.recommend.frameworks.ranksys;
 
 import es.uam.eps.ir.ranksys.core.Recommendation;
+import es.uam.eps.ir.ranksys.core.preference.ConcatPreferenceData;
+import es.uam.eps.ir.ranksys.core.preference.PreferenceData;
+import es.uam.eps.ir.ranksys.core.preference.SimplePreferenceData;
 import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
@@ -79,9 +82,26 @@ public class RanksysRecommenderRunner extends AbstractRunner<Long, Long> {
         String testDataPath = getProperties().getProperty(RecommendationRunner.TEST_SET);
         String userPath = getProperties().getProperty(RecommendationRunner.USER_INDEX);
         String itemPath = getProperties().getProperty(RecommendationRunner.ITEM_INDEX);
+		
+		PreferenceData<Long, Long> dataTotal = null;
+		if ((userPath == null) ||  (itemPath == null)){
+			PreferenceData<Long, Long> dataTrain = SimplePreferenceData.load(SimpleRatingPreferencesReader.get().read(trainDataPath, Parsers.lp, Parsers.lp));
+			PreferenceData<Long, Long> dataTest = SimplePreferenceData.load(SimpleRatingPreferencesReader.get().read(testDataPath, Parsers.lp, Parsers.lp));
+			dataTotal = new ConcatPreferenceData<>(dataTrain, dataTest);
+		}
 
-        FastUserIndex<Long> userIndex = SimpleFastUserIndex.load(UsersReader.read(userPath, Parsers.lp));
-        FastItemIndex<Long> itemIndex = SimpleFastItemIndex.load(ItemsReader.read(itemPath, Parsers.lp));
+        FastUserIndex<Long> userIndex = null;
+		if (userPath != null){
+			userIndex = SimpleFastUserIndex.load(UsersReader.read(userPath, Parsers.lp));
+		}else{
+			userIndex = SimpleFastUserIndex.load(dataTotal.getAllUsers());
+		}
+        FastItemIndex<Long> itemIndex = null;
+		if (itemPath != null){
+			itemIndex = SimpleFastItemIndex.load(ItemsReader.read(itemPath, Parsers.lp));
+		}else{
+			itemIndex = SimpleFastItemIndex.load(dataTotal.getAllItems());
+		}
         FastPreferenceData<Long, Long> trainData = SimpleFastPreferenceData.load(SimpleRatingPreferencesReader.get().read(trainDataPath, Parsers.lp, Parsers.lp), userIndex, itemIndex);
         FastPreferenceData<Long, Long> testData = SimpleFastPreferenceData.load(SimpleRatingPreferencesReader.get().read(testDataPath, Parsers.lp, Parsers.lp), userIndex, itemIndex);
 
